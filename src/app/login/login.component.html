@@ -1,1 +1,15 @@
-<p>login works!</p>
+<section>
+    <div id="loginBox">
+      <h2>Log In</h2>
+      <form #form="ngForm" (ngSubmit)="login()">
+        <input required name="email" [(ngModel)]="email" id="email" placeholder="Email address" />
+        <input required type="password" name="password" [(ngModel)]="password" id="password" placeholder="Password" />
+        <button type="submit" [disabled]="!form.valid">Log in</button>
+      </form>
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+      
+      <a class="center" routerLink="/forgot">Forgot password?</a>
+  
+      <p>Noch nicht registriert? Hier geht es zur <a routerLink="/register"><b>Registrierung!</b></a></p>
+    </div>
+  </section>

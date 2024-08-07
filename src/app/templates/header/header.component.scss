@@ -1,17 +1,16 @@
 header {
     display: flex;
     flex-direction: column;
-    padding-top: 16px;
+    padding: 16px;
     align-items: center;
-    width: 100%;
     background-color: #8B1A10;
+    height: 100%;
+
+    img {
+        width: 50px;
+    }
   }
-  
-  .headerDistanceRight {
-    position: absolute;
-    right:32px;
-  }
-  
+
   .headerlinks {
     color: rgb(255, 255, 255);
     gap: 16px;
@@ -22,13 +21,11 @@ header {
     align-items: center;
     margin: 8px 0px 8px 0px;
     position: sticky;
+    flex-direction: column;
   
     a {
         color: rgb(255, 255, 255);
   
-      &:hover {
-        font-weight: 600;
-      }
     }
   }
   
