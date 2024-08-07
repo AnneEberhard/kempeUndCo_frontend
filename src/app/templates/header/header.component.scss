@@ -1,0 +1,59 @@
+header {
+    display: flex;
+    flex-direction: column;
+    padding-top: 16px;
+    align-items: center;
+    width: 100%;
+    background-color: #8B1A10;
+  }
+  
+  .headerDistanceRight {
+    position: absolute;
+    right:32px;
+  }
+  
+  .headerlinks {
+    color: rgb(255, 255, 255);
+    gap: 16px;
+    width: 100%;
+    height: 48px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 8px 0px 8px 0px;
+    position: sticky;
+  
+    a {
+        color: rgb(255, 255, 255);
+  
+      &:hover {
+        font-weight: 600;
+      }
+    }
+  }
+  
+  
+  .logo {
+    height: 120px;
+  }
+  
+  .translationButtons {
+    top: 32px;
+    color: rgba(19, 79, 92, 1);
+    &:hover {
+      scale: (1.1);
+    }
+  }
+  
+   .dNone {
+    display: none !important;
+   }
+  
+   .bold {
+    font-weight: bold;
+   }
+  
+  .active {
+    font-weight: bold;
+    color: rgba(19, 79, 92, 1);
+  }

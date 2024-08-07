@@ -1,6 +1,4 @@
-import { provideHttpClient, withFetch } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { RouterOutlet } from '@angular/router';
 import { RegistrationComponent } from './registration/registration.component';
 import { LoginComponent } from './login/login.component';
@@ -10,13 +8,15 @@ import { InfosComponent } from './infos/infos.component';
 import { AncestorsComponent } from './ancestors/ancestors.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { LegalComponent } from './legal/legal.component';
+import { HeaderComponent } from './templates/header/header.component';
+import { FooterComponent } from './templates/footer/footer.component';
+import { ScrollToTopButtonComponent } from './templates/scroll-to-top-button/scroll-to-top-button.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterOutlet,
-    BrowserModule,
     RegistrationComponent,
     LoginComponent,
     WelcomeComponent,
@@ -24,7 +24,10 @@ import { LegalComponent } from './legal/legal.component';
     InfosComponent,
     AncestorsComponent,
     RecipesComponent,
-    LegalComponent
+    LegalComponent,
+    HeaderComponent,
+    FooterComponent,
+    ScrollToTopButtonComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

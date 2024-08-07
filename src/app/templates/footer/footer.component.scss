@@ -1,0 +1,20 @@
+footer {
+    background-color: #8B1A10;
+    color: white;
+    gap: 16px;
+    width: 100%;
+    flex-direction: column;
+    height: fit-content;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 20px 0 80px 0;
+  
+    a {
+      color: white;
+  
+      &:hover {
+        filter: brightness(0.5);
+      }
+    }
+  }
