@@ -1,13 +1,18 @@
 <header>
   <div>
-    <img class="logo" src="assets/images/logo_FFFFFF.svg" alt="logo" />
+    <a routerLink="/" routerLinkActive="active">
+      <img class="logo" src="assets/images/logo_FFFFFF.svg" alt="logo" />
+    </a>
+    
   </div>
-  <div class="headerlinks">
-    <a routerLink="/" routerLinkActive="active">Home</a>
+  <nav class="headerlinks">
+    <a routerLink="/" routerLinkActive="active">Startseite</a>
     <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>
     <a routerLink="/discussions" routerLinkActive="active">Diskussionen</a>
     <a routerLink="/infos" routerLinkActive="active">Infos</a>
     <a routerLink="/recipes" routerLinkActive="active">Familienrezepte</a>
-  </div>
-  <div id="divider"></div>
+    <div id="divider"></div>
+    <button>Ausloggen</button> 
+  </nav>
+
 </header>

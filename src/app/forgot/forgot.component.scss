@@ -1,0 +1,61 @@
+#loginBox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 500px;
+  padding: 48px;
+  background-color: rgba(0, 0, 0, 0.2);
+  justify-content: center;
+  margin: 16px;
+  border-radius: 20px;
+
+  h2 {
+    margin-bottom: 28px;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+
+  input {
+    line-height: 1.5;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    color: inherit;
+    padding: 1rem;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
+    border-radius: 0.25rem;
+    ::placeholder {
+      color: #b2b8b8;
+    }
+  }
+
+  button {
+    background-color: rgb(139, 26, 16);
+    color: white !important;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    width: 100%;
+    line-height: 1.5;
+    padding: 1rem;
+    min-height: 16px;
+    min-width: 16px;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-size: 1rem;
+    border: none;
+    width: 100%;
+    color: inherit;
+
+    &:hover {
+      background-color: #ad0810;
+    }
+  }
+}

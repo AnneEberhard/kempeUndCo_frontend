@@ -7,6 +7,7 @@ import { AncestorsComponent } from './ancestors/ancestors.component';
 import { InfosComponent } from './infos/infos.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { LegalComponent } from './legal/legal.component';
+import { ForgotComponent } from './forgot/forgot.component';
 
 export const routes: Routes = [
     { path: '', component: WelcomeComponent },
@@ -17,4 +18,5 @@ export const routes: Routes = [
     { path: 'infos', component: InfosComponent },
     { path: 'recipes', component: RecipesComponent },
     { path: 'legal', component: LegalComponent },
+    { path: 'forgot', component: ForgotComponent },
 ];
