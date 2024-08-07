@@ -38,7 +38,7 @@ form {
   }
 
   button {
-    background-color: rgb(139, 26, 16);
+    background-color: rgb(100,16,32);
     color: white !important;
     border-radius: 0.25rem;
     cursor: pointer;
@@ -55,7 +55,7 @@ form {
     color: inherit;
 
     &:hover {
-      background-color: #ad0810;
+      background-color: rgb(139, 26, 16);
     }
   }
 }

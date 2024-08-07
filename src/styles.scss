@@ -36,7 +36,7 @@ a {
   background-color: rgba(255, 255, 255, 0.9);
 
   a {
-    color:#8b1a10;
+    color:rgb(100,16,32);
   }
 }
 
@@ -58,7 +58,7 @@ section {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #8b1a10; /* Farbe des Scrollbalken-Daumens (der bewegliche Teil) */
+  background-color: rgb(100,16,32); /* Farbe des Scrollbalken-Daumens (der bewegliche Teil) */
   border-radius: 4px; /* Abrundung des Scrollbalken-Daumens */
 }
 

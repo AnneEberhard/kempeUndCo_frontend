@@ -34,7 +34,7 @@ export class ScrollToTopButtonComponent implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      this.scrollContainer = document.getElementById('contentContainer') as HTMLElement;
+      this.scrollContainer = document.getElementById('mainContainer') as HTMLElement;
       this.scrollContainer.addEventListener('scroll', this.onScroll.bind(this));
     }
   }

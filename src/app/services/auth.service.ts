@@ -18,32 +18,40 @@ import { environment } from '../../environments/environment.prod';
 export class AuthService {
 
   isLoading: boolean = false;
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false); //defining an Observale for subscription
-  isLoggedIn$ = this.isLoggedInSubject.asObservable(); //observable derived from isLoggedInSubject, cannot be altered from outside
+ //private isLoggedInSubject = new BehaviorSubject<boolean>(false); //defining an Observale for subscription
+ //isLoggedIn$ = this.isLoggedInSubject.asObservable(); //observable derived from isLoggedInSubject, cannot be altered from outside
+
+  private loggedIn = false;
+
+
+  isLoggedIn(): boolean {
+    return this.loggedIn;
+  }
+//Folgende Logik in Konstruktor und related functions auskommentiert wegen neuem isLoggedIn
 
   constructor(private http: HttpClient, private router: Router) {
     const token = sessionStorage.getItem('token');
-    if (token) {
-      this.setLoggedIn(true); //if token is available aka logged in in backend, setLoggedIn(true)
-    } else {
-      this.setLoggedIn(false);
-    }
+  // if (token) {
+  //   this.setLoggedIn(true); //if token is available aka logged in in backend, setLoggedIn(true)
+  // } else {
+  //   this.setLoggedIn(false);
+  // }
   }
 
   /**
    * changes isLoggedInSubject to the value false or true depending on token existence in session storage
    * @param {boolean} value : refers to the fact whether a token is in the session storage as defined in the constructur
    */
-  setLoggedIn(value: boolean) {
-    this.isLoggedInSubject.next(value);
-  }
+// setLoggedIn(value: boolean) {
+//   this.isLoggedInSubject.next(value);
+// }
 
   /**
    * @returns the value of isLoggedInSubject
    */
-  get isLoggedIn() {
-    return this.isLoggedInSubject.value;
-  }
+// get isLoggedIn() {
+//   return this.isLoggedInSubject.value;
+// }
 
   /**
    * logic around handling registration of user in the backend
@@ -77,35 +85,39 @@ export class AuthService {
     return this.http.post<any>(url, userData);
   }
 
+
+  // auskommentiert backend kommunikation
   /**
    * handles user login in backend
    * @param {string} email - user email
    * @param {string} password - user password
    */
   public login(email: string, password: string) {
-    const url = environment.baseUrl + '/login/';
-    const body = {
-      "email": email,
-      "password": password
-    };
-    return lastValueFrom(this.http.post(url, body));
+  // const url = environment.baseUrl + '/login/';
+  // const body = {
+  //   "email": email,
+  //   "password": password
+  // };
+   this.loggedIn = true;
+  //  return lastValueFrom(this.http.post(url, body));
   }
 
-
+// auskommentiert backend kommunikation
   /**
    * handles user logout in backend
    * @param {string} authToken - token from sessionStorage
    */
   async logout(authToken: string) {
-    const url = environment.baseUrl + `/logout/`;
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Token ${authToken}`,
-      },
-    }).catch(error => {
-      console.error("Fehler beim Logout:", error);
-    });
+  //  const url = environment.baseUrl + `/logout/`;
+  //  await fetch(url, {
+  //    method: "POST",
+  //    headers: {
+  //      "Authorization": `Token ${authToken}`,
+  //    },
+  //  }).catch(error => {
+  //    console.error("Fehler beim Logout:", error);
+  //  });
+    this.loggedIn = false;
   }
 
   /**

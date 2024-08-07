@@ -17,7 +17,7 @@
     a {
         cursor: pointer;
         text-decoration: none;
-        color:#ad0810;
+        color:rgb(100,16,32);
       
         &:hover {
           font-weight: 600;
@@ -47,7 +47,7 @@
         }
       
         button {
-          background-color: rgb(139,26,16);
+          background-color: rgb(100,16,32);
           color: white !important;
           border-radius: 0.25rem;
           cursor: pointer;
@@ -64,7 +64,7 @@
           color: inherit;
   
           &:hover {
-              background-color: #ad0810;
+              background-color: rgb(139, 26, 16);
           }
         }
     }

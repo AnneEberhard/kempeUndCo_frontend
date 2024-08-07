@@ -11,23 +11,16 @@ import { LegalComponent } from './legal/legal.component';
 import { HeaderComponent } from './templates/header/header.component';
 import { FooterComponent } from './templates/footer/footer.component';
 import { ScrollToTopButtonComponent } from './templates/scroll-to-top-button/scroll-to-top-button.component';
+import { PublicLayoutComponent } from './templates/public-layout/public-layout.component';
+import { PrivateLayoutComponent } from './templates/private-layout/private-layout.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterOutlet,
-    RegistrationComponent,
-    LoginComponent,
-    WelcomeComponent,
-    DiscussionsComponent,
-    InfosComponent,
-    AncestorsComponent,
-    RecipesComponent,
-    LegalComponent,
-    HeaderComponent,
-    FooterComponent,
-    ScrollToTopButtonComponent
+    PublicLayoutComponent,
+    PrivateLayoutComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
