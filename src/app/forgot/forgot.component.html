@@ -1,13 +1,15 @@
   <section>
     <div id="loginBox">
-      <h2>Passwort vergessen?</h2>
+      <h1>Passwort vergessen?</h1>
+      <p>Kennen wir alle - wem ist das denn noch nicht passiert? Trag deinen Email unten ein und frag einen Link zum Neusetzen des Passwortes an.
+      </p>
       <form #form="ngForm" (ngSubmit)="sendMail()">
-        <input required name="email" id="email" placeholder="Email address" [(ngModel)]="email" #emailInput="ngModel" />
+        <input required name="email" id="email" placeholder="Emailadresse" [(ngModel)]="email" #emailInput="ngModel" />
         <button type="submit" [disabled]="!form.valid">Senden</button>
       </form>
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
   
-      <p id="infoBox">Frag einen Link zum Neusetzen des Passwortes an.
+      <p id="infoBox">
       </p>
     </div>
   </section>

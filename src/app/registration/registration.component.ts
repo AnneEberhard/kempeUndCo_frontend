@@ -148,7 +148,6 @@ export class RegistrationComponent {
   renderAlert(alertType: string) {
     if (alertType === 'email') {
       this.showErrorEmailAlert = true;
-
     } else if (alertType === 'password') {
       this.showErrorPasswordAlert = true;
     } else if (alertType === 'passwordMatch') {
