@@ -1,0 +1,93 @@
+#registerBox {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 500px;
+    padding: 16px 48px;
+    background-color: rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    margin: 16px;
+    border-radius: 20px;
+    min-width: 70vw;
+  
+    h2 {
+      margin-bottom: 28px;
+    }
+
+    a {
+        cursor: pointer;
+        text-decoration: none;
+        color:rgb(100,16,32);
+      
+        &:hover {
+          font-weight: 600;
+        }
+      }
+  
+  }
+
+  .registerInputBox {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    gap: 16px;
+  }
+
+form {
+    display: flex;
+    flex-direction: column;
+
+    input {
+        line-height: 1.5;
+        font-size: 1rem;
+        color: inherit;
+        padding: 1rem;
+        border: solid 1px #B2B8B8;
+        appearance: none;
+        background: transparent;
+        border-radius: 0.25rem;
+
+      }
+    
+      button {
+        background-color: rgb(100,16,32);
+        margin-top: 16px;
+        color: white;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        width: 100%;
+        line-height: 1.5;
+        padding: 1rem;
+        min-height: 16px;
+        min-width: 16px;
+        font-size: 1rem;
+        line-height: 1.5;
+        font-size: 1rem;
+        border: none;
+        width: 100%;
+
+        &:hover {
+            background-color: rgb(139, 26, 16);
+        }
+      }
+  }
+
+  .border-red {
+    border: 1px solid red !important;
+  }
+
+  .alert {
+    font-size: 10px;
+    width: 100%;
+    text-align: right;
+    color: red;
+  }
+
+p {
+  text-align: center;
+
+  a {
+    font-weight:bold;
+  }
+}

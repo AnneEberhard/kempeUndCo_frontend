@@ -16,10 +16,4 @@ import { HeaderComponent } from '../header/header.component';
 export class PrivateLayoutComponent {
   constructor(private authService: AuthService) {}
 
-  //token needs to be included here
-  logout(): void {
-    this.authService.logout('token');
-    location.reload();  // Reload the page to switch the layout
-  }
-
 }

@@ -17,6 +17,7 @@ export const routes: Routes = [
         path: '',
         component: PublicLayoutComponent,
         children: [
+            { path: '', component: LoginComponent },
             { path: 'login', component: LoginComponent },
             { path: 'register', component: RegistrationComponent },
             { path: 'legal', component: LegalComponent },
@@ -28,7 +29,7 @@ export const routes: Routes = [
         component: PrivateLayoutComponent,
         canActivate: [AuthGuard],
         children: [
-            { path: '', component: WelcomeComponent },
+            { path: 'welcome', component: WelcomeComponent },
             { path: 'ancestors', component: AncestorsComponent },
             { path: 'discussions', component: DiscussionsComponent },
             { path: 'infos', component: InfosComponent },

@@ -1,18 +1,35 @@
 <section>
-    <div id="loginBox">
-        <h1>Hallo!</h1>
-        <p>Dies ist eine Webseite für die ostfriesische Familie Kempe und ihre Verwandten. Da hier der Familienstammbaum hinterlegt ist, dürfen nur verifizierte Familienmitglieder darauf zugreifen. Für die Registrierung braucht ihr die Empfehlung eines bereits registrierten, uns bekannten Nutzers.</p>
-        <p>Hier geht es zur <a routerLink="/register">Registrierung!</a></p>
-      <h2>Schon registriert?</h2>
-      <form #form="ngForm" (ngSubmit)="login()">
-        <input required name="email" [(ngModel)]="email" id="email" placeholder="Email address" />
-        <input required type="password" name="password" [(ngModel)]="password" id="password" placeholder="Password" />
-        <button type="submit" [disabled]="!form.valid">Einloggen</button>
-      </form>
-      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-      
-      <a class="center" routerLink="/forgot">Passwort vergessen?</a>
-  
-      
-    </div>
-  </section>
+  <div id="loginBox">
+    <h1>Hallo!</h1>
+    <p>
+      Dies ist eine Webseite für die ostfriesische Familie Kempe und ihre
+      Verwandten. Da hier der Familienstammbaum hinterlegt ist, dürfen nur
+      verifizierte Familienmitglieder darauf zugreifen. Für die Registrierung
+      braucht ihr die Empfehlung eines bereits registrierten, uns bekannten
+      Nutzers oder müsst euch anderweitig ausweisen.
+    </p>
+    <p>Hier geht es zur <a routerLink="/register">Registrierung!</a></p>
+    <h2>Schon registriert?</h2>
+    <form #form="ngForm" (ngSubmit)="login()">
+      <input
+        required
+        name="email"
+        [(ngModel)]="email"
+        id="email"
+        placeholder="Email address"
+      />
+      <input
+        required
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        id="password"
+        placeholder="Password"
+      />
+      <button type="submit" [disabled]="!form.valid">Einloggen</button>
+    </form>
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+    <a class="center" routerLink="/forgot">Passwort vergessen?</a>
+  </div>
+</section>

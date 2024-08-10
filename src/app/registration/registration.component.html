@@ -1,1 +1,92 @@
-<p>registration works!</p>
+<section>
+  <div id="registerBox">
+    <h1>Registrierung</h1>
+    <p>
+        Bitte versteht, dass wir nur verifizierte Familienmitglieder zulassen dürfen. Für die Registrierung
+        braucht ihr die Empfehlung eines bereits registrierten, uns bekannten
+        Nutzers oder müsst euch anderweitig ausweisen. In dem Fall klickt bitte die Box "Ich habe keinen Bürgen" an.
+      </p>
+    <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
+      <div class="registerInputBox">
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="formData.email"
+          required
+        />
+      </div>
+      <div class="alert" *ngIf="showErrorEmailAlert">
+        Bitter gibt eine valide Email ein.
+      </div>
+      <div class="registerInputBox">
+        <label for="username">Vorname:</label>
+        <input
+          type="text"
+          id="givenName"
+          name="givenName"
+          [(ngModel)]="formData.givenName"
+          required
+        />
+        <label for="username">Nachname:</label>
+        <input
+          type="text"
+          id="surname"
+          name="surname"
+          [(ngModel)]="formData.surname"
+          required
+        />
+      </div>
+      <div class="registerInputBox">
+        <label for="password">Passwort:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="formData.password"
+          required
+        />
+      </div>
+      <div class="alert" *ngIf="showErrorPasswordAlert">
+        Mindestens 8 Zeichen.
+      </div>
+      <div class="registerInputBox">
+        <label for="confirmPassword">Passwort Wiederholung:</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="formData.confirmPassword"
+          required
+        />
+      </div>
+      <div class="alert" *ngIf="showErrorPasswordMatchAlert">
+        Passwörter entsprechen einander nicht.
+      </div>
+      <div class="registerInputBox">
+        <input type="checkbox" id="guarantor" name="guarantor" value="guarantor" />
+        <label for="guarantor"> Ich habe einen Bürgen.</label><br />
+        <input type="checkbox" id="noGuarantor" name="noGuarantor" value="noGuarantor" />
+        <label for="noGuarantor"> Ich habe keinen Bürgen, bitte kontaktiert mich.</label><br />
+      </div>
+      <div class="registerInputBox">
+        <label for="guarantorEmail">Die Email meines Bürgen ist:</label>
+        <input
+          type="email"
+          id="guarantorEmail"
+          name="guarantorEmail"
+          [(ngModel)]="formData.guarantorEmail"
+          required
+        />
+      </div>
+      <div class="alert" *ngIf="showErrorEmailAlert">
+        Bitter gibt eine valide Email ein.
+      </div>
+      <button type="submit" [disabled]="!registerForm.valid">Absenden</button>
+    </form>
+    <p class="">
+      Hast du schon einen Account? Gehe zum <a routerLink="/login">Login</a>
+    </p>
+  </div>
+</section>
