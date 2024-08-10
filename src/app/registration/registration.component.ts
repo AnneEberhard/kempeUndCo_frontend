@@ -17,6 +17,8 @@ export class RegistrationComponent {
   showErrorEmailAlert: boolean = false;
   showErrorPasswordAlert: boolean = false;
   showErrorPasswordMatchAlert: boolean = false;
+  showErrorChooseGuarantor: boolean = false;
+  showErrorGuarantorEmailAlert: boolean = false;
 
   formData = {
     email: '',
@@ -34,10 +36,13 @@ export class RegistrationComponent {
   onCheckboxChange(type: string) {
     if (type === 'guarantor') {
       this.formData.noGuarantor = false;
-      this.formData.guarantor = true;
+      this.formData.guarantor = !this.formData.guarantor;
     } else {
       this.formData.guarantor = false;
-      this.formData.noGuarantor = true;
+      this.formData.noGuarantor = !this.formData.noGuarantor;
+    }
+    if(this.showErrorChooseGuarantor &&(this.formData.guarantor || this.formData.noGuarantor)) {
+      this.showErrorChooseGuarantor = false;
     }
     console.log('Bürge', this.formData.guarantor);
     console.log('kein Bürge', this.formData.noGuarantor);
@@ -52,14 +57,12 @@ export class RegistrationComponent {
 */
   onSubmit(form: NgForm) {
     if (this.checkForm(form)) {
-      const userData = {
-        email: this.formData.email,
-        username: this.formData.givenName + this.formData.surname,
-        password: this.formData.password
-      };
-      this.registerUser(userData)
+      const userData = this.assembleData(form);
+      console.log(userData);
+      //this.registerUser(userData)
     }
   }
+
 
 
   //add Popu up with confirmation info here
@@ -92,12 +95,20 @@ export class RegistrationComponent {
         this.renderAlert("email");
         return false;
       }
-      if (!this.validatePassword(this.formData.password)) {
-        this.renderAlert("password");
+     if (!this.validatePassword(this.formData.password)) {
+       this.renderAlert("password");
+       return false;
+     }
+     if (this.formData.password !== this.formData.confirmPassword) {
+       this.renderAlert("passwordMatch");
+       return false;
+      }
+      if (!this.formData.guarantor && !this.formData.noGuarantor) {
+        this.renderAlert("chooseGuarantor");
         return false;
       }
-      if (this.formData.password !== this.formData.confirmPassword) {
-        this.renderAlert("passwordMatch");
+      if (this.formData.guarantor && !this.formData.guarantorEmail) {
+        this.renderAlert("guarantorEmail");
         return false;
       }
       return true;
@@ -128,17 +139,41 @@ export class RegistrationComponent {
    * @returns boolean
    */
   validatePassword(password: string): boolean {
-    if (password.length < 8) {
+    // Überprüfe die Länge
+    if (password.length < 12) {
       this.showErrorPasswordAlert = true;
       return false;
     }
-    if (!/[a-zA-Z]/.test(password)) {
+    // Überprüfe auf Großbuchstaben
+    if (!/[A-Z]/.test(password)) {
       this.showErrorPasswordAlert = true;
       return false;
     }
+    // Überprüfe auf Kleinbuchstaben
+    if (!/[a-z]/.test(password)) {
+      this.showErrorPasswordAlert = true;
+      return false;
+    }
+    // Überprüfe auf Zahlen
+    if (!/[0-9]/.test(password)) {
+      this.showErrorPasswordAlert = true;
+      return false;
+    }
+    // Überprüfe auf erlaubte Sonderzeichen (einschließlich der erlaubten Zeichen)
+    if (!/[!@#$%^&*()_+-=?€]+/.test(password)) {
+      this.showErrorPasswordAlert = true;
+      return false;
+    }
+    // Überprüfe auf verbotene Zeichen
+    if (/[\'\"<>&,.]/.test(password)) {
+      this.showErrorPasswordAlert = true;
+      return false;
+    }
+    // Wenn alle Bedingungen erfüllt sind
     this.showErrorPasswordAlert = false;
     return true;
   }
+  
 
   /**
  * renders alert
@@ -152,7 +187,26 @@ export class RegistrationComponent {
       this.showErrorPasswordAlert = true;
     } else if (alertType === 'passwordMatch') {
       this.showErrorPasswordMatchAlert = true;
+    } else if (alertType === 'chooseGuarantor') {
+      this.showErrorChooseGuarantor = true;
+    } else if (alertType === 'guarantorEmail') {
+      this.showErrorGuarantorEmailAlert = true;
     }
-
   }
+  
+
+
+  assembleData(form:NgForm) {
+    const userData = {
+      email: this.formData.email,
+      username: this.formData.givenName + this.formData.surname,
+      password: this.formData.password,
+      givenName: this.formData.givenName,
+      surname: this.formData.surname,
+      guarantorEmail: this.formData.guarantorEmail,
+      guarantor: this.formData.guarantor
+    };
+    return userData;
+  }
+
 }
