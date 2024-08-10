@@ -65,11 +65,14 @@
         Passwörter entsprechen einander nicht.
       </div>
       <div class="registerInputBox">
-        <input type="checkbox" id="guarantor" name="guarantor" value="guarantor" />
-        <label for="guarantor"> Ich habe einen Bürgen.</label><br />
-        <input type="checkbox" id="noGuarantor" name="noGuarantor" value="noGuarantor" />
-        <label for="noGuarantor"> Ich habe keinen Bürgen, bitte kontaktiert mich.</label><br />
+        <div div class="checkboxContainer">
+        <input type="checkbox" id="guarantor" name="guarantor" [(ngModel)]="formData.guarantor" (change)="onCheckboxChange('guarantor')" />
+        <label for="guarantor">Ich habe einen Bürgen.</label>
       </div>
+      <div class="checkboxContainer">
+        <input type="checkbox" id="noGuarantor" name="noGuarantor" [(ngModel)]="formData.noGuarantor" (change)="onCheckboxChange('noGuarantor')" />
+        <label for="noGuarantor">Ich habe keinen Bürgen, bitte kontaktiert mich.</label>
+      </div></div>
       <div class="registerInputBox">
         <label for="guarantorEmail">Die Email meines Bürgen ist:</label>
         <input
@@ -77,7 +80,7 @@
           id="guarantorEmail"
           name="guarantorEmail"
           [(ngModel)]="formData.guarantorEmail"
-          required
+          [required]="formData.guarantor" [disabled]="!formData.guarantor"
         />
       </div>
       <div class="alert" *ngIf="showErrorEmailAlert">

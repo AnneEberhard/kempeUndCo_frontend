@@ -47,6 +47,7 @@ form {
         appearance: none;
         background: transparent;
         border-radius: 0.25rem;
+        min-width: 30vw;
 
       }
     
@@ -73,6 +74,7 @@ form {
       }
   }
 
+
   .border-red {
     border: 1px solid red !important;
   }
@@ -90,4 +92,47 @@ p {
   a {
     font-weight:bold;
   }
+}
+
+/* Das Kontrollkästchen und das Label in einem Container umwickeln 
+meine Addition: label, damit es nicht springt und zentriert ist*/
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Horizontale Zentrierung */
+  cursor: pointer;
+
+  label {
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Verstecke das native Kontrollkästchen */
+.checkboxContainer input[type="checkbox"] {
+  display: none;
+}
+
+/* Erstelle das benutzerdefinierte Kontrollkästchen */
+.checkboxContainer input[type="checkbox"] + label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  border-radius: 3px;
+  margin-right: 10px;
+  transition: background-color 0.2s;
+}
+
+/* Zeige das Häkchen an, wenn das Kontrollkästchen aktiviert ist */
+.checkboxContainer input[type="checkbox"]:checked + label::before {
+  background-color: #000;
+  content: '✔';
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 20px;
 }

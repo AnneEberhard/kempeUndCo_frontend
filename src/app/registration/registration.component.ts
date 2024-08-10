@@ -25,9 +25,25 @@ export class RegistrationComponent {
     password: '',
     confirmPassword: '',
     guarantorEmail: '',
+    guarantor: false,
+    noGuarantor: false
   };
 
   constructor(private authService: AuthService, private router: Router) { }
+
+  onCheckboxChange(type: string) {
+    if (type === 'guarantor') {
+      this.formData.noGuarantor = false;
+      this.formData.guarantor = true;
+    } else {
+      this.formData.guarantor = false;
+      this.formData.noGuarantor = true;
+    }
+    console.log('Bürge', this.formData.guarantor);
+    console.log('kein Bürge', this.formData.noGuarantor);
+  }
+
+
 
 /**
 * starts validation, and if true, sends registration to backend
