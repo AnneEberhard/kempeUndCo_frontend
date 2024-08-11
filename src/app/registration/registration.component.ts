@@ -24,13 +24,14 @@ export class RegistrationComponent {
 
   formData = {
     email: '',
-    givenName: '',
-    surname: '',
+    first_name: '',
+    last_name: '',
     password: '',
     confirmPassword: '',
     guarantorEmail: '',
     guarantor: false,
-    noGuarantor: false
+    noGuarantor: false,
+    family: 'kempe'
   };
 
   constructor(private authService: AuthService, private router: Router) { }
@@ -61,7 +62,7 @@ export class RegistrationComponent {
     if (this.checkForm(form)) {
       const userData = this.assembleData(form);
       console.log(userData);
-      //this.registerUser(userData)
+      this.registerUser(userData)
     }
   }
 
@@ -206,12 +207,12 @@ export class RegistrationComponent {
   assembleData(form: NgForm) {
     const userData = {
       email: this.formData.email,
-      username: this.formData.givenName + this.formData.surname,
       password: this.formData.password,
-      givenName: this.formData.givenName,
-      surname: this.formData.surname,
-      guarantorEmail: this.formData.guarantorEmail,
-      guarantor: this.formData.guarantor
+      first_name: this.formData.first_name,
+      last_name: this.formData.last_name,
+      guarantor: this.formData.guarantor,
+      guarantor_email: this.formData.guarantorEmail,
+      family: this.formData.family
     };
     return userData;
   }
