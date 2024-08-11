@@ -90,8 +90,10 @@
       <div class="alert" *ngIf="showErrorGuarantorEmailAlert">
         Bitte gibt eine valide Email ein.
       </div>
-      <button type="submit" [disabled]="!registerForm.valid">Absenden</button>
+      <button id="submitButton" type="submit" [disabled]="!registerForm.valid || this.sent">{{ this.buttonText }}</button>
     </form>
+    <p id="infoBox">
+    </p>
     <p class="">
       Hast du schon einen Account? Gehe zum <a routerLink="/login">Login</a>
     </p>

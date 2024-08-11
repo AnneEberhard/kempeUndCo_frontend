@@ -41,6 +41,6 @@ export class ForgotComponent {
   renderInfo() {
     let div = document.getElementById('infoBox');
     if (div)
-      div.innerHTML = 'An Email was sent.';
+      div.innerHTML = 'Die Email wurde versendet.';
   }
 }
