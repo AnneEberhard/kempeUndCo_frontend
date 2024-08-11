@@ -7,6 +7,9 @@
       verifizierte Familienmitglieder darauf zugreifen. Für die Registrierung
       braucht ihr die Empfehlung eines bereits registrierten, uns bekannten
       Nutzers oder müsst euch anderweitig ausweisen.
+      <br />Noch ein Hinweis: Diese Seite ist derzeit nicht responsiv - das
+      heißt, ihr werdet sie nur am Computer vernünftig sehen können, nicht an
+      kleineren Geräten wie z.B. am Handy.
     </p>
     <p>Hier geht es zur <a routerLink="/register">Registrierung!</a></p>
     <h2>Schon registriert?</h2>
@@ -16,7 +19,7 @@
         name="email"
         [(ngModel)]="email"
         id="email"
-        placeholder="Email address"
+        placeholder="Emailadresse"
       />
       <input
         required
@@ -24,7 +27,7 @@
         name="password"
         [(ngModel)]="password"
         id="password"
-        placeholder="Password"
+        placeholder="Passwort"
       />
       <button type="submit" [disabled]="!form.valid">Einloggen</button>
     </form>

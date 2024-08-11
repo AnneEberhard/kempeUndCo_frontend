@@ -12,9 +12,6 @@ import { environment } from '../../environments/environment.prod';
 })
 export class AuthService {
 
-  isLoading: boolean = false;
-  private token: string | null = null;
-
   constructor(private http: HttpClient, private router: Router) {  }
 
   public   isLoggedIn(): boolean {
@@ -76,7 +73,6 @@ export class AuthService {
   getKempelogin(): string | null {
     return sessionStorage.getItem('kempelogin');
   }
-
 
   /**
    * handles user logout in front and backend
