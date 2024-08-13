@@ -11,6 +11,8 @@ import { LegalComponent } from './legal/legal.component';
 import { ForgotComponent } from './forgot/forgot.component';
 import { PrivateLayoutComponent } from './templates/private-layout/private-layout.component';
 import { PublicLayoutComponent } from './templates/public-layout/public-layout.component';
+import { ActivationSuccessComponent } from './activation-success/activation-success.component';
+import { ActivationFailureComponent } from './activation-failure/activation-failure.component';
 
 export const routes: Routes = [
     {
@@ -22,7 +24,9 @@ export const routes: Routes = [
             { path: 'register', component: RegistrationComponent },
             { path: 'legal', component: LegalComponent },
             { path: 'forgot', component: ForgotComponent },
-        ]
+            { path: 'activation-success', component: ActivationSuccessComponent },
+            { path: 'activation-failure', component: ActivationFailureComponent },
+        ] 
     },
     {
         path: '',
