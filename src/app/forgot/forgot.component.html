@@ -5,7 +5,7 @@
       </p>
       <form #form="ngForm" (ngSubmit)="sendMail()">
         <input required name="email" id="email" placeholder="Emailadresse" [(ngModel)]="email" #emailInput="ngModel" />
-        <button type="submit" [disabled]="!form.valid">Senden</button>
+        <button type="submit" [disabled]="!form.valid || this.sent">{{ this.buttonText }}</button>
       </form>
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
       <p id="infoBox">

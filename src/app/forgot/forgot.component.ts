@@ -16,6 +16,8 @@ export class ForgotComponent {
   constructor(private authService: AuthService, private router: Router) { }
   email: string = '';
   errorMessage: string = '';
+  buttonText: string = 'Absenden';
+  sent: boolean = false;
 
 
   /**
@@ -40,7 +42,11 @@ export class ForgotComponent {
   */
   renderInfo() {
     let div = document.getElementById('infoBox');
-    if (div)
+    if (div) {
       div.innerHTML = 'Die Email wurde versendet.';
+    }
+    this.sent = true;
+    this.buttonText = 'Gesendet';
   }
+
 }

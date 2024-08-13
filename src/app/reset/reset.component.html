@@ -1,0 +1,58 @@
+<section>
+  <div id="resetBox">
+    <h1>Passwort zurücksetzen</h1>
+    <p>Du kennst das Spiel...</p>
+    <form #resetForm="ngForm" (ngSubmit)="onSubmit(resetForm)">
+      <div class="resetInputBox">
+        <label for="password">Passwort:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="formData.password"
+          required
+        />
+      </div>
+      <div class="alert" *ngIf="showErrorPasswordAlert">
+        Das Passwort muss mindestens 10 Zeichen lang sein und mindestens je
+        einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes
+        Sonderzeichen
+        (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
+        enthalten.
+      </div>
+      <div class="resetInputBox">
+        <label for="confirmPassword">Passwort Wiederholung:</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="formData.confirmPassword"
+          required
+        />
+      </div>
+      <div class="alert" *ngIf="showErrorPasswordMatchAlert">
+        Passwörter entsprechen einander nicht.
+      </div>
+      <div class="passwortInfo">
+        <h4>Passwort-Regeln:</h4>
+        <p>
+          Das Passwort muss mindestens 10 Zeichen lang sein und mindestens je
+          einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes
+          Sonderzeichen
+          (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
+          enthalten.
+        </p>
+      </div>
+      <button
+        id="submitButton"
+        type="submit"
+        [disabled]="!resetForm.valid || this.sent"
+      >
+        {{ this.buttonText }}
+      </button>
+      <p id="infoBox"></p>
+      <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
+    </form>
+
+  </div>
+</section>

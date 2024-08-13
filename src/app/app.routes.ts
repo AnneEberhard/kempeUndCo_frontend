@@ -13,6 +13,7 @@ import { PrivateLayoutComponent } from './templates/private-layout/private-layou
 import { PublicLayoutComponent } from './templates/public-layout/public-layout.component';
 import { ActivationSuccessComponent } from './activation-success/activation-success.component';
 import { ActivationFailureComponent } from './activation-failure/activation-failure.component';
+import { ResetComponent } from './reset/reset.component';
 
 export const routes: Routes = [
     {
@@ -24,6 +25,7 @@ export const routes: Routes = [
             { path: 'register', component: RegistrationComponent },
             { path: 'legal', component: LegalComponent },
             { path: 'forgot', component: ForgotComponent },
+            { path: 'reset-password/:uidb64/:token', component: ResetComponent },
             { path: 'activation-success', component: ActivationSuccessComponent },
             { path: 'activation-failure', component: ActivationFailureComponent },
         ] 

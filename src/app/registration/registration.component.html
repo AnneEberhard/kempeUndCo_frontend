@@ -1,11 +1,24 @@
 <section>
   <div id="registerBox">
+    <div id="popUpInfoContainer" (click)="hideRules()" class="dNone">
+      <div class="popUpInfo">
+        <h4>Passwort-Regeln:</h4>
+        <p>
+          Das Passwort muss mindestens 10 Zeichen lang sein und mindestens je
+          einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes
+          Sonderzeichen
+          (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
+          enthalten.
+        </p>
+      </div>
+    </div>
     <h1>Registrierung</h1>
     <p>
-        Bitte versteht, dass wir nur verifizierte Familienmitglieder zulassen dürfen. Für die Registrierung
-        braucht ihr die Empfehlung eines bereits registrierten, uns bekannten
-        Nutzers oder müsst euch anderweitig ausweisen. In dem Fall klickt bitte die Box "Ich habe keinen Bürgen" an.
-      </p>
+      Bitte versteht, dass wir nur verifizierte Familienmitglieder zulassen
+      dürfen. Für die Registrierung braucht ihr die Empfehlung eines bereits
+      registrierten, uns bekannten Nutzers oder müsst euch anderweitig
+      ausweisen. In dem Fall klickt bitte die Box "Ich habe keinen Bürgen" an.
+    </p>
     <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
       <div class="registerInputBox">
         <label for="email">Email:</label>
@@ -21,7 +34,7 @@
         Bitte gibt eine valide Email ein.
       </div>
       <div class="registerInputBox">
-        <label for="username">Vorname:</label>
+        <label for="first_name">Vorname:</label>
         <input
           type="text"
           id="first_name"
@@ -29,7 +42,7 @@
           [(ngModel)]="formData.first_name"
           required
         />
-        <label for="username">Nachname:</label>
+        <label for="last_name">Nachname:</label>
         <input
           type="text"
           id="last_name"
@@ -39,7 +52,7 @@
         />
       </div>
       <div class="registerInputBox">
-        <label for="password">Passwort:</label>
+        <label class="passwort" for="password">Passwort: <div class="labelInfoText" (click)="showRules()">(Passwortregeln)</div></label>
         <input
           type="password"
           id="password"
@@ -49,8 +62,12 @@
         />
       </div>
       <div class="alert" *ngIf="showErrorPasswordAlert">
-        Das Passwort muss mindestens 12 Zeichen lang sein und mindestens je einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes Sonderzeichen (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>) enthalten.
-      </div>      
+        Das Passwort muss mindestens 10 Zeichen lang sein und mindestens je
+        einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes
+        Sonderzeichen
+        (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
+        enthalten.
+      </div>
       <div class="registerInputBox">
         <label for="confirmPassword">Passwort Wiederholung:</label>
         <input
@@ -66,17 +83,31 @@
       </div>
       <div class="registerInputBox">
         <div div class="checkboxContainer">
-        <input type="checkbox" id="guarantor" name="guarantor" [checked]="formData.guarantor" (change)="onCheckboxChange('guarantor')" />
-        <label for="guarantor">Ich habe einen Bürgen.</label>
+          <input
+            type="checkbox"
+            id="guarantor"
+            name="guarantor"
+            [checked]="formData.guarantor"
+            (change)="onCheckboxChange('guarantor')"
+          />
+          <label for="guarantor">Ich habe einen Bürgen.</label>
+        </div>
+        <div class="checkboxContainer">
+          <input
+            type="checkbox"
+            id="noGuarantor"
+            name="noGuarantor"
+            [checked]="formData.noGuarantor"
+            (change)="onCheckboxChange('noGuarantor')"
+          />
+          <label for="noGuarantor"
+            >Ich habe keinen Bürgen, bitte kontaktiert mich.</label
+          >
+        </div>
       </div>
-      <div class="checkboxContainer">
-        <input type="checkbox" id="noGuarantor" name="noGuarantor" [checked]="formData.noGuarantor" (change)="onCheckboxChange('noGuarantor')" />
-        <label for="noGuarantor">Ich habe keinen Bürgen, bitte kontaktiert mich.</label>
+      <div class="alert" *ngIf="showErrorChooseGuarantor">
+        Bitte wähle eine von beiden Möglichkeiten aus.
       </div>
-    </div>
-    <div class="alert" *ngIf="showErrorChooseGuarantor">
-      Bitte wähle eine von beiden Möglichkeiten aus.
-    </div>
       <div class="registerInputBox">
         <label for="guarantorEmail">Die Email meines Bürgen ist:</label>
         <input
@@ -90,11 +121,19 @@
       <div class="alert" *ngIf="showErrorGuarantorEmailAlert">
         Bitte gibt eine valide Email ein.
       </div>
-      <button id="submitButton" type="submit" [disabled]="!registerForm.valid || this.sent">{{ this.buttonText }}</button>
+      <button
+        id="submitButton"
+        type="submit"
+        [disabled]="!registerForm.valid || this.sent"
+      >
+        {{ this.buttonText }}
+      </button>
     </form>
-    <p id="infoBox">
-    </p>
-    <p class="">
+    <div>
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+      <p id="infoBox"></p>
+    </div>
+    <p>
       Hast du schon einen Account? Gehe zum <a routerLink="/login">Login</a>
     </p>
   </div>

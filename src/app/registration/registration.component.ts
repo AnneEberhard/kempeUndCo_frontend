@@ -19,6 +19,7 @@ export class RegistrationComponent {
   showErrorPasswordMatchAlert: boolean = false;
   showErrorChooseGuarantor: boolean = false;
   showErrorGuarantorEmailAlert: boolean = false;
+  errorMessage: string = '';
   buttonText: string = 'Absenden';
   sent: boolean = false;
 
@@ -71,19 +72,24 @@ export class RegistrationComponent {
    * handles logic depending on backend answer
    * @param userData 
    */
-  public registerUser(userData: any) {
+  registerUser(userData: any) {
     this.authService.registerUser(userData).pipe(take(1))
       .subscribe({
         next: (response) => {
-          console.log(JSON.stringify(response));
           this.renderInfo();
           setTimeout(this.clearForm, 3000);
         },
-        error: (err) => {
-          if (err instanceof HttpErrorResponse) {
-            console.log(JSON.stringify(err.error));
+        error: (error) => {
+          if (error instanceof HttpErrorResponse) {
+            if (error.status === 400 && error.error && error.error.email && error.error.email[0] === "user with this email already exists.") {
+              this.errorMessage = 'Ein Nutzer mit dieser Email ist bereits bei uns registriert.';
+              this.renderPasswordForgotLink();
+            } else {
+              console.error('An error occurred:', error);
+              this.errorMessage = 'Ein Fehler ist vorgefallen!';
+            }
           } else {
-            console.error('An error occurred:', err);
+            console.error('An error occurred:', error);
             alert('Ein Fehler ist vorgefallen!');
           }
         }
@@ -140,13 +146,13 @@ export class RegistrationComponent {
   }
 
   /**
-   * checks if password follows rules of at least 8 characters and not entirely numeric
+   * checks if password follows password rules
    * @param {string} password - value of password field
    * @returns boolean
    */
   validatePassword(password: string): boolean {
     // check length
-    if (password.length < 12) {
+    if (password.length < 10) {
       this.showErrorPasswordAlert = true;
       return false;
     }
@@ -240,4 +246,38 @@ export class RegistrationComponent {
     window.location.reload();
   }
 
+  /**
+  * renders link to forgot passwort component in case user already exists
+  */
+  renderPasswordForgotLink() {
+    const div = document.getElementById('infoBox');
+    if (div) {
+      const link = document.createElement('a');
+      link.textContent = 'Passwort vergessen?';
+      link.href = 'javascript:void(0)';
+      link.onclick = () => this.router.navigate(['/forgot']);
+      link.className = 'forgotLink';
+      div.appendChild(link);
+    }
+  }
+
+  /**
+  * shows overlay with password rules
+  */
+  showRules() {
+  const div = document.getElementById('popUpInfoContainer');
+  if (div) {
+    div.classList.remove('dNone');
+  }
+  }
+
+  /**
+  * hides overlay with password rules
+  */
+  hideRules() {
+    const div = document.getElementById('popUpInfoContainer');
+    if (div) {
+      div.classList.add('dNone');
+    }
+  }
 }

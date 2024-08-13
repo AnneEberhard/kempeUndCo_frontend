@@ -120,7 +120,7 @@ export class AuthService {
    * @param {string} email - user email address
    */
   public forgot(email: string) {
-    const url = environment.baseUrl + '/forgot/';
+    const url = environment.baseUrl + '/password-reset-request/';
     const body = {
       "email": email
     };
