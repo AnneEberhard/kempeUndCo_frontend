@@ -20,7 +20,7 @@ export class ForgotComponent {
   sent: boolean = false;
 
 
-  /**
+/**
  * starts logic for sending user email to backend
  * deals with errors that might occur
  */

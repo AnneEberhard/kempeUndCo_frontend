@@ -45,7 +45,6 @@ export class AuthService {
     sessionStorage.setItem('kempeLogin', 'True');
   }
 
-
   /**
    * Retrieves the access token from sessionStorage.
    * if ensures that no error shows up in vscode
@@ -101,7 +100,6 @@ export class AuthService {
     });
   }
 
-  
   /**
    * handles user register in backend
    * @param {any} userData - user info needed for regstration in backend
@@ -110,10 +108,6 @@ export class AuthService {
     const url = environment.baseUrl + '/register/';
     return this.http.post<any>(url, userData);
   }
-
-
-
-
 
   /**
    * sends email-info to backend in case of forgotten password
@@ -140,4 +134,5 @@ export class AuthService {
     };
     return lastValueFrom(this.http.post(url, body));
   }
+  
 }

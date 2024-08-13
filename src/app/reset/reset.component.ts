@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -31,16 +30,25 @@ export class ResetComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
-    private http: HttpClient,
     private router: Router
   ) { }
 
+/**
+ * Initializes the component by extracting URL parameters `uidb64` and `token`.
+ * This method is called once the component is initialized.
+ */
   ngOnInit(): void {
-    // URL-Parameter abrufen
     this.uidb64 = this.route.snapshot.paramMap.get('uidb64');
     this.token = this.route.snapshot.paramMap.get('token');
   }
 
+/**
+ * Handles form submission for resetting the password.
+ * It checks if the form is valid, then constructs the API endpoint key
+ * and calls the reset method to perform the password reset.
+ *
+ * @param {NgForm} form - The form containing the new password.
+ */
   onSubmit(form: NgForm) {
     if (this.checkForm(form)) {
       const password = this.formData.password;
@@ -50,9 +58,14 @@ export class ResetComponent implements OnInit {
     }
   }
 
+/**
+ * Resets the user's password by calling the AuthService's reset method with
+ * the provided key and new password. Handles success and error cases.
+ * @param {string} key - The API endpoint key for password reset.
+ * @param {string} password - The new password to be set.
+ */
  async reset(key: string, password: string) {
     try {
-      debugger;
       await this.authService.reset(key, password);
       this.renderInfo();
     } catch (error: any) {
@@ -61,7 +74,7 @@ export class ResetComponent implements OnInit {
     }
   }
 
-  /**
+/**
 * starts varies functions to validate the form
 * @param {NgForm} form - entered data
 * @returns boolean
