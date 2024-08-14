@@ -1,132 +1,129 @@
-#registerBox {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-height: 500px;
-    padding: 16px 48px;
-    background-color: rgba(212,175,55, 0.2);
-    justify-content: center;
-    margin: 16px;
-    border-radius: 20px;
-    min-width: 50vw;
-  
-    h2 {
-      margin-bottom: 28px;
-    }
+#infoBox .forgotLink {
+  color: rgb(100, 16, 32) !important;
+  font-weight: 500;
 
-    a {
-        cursor: pointer;
-        text-decoration: none;
-        color:rgb(100,16,32);
-      
-        &:hover {
-          font-weight: 600;
-        }
-      }
-  
+  &:hover {
+    font-weight: 800;
   }
+}
+
+#registerBox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 500px;
+  padding: 16px 48px;
+  background-color: rgba(212, 175, 55, 0.2);
+  justify-content: center;
+  margin: 16px;
+  border-radius: 20px;
+  min-width: 50vw;
+
+  h2 {
+    margin-bottom: 28px;
+  }
+
+  a {
+    cursor: pointer;
+    text-decoration: none;
+    color: rgb(100, 16, 32);
+
+    &:hover {
+      font-weight: 600;
+    }
+  }
+}
 
 .passwort {
   display: flex;
-  gap:4px;
+  gap: 4px;
   align-items: center;
 }
 
 .labelInfoText {
- font-size:10px;
- cursor: pointer;
- &:hover {
-  font-weight: bold;
- }
+  font-size: 10px;
+  cursor: pointer;
+  &:hover {
+    font-weight: bold;
+  }
 }
 
 #popUpInfoContainer {
- position:fixed;
- overflow: hidden;
- display: flex;
- justify-content: center;
-align-items: center;
- top:0;
- bottom:0;
- left:0;
- right:0;
- background-color: rgba(0,0,0,0.5);
- cursor: pointer;
+  position: fixed;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
 }
 
 .popUpInfo {
- background-color: #fff;
- border-radius: 10px;
- width: 400px;
- padding: 48px;
+  background-color: #fff;
+  border-radius: 10px;
+  width: 400px;
+  padding: 48px;
 }
 
-  .registerInputBox {
-    display:flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 16px;
-    gap: 16px;
-  }
+.registerInputBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  gap: 16px;
+}
 
 form {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    input {
-        line-height: 1.5;
-        font-size: 1rem;
-        color: inherit;
-        padding: 1rem;
-        border: solid 1px #B2B8B8;
-        appearance: none;
-        background: transparent;
-        border-radius: 0.25rem;
-        min-width: 20vw;
-
-      }
-    
-      button {
-        background-color: rgb(100,16,32);
-        margin-top: 16px;
-        color: white;
-        border-radius: 0.25rem;
-        cursor: pointer;
-        line-height: 1.5;
-        padding: 1rem;
-        min-height: 16px;
-        font-size: 1rem;
-        line-height: 1.5;
-        font-size: 1rem;
-        border: none;
-
-        &:hover {
-            background-color: rgb(139, 26, 16);
-        }
-
-        &:disabled {
-          background-color: darkgray;
-          cursor: not-allowed;
-        }
-      }
+  input {
+    line-height: 1.5;
+    font-size: 1rem;
+    color: inherit;
+    padding: 1rem;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
+    border-radius: 0.25rem;
+    min-width: 20vw;
   }
 
+  button {
+    background-color: rgb(100, 16, 32);
+    margin-top: 16px;
+    color: white;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    line-height: 1.5;
+    padding: 1rem;
+    min-height: 16px;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-size: 1rem;
+    border: none;
 
-  .alert {
-    font-size: 12px;
-    width: 100%;
-    text-align: left;
-    color: red;
-  }
-
-  .forgotLink {
-    color: rgb(100, 16, 32) !important;
-    font-weight: 500;
-    
     &:hover {
-      font-weight: 800;
+      background-color: rgb(139, 26, 16);
+    }
+
+    &:disabled {
+      background-color: darkgray;
+      cursor: not-allowed;
     }
   }
+}
+
+.alert {
+  font-size: 12px;
+  width: 100%;
+  text-align: left;
+  color: red;
+}
 
 p {
   text-align: center;
@@ -134,9 +131,9 @@ p {
   a {
     cursor: pointer;
     text-decoration: none;
-    color:rgb(100,16,32);
+    color: rgb(100, 16, 32);
     font-weight: 500;
-  
+
     &:hover {
       font-weight: 800;
     }
@@ -164,7 +161,7 @@ meine Addition: label, damit es nicht springt und zentriert ist*/
 
 /* Erstelle das benutzerdefinierte Kontrollkästchen */
 .checkboxContainer input[type="checkbox"] + label::before {
-  content: '';
+  content: "";
   display: inline-block;
   width: 20px;
   height: 20px;
@@ -177,7 +174,7 @@ meine Addition: label, damit es nicht springt und zentriert ist*/
 /* Zeige das Häkchen an, wenn das Kontrollkästchen aktiviert ist */
 .checkboxContainer input[type="checkbox"]:checked + label::before {
   background-color: #000;
-  content: '✔';
+  content: "✔";
   color: #fff;
   display: flex;
   align-items: center;
@@ -187,5 +184,5 @@ meine Addition: label, damit es nicht springt und zentriert ist*/
 }
 
 .error-message {
-  color:red;
+  color: red;
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -10,7 +10,8 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [RouterModule, FormsModule, CommonModule],
   templateUrl: './reset.component.html',
-  styleUrl: './reset.component.scss'
+  styleUrl: './reset.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class ResetComponent implements OnInit {
   errorMessage: string = '';
