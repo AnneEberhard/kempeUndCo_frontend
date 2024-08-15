@@ -5,11 +5,12 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { take } from 'rxjs';
+import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 
 @Component({
   selector: 'app-registration',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ScrollToTopButtonComponent],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
   encapsulation: ViewEncapsulation.None

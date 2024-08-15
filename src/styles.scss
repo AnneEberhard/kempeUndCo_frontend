@@ -21,24 +21,6 @@ a {
   flex-direction: row;
 }
 
-.background {
-  background-image: url('assets/images/Osterburg_Groothusen.jpg');
-  background-size: cover;
-  background-position: center;
-}
-
-.textContainer {
-  padding: 8px;
-  min-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.9);
-
-  a {
-    color:rgb(100,16,32);
-  }
-}
 
 section {
   display: flex !important;
@@ -46,6 +28,7 @@ section {
   justify-content: center;
   align-items: center;
   min-height: 75vh;
+  overflow: auto;
 }
 
 .dNone {

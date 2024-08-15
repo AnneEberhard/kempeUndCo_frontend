@@ -1,1 +1,31 @@
-<p>ancestors works!</p>
+<section id="mainSection">
+  <div class="contentContainer" >
+    <div class="family-tree" >
+      <div class="generation grandparents">
+        <div *ngFor="let grandparent of family.grandparents" class="person">
+          <div class="name">{{ grandparent.name }}</div>
+        </div>
+      </div>
+      <div class="generation parents">
+        <div *ngFor="let parent of family.parents" class="person">
+          <div class="name">{{ parent.name }}</div>
+        </div>
+      </div>
+      <div class="generation person">
+        <div class="name">{{ family.person.name }}</div>
+      </div>
+      <div class="generation spouse" *ngIf="family.spouse">
+        <div class="person">
+          <div class="name">{{ family.spouse.name }}</div>
+        </div>
+      </div>
+      <div class="generation children">
+        <div *ngFor="let child of family.children" class="person">
+          <div class="name">{{ child.name }}</div>
+        </div>
+      </div>
+    </div>
+    <div id="infoBar">Infos</div>
+  </div>
+</section>
+<app-scroll-to-top-button></app-scroll-to-top-button>

@@ -1,0 +1,75 @@
+.tree {
+    justify-content: center;
+    min-width: 80vw;
+    min-height: 80vh;
+}
+
+
+#infoBar {
+    width: 200px;
+    background-color: rgba(100,16,32, 0.2);
+    padding: 16px;
+    min-height: 80vh;
+    z-index: 1;
+}
+
+.family-tree {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.generation {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin: 20px 0;
+}
+
+.person {
+  text-align: center;
+  margin: 0 10px;
+  position: relative;
+}
+
+/* Verbindungsstriche */
+.generation.parents .person::before,
+.generation.children .person::before {
+  content: "";
+  position: absolute;
+  border-top: 1px solid #000;
+  width: 50px;
+  top: -10px;
+}
+
+.generation.parents .person::before {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.generation.children .person::before {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.generation.person::before,
+.generation.spouse::before {
+  content: "";
+  position: absolute;
+  border-left: 1px solid #000;
+  height: 20px;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.generation.parents .person:first-child::before,
+.generation.children .person:first-child::before {
+  left: 25%;
+}
+
+.generation.parents .person:last-child::before,
+.generation.children .person:last-child::before {
+  left: 75%;
+}
