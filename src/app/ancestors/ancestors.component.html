@@ -21,46 +21,56 @@
       </div>
     </div>
 
-    <div class="family-tree">
-      <div class="generation grandparents">
+    <div class="family-tree" *ngIf="family">
+      <div class="generation grandparents" *ngIf="family.grandparents && family.grandparents.length > 0">
         <h3>Großeltern</h3>
         <div class="person-list">
-          <div *ngFor="let grandparent of family.grandparents" class="person">
-            {{ grandparent.name }}
-          </div>
+          <ng-container *ngFor="let grandparent of family.grandparents">
+            <div *ngIf="grandparent" class="person" (click)="getNewData(grandparent.id)">
+              {{ grandparent.name }}
+            </div>
+          </ng-container>
         </div>
       </div>
-
-      <div class="generation parents">
+    
+      <div class="generation parents" *ngIf="family.parents && family.parents.length > 0">
         <h3>Eltern</h3>
         <div class="person-list">
-          <div *ngFor="let parent of family.parents" class="person">
-            {{ parent.name }}
-          </div>
+          <ng-container *ngFor="let parent of family.parents">
+            <div *ngIf="parent" class="person" (click)="getNewData(parent.id)">
+              {{ parent.name }}
+            </div>
+          </ng-container>
         </div>
       </div>
-
+    
       <div class="center">
         <div class="person mainPerson" (click)="showInfos()">
           {{ family.person.name }}
         </div>
       </div>
-
-      <div class="generation spouses">
+    
+      <div class="generation spouses" *ngIf="family.marriages && family.marriages.length > 0">
         <div class="person-list">
-          <div *ngFor="let marriage of family.marriages">
-            <h4>Ehepartner:</h4>
-            <div class="person">{{ marriage.spouse.name }}</div>
-            <div class="children">
-              <h4 *ngIf="marriage.children.length > 0">Kinder:</h4>
-              <div *ngFor="let child of marriage.children" class="person">
-                {{ child.name }}
+          <ng-container *ngFor="let marriage of family.marriages">
+            <div *ngIf="marriage.spouse">
+              <h4>Ehepartner:</h4>
+              <div class="person" (click)="getNewData(marriage.spouse.id)">{{ marriage.spouse.name }}</div>
+              <div class="children" *ngIf="marriage.children && marriage.children.length > 0">
+                <h4 *ngIf="marriage.children.length > 0">Kinder:</h4>
+                <ng-container *ngFor="let child of marriage.children">
+                  <div *ngIf="child" class="person" (click)="getNewData(child.id)">
+                    {{ child.name }}
+                  </div>
+                </ng-container>
               </div>
             </div>
-          </div>
+          </ng-container>
         </div>
       </div>
     </div>
+    
+    
   </div>
   <div id="popUpInfoContainer" class="popUpInfoContainer dNone">
     <div (click)="hideInfos()" id="filler"></div>

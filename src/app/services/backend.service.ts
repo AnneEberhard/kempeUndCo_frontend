@@ -13,7 +13,7 @@ export class BackendService {
 
   // Beispielmethode für einen GET-Request
   getPersons(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/ancestors`);
+    return this.http.get<any[]>(`${this.apiUrl}/persons`);
   }
 
   getRelations(): Observable<any[]> {
