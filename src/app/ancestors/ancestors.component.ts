@@ -14,35 +14,37 @@ import { Family } from '../interfaces/family';
   templateUrl: './ancestors.component.html',
   styleUrl: './ancestors.component.scss'
 })
-export class AncestorsComponent implements OnInit{
+export class AncestorsComponent implements OnInit {
 
 
   person: Person | undefined;
-  relation:Relations | undefined;
+  relation: Relations | undefined;
   allPersonsList: any[] | undefined;
   family: Family | undefined;
   personId: number;
 
-  constructor(private familyService: FamilyService, private router: Router) { 
+  constructor(private familyService: FamilyService, private router: Router) {
     this.personId = 3571;
-   }
+  }
 
 
   ngOnInit() {
     this.familyService.getAllPersons().subscribe(data => {
       this.allPersonsList = data;
     });
-   
+
     this.familyService.getFamily(this.personId).subscribe(family => {
       this.family = family;
     });
   }
 
-  getNewData(id:number) {
-    this.personId = id;
-    this.familyService.getFamily(this.personId).subscribe(family => {
-      this.family = family;
-    });
+  getNewData(id: number) {
+    if (id != 0) {
+      this.personId = id;
+      this.familyService.getFamily(this.personId).subscribe(family => {
+        this.family = family;
+      });
+    }
   }
 
   /**
