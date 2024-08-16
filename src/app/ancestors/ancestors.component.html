@@ -1,30 +1,69 @@
-<section id="mainSection">
-  <div class="contentContainer" >
-    <div class="family-tree" >
+<section>
+  <div class="contentContainer">
+    <div (click)="showHint()" class="hint">Hinweise</div>
+    <div
+      id="popUpHintContainer"
+      class="popUpInfoContainer dNone"
+      (click)="hideHint()"
+    >
+      <div class="popUpInfo">
+        <h4>Hinweise:</h4>
+        <p>
+          Um weitere Infos zu bekommen, bitte auf den Namen der Person klicken.
+          Um den Stammbaum einer anderen Person zu sehen, bitte auf diesen Namen
+          klicken.<br />
+          Wenn ihr Fehler seht, könnt ihr über die Infos zur Diskussionsseite
+          wechseln oder eine neue Diskussion starten. <br />
+          Wenn ihr eure Namen ausgeblendet haben wollt, informiert uns bitte.
+          Ebenso, wenn ihr einverstanden seid, mehr als nur euren Namen
+          anzuzeigen.
+        </p>
+      </div>
+    </div>
+
+    <div class="family-tree">
       <div class="generation grandparents">
-        <div *ngFor="let grandparent of family.grandparents" class="person">
-          <div class="name">{{ grandparent.name }}</div>
+        <h3>Großeltern</h3>
+        <div class="person-list">
+          <div *ngFor="let grandparent of family.grandparents" class="person">
+            {{ grandparent.name }}
+          </div>
         </div>
       </div>
+
       <div class="generation parents">
-        <div *ngFor="let parent of family.parents" class="person">
-          <div class="name">{{ parent.name }}</div>
+        <h3>Eltern</h3>
+        <div class="person-list">
+          <div *ngFor="let parent of family.parents" class="person">
+            {{ parent.name }}
+          </div>
         </div>
       </div>
-      <div class="generation person">
-        <div class="name">{{ family.person.name }}</div>
-      </div>
-      <div class="generation spouse" *ngIf="family.spouse">
-        <div class="person">
-          <div class="name">{{ family.spouse.name }}</div>
+
+      <div class="center">
+        <div class="person mainPerson" (click)="showInfos()">
+          {{ family.person.name }}
         </div>
       </div>
-      <div class="generation children">
-        <div *ngFor="let child of family.children" class="person">
-          <div class="name">{{ child.name }}</div>
+
+      <div class="generation spouses">
+        <div class="person-list">
+          <div *ngFor="let marriage of family.marriages">
+            <h4>Ehepartner:</h4>
+            <div class="person">{{ marriage.spouse.name }}</div>
+            <div class="children">
+              <h4 *ngIf="marriage.children.length > 0">Kinder:</h4>
+              <div *ngFor="let child of marriage.children" class="person">
+                {{ child.name }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+  <div id="popUpInfoContainer" class="popUpInfoContainer dNone">
+    <div (click)="hideInfos()" id="filler"></div>
     <div id="infoBar">Infos</div>
   </div>
 </section>

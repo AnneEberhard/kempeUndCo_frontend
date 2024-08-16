@@ -22,17 +22,29 @@ a {
 }
 
 
-section {
-  display: flex !important;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 75vh;
-  overflow: auto;
-}
-
 .dNone {
   display: none !important;
+}
+
+.popUpInfoContainer {
+  position: fixed;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.popUpInfo {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 400px;
+  padding: 48px;
 }
 
 /* scroll */
