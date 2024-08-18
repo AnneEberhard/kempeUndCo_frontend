@@ -7,6 +7,16 @@ section {
       }
 }
 
+.backtoHomeButton {
+        top: 16px;
+        padding: 8px;
+        border-radius: 10px;
+        border: 2px solid rgba(100, 16, 32);
+        background-color: antiquewhite;
+        color: rgba(100, 16, 32);
+        cursor: pointer;
+}
+
 .searchContainer {
     margin-bottom: 20px;
     display: flex;

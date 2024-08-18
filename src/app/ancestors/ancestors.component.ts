@@ -115,7 +115,8 @@ export class AncestorsComponent implements OnInit {
 
   goToDiscussions(): void {
     if (this.selectedPerson) {
-      this.router.navigate(['/discussions', this.selectedPerson.id]);
+      const url = `/discussions/${this.selectedPerson.id}`;
+      this.router.navigate([url]);
     }
   }
 

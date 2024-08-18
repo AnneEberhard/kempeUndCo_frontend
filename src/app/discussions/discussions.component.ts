@@ -26,7 +26,7 @@ export class DiscussionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.personId = params.get('personId');
+      this.personId = params.get('id');
       if (this.personId) {
         this.loadDiscussion(this.personId);
       } else {
@@ -48,7 +48,9 @@ export class DiscussionsComponent implements OnInit {
   }
 
   goToDiscussion(personId: string): void {
-    this.router.navigate(['/discussions', personId]);
+    this.router.navigate(['/discussions/', personId]);
+    //get person
+    //get discussion
   }
 
   clearSelection(): void {
