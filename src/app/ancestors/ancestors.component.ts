@@ -57,6 +57,11 @@ export class AncestorsComponent implements OnInit {
     });
   }
 
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.searchResults = [];
+  }
+
   getNewData(id: number) {
     if (id != 0) {
       this.personId = id;
