@@ -5,6 +5,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { Person } from "../interfaces/person";
 import { Relations } from "../interfaces/relations";
 import { Family } from "../interfaces/family";
+import { environment } from '../../environments/environment.prod';
 
 
 @Injectable({
@@ -12,22 +13,22 @@ import { Family } from "../interfaces/family";
 })
 export class FamilyService {
 
-  private apiUrl = 'http://localhost:8000/api'; 
+  private apiUrl = `${environment.baseUrl}/api/ancestors`;
   family: Family | null = null;
 
   constructor(private http: HttpClient) { }
 
   getAllPersons(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/ancestors/persons/`);
+    return this.http.get<any[]>(`${this.apiUrl}/persons/`);
   }
 
     
   getPerson(id:number): Observable<Person> {
-    return this.http.get<Person>(`${this.apiUrl}/ancestors/persons/${id}/`);
+    return this.http.get<Person>(`${this.apiUrl}/persons/${id}/`);
   }
 
   getRelations(id:number): Observable<Relations> {
-    return this.http.get<Relations>(`${this.apiUrl}/ancestors/relations/${id}/`);
+    return this.http.get<Relations>(`${this.apiUrl}/relations/${id}/`);
   }
 
   getFamily(id: number): Observable<Family> {

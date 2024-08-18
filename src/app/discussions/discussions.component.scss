@@ -1,0 +1,48 @@
+section {
+    padding: 8px;
+    min-height: 90vh;
+
+    a {
+        color:rgb(100,16,32);
+      }
+}
+
+.searchContainer {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    
+    input {
+      line-height: 1;
+      font-size: 1rem;
+      color: inherit;
+      padding: 1rem;
+      border: solid 1px #b2b8b8;
+      appearance: none;
+      background: antiquewhite;
+      border-radius: 0.25rem;
+      ::placeholder {
+        color: #b2b8b8;
+      }
+    }
+  
+    button {
+      background-color: rgb(100, 16, 32);
+      color: white !important;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      padding: 1rem;
+      cursor: pointer;
+      border: none;
+      color: inherit;
+  
+      &:hover {
+        background-color: rgb(139, 26, 16);
+      }
+  
+      &:disabled {
+        background-color: darkgray;
+        cursor: not-allowed;
+      }
+    }
+}

@@ -38,6 +38,7 @@ export const routes: Routes = [
             { path: 'welcome', component: WelcomeComponent },
             { path: 'ancestors', component: AncestorsComponent },
             { path: 'discussions', component: DiscussionsComponent },
+            { path: 'discussions/:id', component: DiscussionsComponent },
             { path: 'infos', component: InfosComponent },
             { path: 'recipes', component: RecipesComponent }
         ]

@@ -1,2 +1,26 @@
-<section>Diskussionen</section>
+<section>
+    <div *ngIf="selectedDiscussion; else startPage">
+        <h2>Diskussion für Person ID: {{ personId }}</h2>
+        <button (click)="clearSelection()">Zurück zur Startseite</button>
+        <!-- Hier die Details der spezifischen Diskussion anzeigen -->
+        <div *ngFor="let entry of selectedDiscussion.entries">
+          <p>{{ entry.author }}: {{ entry.content }}</p>
+        </div>
+      </div>
+      
+      <ng-template #startPage>
+        <h2>Diskussionen</h2>
+        <p>Willkommen auf der Diskussionsseite! Um eine neue Diskussion zu einer Person aus der Stammfolge zu starten, geht bitte zuerst auf die Seite <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt die entsprechende Person aus, und klickt auf den Button Diskussion in den Personeninfos.
+            <br> Wenn ihr eine bereits existierende Diskussion auswählen wollt, findet ihr diese in der Liste unten oder könnt über den Namen suchen.</p>
+        <div class="searchContainer">
+            <input type="text" placeholder="Suche nach Diskussionen..." />
+        <button>Suchen</button></div>
+        <h3>Vorhandene Diskussionen</h3>
+        <ul>
+          <li *ngFor="let discussion of discussions" (click)="goToDiscussion(discussion.person.id)">
+            Diskussion zu Person: {{ discussion.person.id }} - {{ discussion.person.name }}
+          </li>
+        </ul>
+      </ng-template>
+</section>
 <app-scroll-to-top-button></app-scroll-to-top-button>

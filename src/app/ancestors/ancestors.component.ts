@@ -26,7 +26,8 @@ export class AncestorsComponent implements OnInit {
   searchTerm: string = '';
   searchResults: (Person[] | any)  = [];
   showNoResultsMessage: boolean = false;
-
+  selectedPerson: Person | null = null;
+  currentImage: string | null = null;
 
   constructor(private familyService: FamilyService, private router: Router) {
     this.personId = 3571;
@@ -95,8 +96,8 @@ export class AncestorsComponent implements OnInit {
     }
   }
 
-  showInfos() {
-    console.log('infos');
+  showInfos(person:Person) {
+    this.selectedPerson = person;
     const div = document.getElementById('popUpInfoContainer');
     if (div) {
       div.classList.remove('dNone');
@@ -104,9 +105,28 @@ export class AncestorsComponent implements OnInit {
   }
 
   hideInfos() {
+    this.selectedPerson = null;
     const div = document.getElementById('popUpInfoContainer');
     if (div) {
       div.classList.add('dNone');
     }
+    this.hideImage();
+  }
+
+  goToDiscussions(): void {
+    if (this.selectedPerson) {
+      this.router.navigate(['/discussions', this.selectedPerson.id]);
+    }
+  }
+
+  showImage(imageUrl: string): void {
+    console.log(imageUrl);
+    this.currentImage = imageUrl;
+    document.getElementById('imageModal')?.classList.remove('dNone');
+  }
+
+  hideImage(): void {
+    this.currentImage = null;
+    document.getElementById('imageModal')?.classList.add('dNone');
   }
 }

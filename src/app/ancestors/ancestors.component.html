@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div class="search-container">
+    <div class="searchContainer">
       <input [(ngModel)]="searchTerm" required placeholder="Name eingeben" />
       <button (click)="search()">Suchen</button>
     </div>
@@ -40,7 +40,7 @@
   </div>
 
     <div *ngIf="searchResults.length > 0" class="searchResultsContainer">
-      <div class="search-results">
+      <div class="searchResults">
         <div
           *ngFor="let person of searchResults"
           (click)="selectPerson(person)"
@@ -50,15 +50,13 @@
       </div>
     </div>
 
-
-
-    <div class="family-tree" *ngIf="family">
+    <div class="familyTree" *ngIf="family">
       <div
         class="generation grandparents"
         *ngIf="family.grandparents && family.grandparents.length > 0"
       >
         <h3>Großeltern</h3>
-        <div class="person-list">
+        <div class="personList">
           <ng-container *ngFor="let grandparent of family.grandparents">
             <div
               *ngIf="grandparent"
@@ -76,7 +74,7 @@
         *ngIf="family.parents && family.parents.length > 0"
       >
         <h3>Eltern</h3>
-        <div class="person-list">
+        <div class="personList">
           <ng-container *ngFor="let parent of family.parents">
             <div *ngIf="parent" class="person" (click)="getNewData(parent.id)">
               {{ parent.name }}
@@ -86,7 +84,7 @@
       </div>
 
       <div class="center">
-        <div class="person mainPerson" (click)="showInfos()">
+        <div class="person mainPerson" (click)="showInfos(family.person)">
           {{
             family.person.confidential === "yes"
               ? "vertraulich"
@@ -99,7 +97,7 @@
         class="generation spouses"
         *ngIf="family.marriages && family.marriages.length > 0"
       >
-        <div class="person-list">
+        <div class="personList">
           <ng-container *ngFor="let marriage of family.marriages">
             <div *ngIf="marriage.spouse">
               <h4>Ehepartner:</h4>
@@ -129,7 +127,61 @@
   </div>
   <div id="popUpInfoContainer" class="popUpInfoContainer dNone">
     <div (click)="hideInfos()" id="filler"></div>
-    <div id="infoBar">Infos</div>
+    <div id="infoBar">
+      <div class="infoHeader">
+        <h4>Personeninformationen</h4>
+        <button (click)="goToDiscussions()" class="discussionButton">Diskussion</button>
+      </div>
+      <div *ngIf="selectedPerson">
+        <p><strong>ID:</strong> {{ selectedPerson.id }}</p>
+        <p *ngIf="selectedPerson.name"><strong>Name:</strong> {{ selectedPerson.name }}</p>
+        <p *ngIf="selectedPerson.surn"><strong>Nachname:</strong> {{ selectedPerson.surn }}</p>
+        <p *ngIf="selectedPerson.givn"><strong>Vorname:</strong> {{ selectedPerson.givn }}</p>
+        <p *ngIf="selectedPerson.name_rufname"><strong>Rufname:</strong> {{ selectedPerson.name_rufname }}</p>
+        <p *ngIf="selectedPerson.name_npfx"><strong>Namenspräfix:</strong> {{ selectedPerson.name_npfx }}</p>
+        <p *ngIf="selectedPerson.name_nick"><strong>Spitzname:</strong> {{ selectedPerson.name_nick }}</p>
+        <p *ngIf="selectedPerson.name_marnm"><strong>Ehename:</strong> {{ selectedPerson.name_marnm }}</p>
+        <p *ngIf="selectedPerson.sex"><strong>Geschlecht:</strong> {{ selectedPerson.sex }}</p>
+        <p *ngIf="selectedPerson.occu"><strong>Beruf:</strong> {{ selectedPerson.occu }}</p>
+        <p *ngIf="selectedPerson.birt_date"><strong>Geburtsdatum:</strong> {{ selectedPerson.birt_date }}</p>
+        <p *ngIf="selectedPerson.birt_plac"><strong>Geburtsort:</strong> {{ selectedPerson.birt_plac }}</p>
+        <p *ngIf="selectedPerson.deat_date"><strong>Sterbedatum:</strong> {{ selectedPerson.deat_date }}</p>
+        <p *ngIf="selectedPerson.deat_plac"><strong>Sterbeort:</strong> {{ selectedPerson.deat_plac }}</p>
+        <p *ngIf="selectedPerson.note"><strong>Notizen:</strong> {{ selectedPerson.note }}</p>
+        <p *ngIf="selectedPerson.chr_date"><strong>Taufdatum:</strong> {{ selectedPerson.chr_date }}</p>
+        <p *ngIf="selectedPerson.chr_plac"><strong>Taufort:</strong> {{ selectedPerson.chr_plac }}</p>
+        <p *ngIf="selectedPerson.chr_addr"><strong>Taufadresse:</strong> {{ selectedPerson.chr_addr }}</p>
+        <p *ngIf="selectedPerson.buri_date"><strong>Beerdigungsdatum:</strong> {{ selectedPerson.buri_date }}</p>
+        <p *ngIf="selectedPerson.buri_plac"><strong>Beerdigungsort:</strong> {{ selectedPerson.buri_plac }}</p>
+        <p *ngIf="selectedPerson.reli"><strong>Religion:</strong> {{ selectedPerson.reli }}</p>
+        <p *ngIf="selectedPerson.sour"><strong>Quellen:</strong> {{ selectedPerson.sour }}</p>
+        <!-- Bildverlinkungen  -->
+        <p *ngIf="selectedPerson.obje_file_1">
+          <button (click)="showImage(selectedPerson.obje_file_1)">Bild 1 anzeigen</button>
+        </p>
+        <p *ngIf="selectedPerson.obje_file_2">
+          <button (click)="showImage(selectedPerson.obje_file_2)">Bild 2 anzeigen</button>
+        </p>
+        <p *ngIf="selectedPerson.obje_file_3">
+          <button (click)="showImage(selectedPerson.obje_file_3)">Bild 3 anzeigen</button>
+        </p>
+        <p *ngIf="selectedPerson.obje_file_4">
+          <button (click)="showImage(selectedPerson.obje_file_4)">Bild 4 anzeigen</button>
+        </p>
+        <p *ngIf="selectedPerson.obje_file_5">
+          <button (click)="showImage(selectedPerson.obje_file_5)">Bild 5 anzeigen</button>
+        </p>
+        <p *ngIf="selectedPerson.obje_file_6">
+          <button (click)="showImage(selectedPerson.obje_file_6)">Bild 6 anzeigen</button>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div id="imageModal" class="imageModal dNone">
+    <div class="imageModalContent">
+      <span class="close" (click)="hideImage()">&times;</span>
+      <img [src]="currentImage" alt="Bild anzeigen">
+    </div>
   </div>
 </section>
 <app-scroll-to-top-button></app-scroll-to-top-button>
