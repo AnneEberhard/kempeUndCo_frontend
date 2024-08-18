@@ -10,7 +10,7 @@ import { BackgroundComponent } from '../background/background.component';
 @Component({
   selector: 'app-private-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive,HeaderComponent, FooterComponent, ScrollToTopButtonComponent, BackgroundComponent],
+  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, HeaderComponent, FooterComponent, ScrollToTopButtonComponent, BackgroundComponent],
   templateUrl: './private-layout.component.html',
   styleUrl: './private-layout.component.scss'
 })
