@@ -24,7 +24,9 @@ export class AncestorsComponent implements OnInit {
   family: Family | undefined;
   personId: number;
   searchTerm: string = '';
-  searchResults: Person[] = [];
+  searchResults: (Person[] | any)  = [];
+  showNoResultsMessage: boolean = false;
+
 
   constructor(private familyService: FamilyService, private router: Router) {
     this.personId = 3571;
@@ -47,19 +49,21 @@ export class AncestorsComponent implements OnInit {
     this.searchResults = this.allPersonsList.filter(person =>
       person.name.toLowerCase().includes(term)
     );
+    this.showNoResultsMessage = this.searchResults.length === 0;
   }
 
   selectPerson(person: Person): void {
     this.personId = person.id;
     this.familyService.getFamily(this.personId).subscribe(family => {
       this.family = family;
-      this.searchResults = []; // Clear search results after selection
+      this.clearSearch();
     });
   }
 
   clearSearch(): void {
     this.searchTerm = '';
     this.searchResults = [];
+    this.showNoResultsMessage = false;
   }
 
   getNewData(id: number) {

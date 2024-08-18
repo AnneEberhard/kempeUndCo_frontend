@@ -43,7 +43,7 @@ section {
   z-index: 1;
 }
 
-/* family-tree.component.scss */
+/* family-tree.scss */
 .family-tree {
   margin-top: 16px;
   display: flex;
@@ -101,7 +101,7 @@ section {
   border: 2px solid rgb(100, 16, 32);
 }
 
-
+/* search.scss */
 .search-container {
   margin-bottom: 20px;
   display: flex;
@@ -168,4 +168,16 @@ section {
 
 .search-results div:hover {
   background-color: #f0f0f0;
+}
+
+.no-results {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 20;
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
 }
