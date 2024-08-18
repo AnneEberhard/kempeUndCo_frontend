@@ -37,10 +37,11 @@ export class AuthService {
    * @param {string} accessToken - The access token to set.
    * @param {string} refreshToken - The refresh token to set.
    */
-  setTokens(accessToken: string, refreshToken: string, userId: string, username: string): void {
+  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail:string, username: string): void {
     sessionStorage.setItem('accessToken', accessToken);
     sessionStorage.setItem('refreshToken', refreshToken);
     sessionStorage.setItem('userId', userId);
+    sessionStorage.setItem('userEmail', userEmail);
     sessionStorage.setItem('username', username);
     sessionStorage.setItem('kempeLogin', 'True');
   }
@@ -84,6 +85,7 @@ export class AuthService {
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('userEmail');
         sessionStorage.removeItem('username');
         sessionStorage.removeItem('kempeLogin');
         this.router.navigate(['/login']);
@@ -135,4 +137,12 @@ export class AuthService {
     return lastValueFrom(this.http.post(url, body));
   }
   
+  setAccessToken(token: string): void {
+    sessionStorage.setItem('accessToken', token);
+  }
+
+  refreshToken(): Observable<any> {
+    const refreshToken = sessionStorage.getItem('refreshToken');
+    return this.http.post(`${environment.baseUrl}/login/refresh/`, { refresh: refreshToken });
+  }
 }

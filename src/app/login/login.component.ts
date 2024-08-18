@@ -29,7 +29,8 @@ export class LoginComponent {
   login() {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        this.authService.setTokens(response.access, response.refresh, response.id, response.username);
+        console.log(response);
+        this.authService.setTokens(response.access, response.refresh, response.user.id, response.user.email, response.user.username);
         this.router.navigate(['/welcome']);
       },
       error: (error) => {
