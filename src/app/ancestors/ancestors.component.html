@@ -21,6 +21,19 @@
       </div>
     </div>
 
+    <div class="search-container">
+      <input [(ngModel)]="searchTerm" required placeholder="Name eingeben" />
+      <button (click)="search()">Suchen</button>
+    </div>
+    
+    <div *ngIf="searchResults.length > 0" class="overlay">
+      <div class="search-results">
+        <div *ngFor="let person of searchResults" (click)="selectPerson(person)">
+          {{ person.name }}
+        </div>
+      </div>
+    </div>
+
     <div class="family-tree" *ngIf="family">
       <div class="generation grandparents" *ngIf="family.grandparents && family.grandparents.length > 0">
         <h3>Großeltern</h3>

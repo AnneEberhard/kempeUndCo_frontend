@@ -6,11 +6,12 @@ import { FamilyService } from '../services/family.service';
 import { Person } from "../interfaces/person";
 import { Relations } from "../interfaces/relations";
 import { Family } from '../interfaces/family';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-ancestors',
   standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent],
+  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule],
   templateUrl: './ancestors.component.html',
   styleUrl: './ancestors.component.scss'
 })
@@ -19,9 +20,11 @@ export class AncestorsComponent implements OnInit {
 
   person: Person | undefined;
   relation: Relations | undefined;
-  allPersonsList: any[] | undefined;
+  allPersonsList: Person[] = [];
   family: Family | undefined;
   personId: number;
+  searchTerm: string = '';
+  searchResults: Person[] = [];
 
   constructor(private familyService: FamilyService, private router: Router) {
     this.personId = 3571;
@@ -35,6 +38,22 @@ export class AncestorsComponent implements OnInit {
 
     this.familyService.getFamily(this.personId).subscribe(family => {
       this.family = family;
+    });
+  }
+
+
+  search(): void {
+    const term = this.searchTerm.toLowerCase();
+    this.searchResults = this.allPersonsList.filter(person =>
+      person.name.toLowerCase().includes(term)
+    );
+  }
+
+  selectPerson(person: Person): void {
+    this.personId = person.id;
+    this.familyService.getFamily(this.personId).subscribe(family => {
+      this.family = family;
+      this.searchResults = []; // Clear search results after selection
     });
   }
 
