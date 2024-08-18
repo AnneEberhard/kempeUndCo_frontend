@@ -25,7 +25,7 @@
       <input [(ngModel)]="searchTerm" required placeholder="Name eingeben" />
       <button (click)="search()">Suchen</button>
     </div>
-    <div *ngIf="searchResults.length > 0" class="overlay" (click)="clearSearch()"></div>
+    <div *ngIf="searchResults.length > 0" class="popUpInfoContainer" (click)="clearSearch()"></div>
     
     <div *ngIf="searchResults.length > 0" class="searchResultsContainer">
       <div class="search-results">
