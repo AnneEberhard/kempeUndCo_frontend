@@ -1,12 +1,29 @@
 <section>
   <div *ngIf="selectedDiscussion; else startPage">
+
+    <script>
+      document.cookie = "csrftoken={{ csrf_token }}";
+    </script>
+
     <button class="backtoHomeButton" (click)="clearSelection()">Zurück zur Startseite</button>
     <h2>Diskussion für Person: {{ personId }}</h2>
     
-    <!-- Hier die Details der spezifischen Diskussion anzeigen -->
-    <div *ngFor="let entry of selectedDiscussion.entries">
-      <p>{{ entry.author }}: {{ entry.content }}</p>
+    <div *ngFor="let entry of selectedDiscussion.entries" class="entryContainer">
+      <h5>{{ entry.author }}:</h5>
+      <p>{{ entry.content }}</p>
+      <p class="entry-meta">
+        <small>Erstellt am: {{ entry.created_at | date:'short' }}</small><br>
+        <small>Zuletzt bearbeitet: {{ entry.updated_at | date:'short' }}</small>
+      </p>
     </div>
+    <form (ngSubmit)="addEntry()">
+      <h5>Dein Beitrag:</h5>    
+      <div>
+        <textarea class="entryInput" id="content" [(ngModel)]="newEntry.content" name="content"></textarea>
+      </div>
+    
+      <button type="submit">Beitrag hinzufügen</button>
+    </form>
   </div>
 
   <ng-template #startPage>

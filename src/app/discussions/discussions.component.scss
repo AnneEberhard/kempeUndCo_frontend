@@ -1,6 +1,7 @@
 section {
     padding: 8px;
     min-height: 90vh;
+    min-width: 80vw;
 
     a {
         color:rgb(100,16,32);
@@ -15,6 +16,14 @@ section {
         background-color: antiquewhite;
         color: rgba(100, 16, 32);
         cursor: pointer;
+}
+
+li {
+  cursor: pointer;
+  
+  &:hover {
+    font-weight: bold;
+  }
 }
 
 .searchContainer {
@@ -50,6 +59,54 @@ section {
         background-color: rgb(139, 26, 16);
       }
   
+      &:disabled {
+        background-color: darkgray;
+        cursor: not-allowed;
+      }
+    }
+}
+
+.entryContainer {
+  background-color: antiquewhite;
+  border-radius: 10px;
+  padding: 8px;
+  margin: 4px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+
+  .entryInput {
+      line-height: 1.5;
+      font-size: 1rem;
+      margin-bottom: 16px;
+      color: inherit;
+      padding: 8px;
+      border: solid 1px #B2B8B8;
+      appearance: none;
+      background: transparent;
+      border-radius: 10px;
+      width: 100%;
+       ::placeholder {
+          color: #B2B8B8;
+       }
+    }
+  
+    button {
+      background-color: rgb(100,16,32);
+      color: white !important;
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 8px;
+      font-size: 1rem;
+      border: none;
+      color: inherit;
+
+      &:hover {
+          background-color: rgb(139, 26, 16);
+      }
+
       &:disabled {
         background-color: darkgray;
         cursor: not-allowed;

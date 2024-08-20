@@ -40,9 +40,7 @@ export class LoginComponent {
           this.errorMessage = 'Fehler beim einloggen. Bitte überprüfe Login-Informationen.';
         }
       }
-    })
-      ;
-
+    });
   }
 
 }
