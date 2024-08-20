@@ -20,10 +20,7 @@ export class DiscussionService {
   }
 
   addEntry(entry: any): Observable<any> {
-    console.log(entry);
-    const csrfToken = this.getCookie('csrftoken');
-    const headers = new HttpHeaders().set('X-CSRFToken', csrfToken);
-    return this.http.post<any>(`${this.apiUrl}/entries/`, entry, { headers, withCredentials: true });
+    return this.http.post<any>(`${this.apiUrl}/entries/`, entry, { withCredentials: true });
   }
 
   private getCookie(name: string): string {
@@ -34,5 +31,13 @@ export class DiscussionService {
       console.error('CSRF token not found.');
       return '';
     }
+  }
+
+  updateEntry(entryId: number, entry: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/entries/${entryId}/`, entry, { withCredentials: true });
+  }
+
+  deleteEntry(entryId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/entries/${entryId}/`, { withCredentials: true });
   }
 }

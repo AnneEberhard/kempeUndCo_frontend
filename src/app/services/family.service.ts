@@ -22,7 +22,6 @@ export class FamilyService {
     return this.http.get<any[]>(`${this.apiUrl}/persons/`);
   }
 
-    
   getPerson(id:number): Observable<Person> {
     return this.http.get<Person>(`${this.apiUrl}/persons/${id}/`);
   }

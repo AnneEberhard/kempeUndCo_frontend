@@ -1,28 +1,73 @@
 <section>
   <div *ngIf="selectedDiscussion; else startPage">
-
     <script>
       document.cookie = "csrftoken={{ csrf_token }}";
     </script>
 
-    <button class="backtoHomeButton" (click)="clearSelection()">Zurück zur Startseite</button>
-    <h2>Diskussion für Person: {{ personId }}</h2>
-    
-    <div *ngFor="let entry of selectedDiscussion.entries" class="entryContainer">
-      <h5>{{ entry.author }}:</h5>
-      <p>{{ entry.content }}</p>
-      <p class="entry-meta">
-        <small>Erstellt am: {{ entry.created_at | date:'short' }}</small><br>
-        <small>Zuletzt bearbeitet: {{ entry.updated_at | date:'short' }}</small>
-      </p>
+    <button class="backtoHomeButton" (click)="clearSelection()">
+      Zurück zur Startseite
+    </button>
+    <div class="center">
+      <h2>Diskussion zu {{ personName }}, geb. {{ personGebDate }}</h2>
+      <input
+        type="text"
+        placeholder="Suche nach Autor, Titel oder Inhalt..."
+        (input)="filterEntries($event)"
+        class="searchInput"
+      />
     </div>
-    <form (ngSubmit)="addEntry()">
-      <h5>Dein Beitrag:</h5>    
-      <div>
-        <textarea class="entryInput" id="content" [(ngModel)]="newEntry.content" name="content"></textarea>
+    <div *ngFor="let entry of filteredEntries" class="entryContainer">
+      <h5>{{ entry.author }}: {{ entry.title }}</h5>
+      <p>{{ entry.content }}</p>
+      <div class="entryMeta">
+        <p>
+          <small>Erstellt am: {{ entry.created_at | date : "short" }}</small
+          ><br />
+          <small
+            >Zuletzt bearbeitet: {{ entry.updated_at | date : "short" }}</small
+          >
+        </p>
+        <div class="editOrDeleteContainer">
+          <img
+            src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+            *ngIf="entry.author === userEmail"
+            (click)="showPopUp(entry)"
+          />
+          <img
+            src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+            *ngIf="entry.author === userEmail"
+            (click)="deleteEntry(entry)"
+          />
+        </div>
       </div>
-    
-      <button type="submit">Beitrag hinzufügen</button>
+    </div>
+
+    <form (ngSubmit)="addEntry()">
+      <div class="entryHeader">
+        <h5>Dein Beitrag:</h5>
+        <input
+          class="entryInput"
+          type="text"
+          placeholder="Betreff"
+          [(ngModel)]="newEntry.title"
+          name="title"
+        />
+      </div>
+      <div>
+        <textarea
+          class="entryInput"
+          id="content"
+          [(ngModel)]="newEntry.content"
+          name="content"
+          placeholder="notwendig"
+          required
+        ></textarea>
+      </div>
+      <div class="buttonRightContainer">
+        <button type="submit" [disabled]="!newEntry.content">
+          Beitrag hinzufügen
+        </button>
+      </div>
     </form>
   </div>
 
@@ -54,5 +99,40 @@
       </li>
     </ul>
   </ng-template>
+
+  <div
+    id="popUpContainer"
+    class="popUpInfoContainer"
+    (click)="hidePopUp()"
+    [class.dNone]="!editEntryData"
+  >
+    <div
+      class="editEntry"
+      (click)="$event.stopPropagation()"
+      *ngIf="editEntryData"
+    >
+      <h3>Beitrag bearbeiten</h3>
+      <label for="title">Betreff:</label>
+      <input
+        class="editInput"
+        type="text"
+        id="editTitle"
+        [(ngModel)]="editEntryData.title"
+      />
+
+      <label for="content">Inhalt:</label>
+      <textarea
+        class="editInput"
+        id="editContent"
+        [(ngModel)]="editEntryData.content"
+        required
+      ></textarea>
+
+      <div class="buttonContainer">
+        <button (click)="hidePopUp()">Abbrechen</button>
+        <button (click)="saveEntry()">Speichern</button>
+      </div>
+    </div>
+  </div>
 </section>
 <app-scroll-to-top-button></app-scroll-to-top-button>

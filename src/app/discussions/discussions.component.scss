@@ -1,69 +1,69 @@
 section {
-    padding: 8px;
-    min-height: 90vh;
-    min-width: 80vw;
+  padding: 8px;
+  min-height: 90vh;
+  min-width: 80vw;
 
-    a {
-        color:rgb(100,16,32);
-      }
+  a {
+    color: rgb(100, 16, 32);
+  }
 }
 
 .backtoHomeButton {
-        top: 16px;
-        padding: 8px;
-        border-radius: 10px;
-        border: 2px solid rgba(100, 16, 32);
-        background-color: antiquewhite;
-        color: rgba(100, 16, 32);
-        cursor: pointer;
+  top: 16px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 2px solid rgba(100, 16, 32);
+  background-color: antiquewhite;
+  color: rgba(100, 16, 32);
+  cursor: pointer;
 }
 
 li {
   cursor: pointer;
-  
+
   &:hover {
     font-weight: bold;
   }
 }
 
 .searchContainer {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    
-    input {
-      line-height: 1;
-      font-size: 1rem;
-      color: inherit;
-      padding: 1rem;
-      border: solid 1px #b2b8b8;
-      appearance: none;
-      background: antiquewhite;
-      border-radius: 0.25rem;
-      ::placeholder {
-        color: #b2b8b8;
-      }
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+
+  input {
+    line-height: 1;
+    font-size: 1rem;
+    color: inherit;
+    padding: 1rem;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: antiquewhite;
+    border-radius: 0.25rem;
+    ::placeholder {
+      color: #b2b8b8;
     }
-  
-    button {
-      background-color: rgb(100, 16, 32);
-      color: white !important;
-      border-radius: 0.25rem;
-      font-size: 1rem;
-      padding: 1rem;
-      cursor: pointer;
-      border: none;
-      color: inherit;
-  
-      &:hover {
-        background-color: rgb(139, 26, 16);
-      }
-  
-      &:disabled {
-        background-color: darkgray;
-        cursor: not-allowed;
-      }
+  }
+
+  button {
+    background-color: rgb(100, 16, 32);
+    color: white !important;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    padding: 1rem;
+    cursor: pointer;
+    border: none;
+    color: inherit;
+
+    &:hover {
+      background-color: rgb(139, 26, 16);
     }
+
+    &:disabled {
+      background-color: darkgray;
+      cursor: not-allowed;
+    }
+  }
 }
 
 .entryContainer {
@@ -78,38 +78,136 @@ form {
   flex-direction: column;
 
   .entryInput {
-      line-height: 1.5;
-      font-size: 1rem;
-      margin-bottom: 16px;
-      color: inherit;
-      padding: 8px;
-      border: solid 1px #B2B8B8;
-      appearance: none;
-      background: transparent;
-      border-radius: 10px;
-      width: 100%;
-       ::placeholder {
-          color: #B2B8B8;
-       }
+    line-height: 1.5;
+    font-size: 14px;
+    font-family: "Roboto";
+    margin-bottom: 16px;
+    color: inherit;
+    padding: 8px;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
+    border-radius: 10px;
+    width: 100%;
+    ::placeholder {
+      color: #b2b8b8;
     }
-  
-    button {
-      background-color: rgb(100,16,32);
-      color: white !important;
-      border-radius: 10px;
-      cursor: pointer;
-      padding: 8px;
-      font-size: 1rem;
-      border: none;
-      color: inherit;
+  }
 
-      &:hover {
-          background-color: rgb(139, 26, 16);
-      }
+  button {
+    background-color: rgb(100, 16, 32);
+    color: white !important;
+    border-radius: 10px;
+    cursor: pointer;
+    width: fit-content;
+    padding: 8px;
+    font-size: 1rem;
+    border: none;
+    color: inherit;
 
-      &:disabled {
-        background-color: darkgray;
-        cursor: not-allowed;
-      }
+    &:hover {
+      background-color: rgb(139, 26, 16);
     }
+
+    &:disabled {
+      background-color: darkgray;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.buttonRightContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.entryMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editOrDeleteContainer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+
+  img {
+    height: 20px;
+    cursor: pointer;
+    &:hover {
+      height: 22px;
+    }
+  }
+}
+
+.searchInput {
+  line-height: 1.5;
+  font-size: 14px;
+  font-family: "Roboto";
+  margin-bottom: 16px;
+  color: inherit;
+  padding: 8px;
+  border: solid 1px #b2b8b8;
+  appearance: none;
+  background: transparent;
+  border-radius: 10px;
+  width: 60%;
+  ::placeholder {
+    color: #b2b8b8;
+  }
+}
+
+.editEntry {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 60vw;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .editInput {
+    line-height: 1.5;
+    font-size: 14px;
+    margin-bottom: 16px;
+    color: inherit;
+    padding: 8px;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
+    border-radius: 10px;
+    ::placeholder {
+      color: #b2b8b8;
+      font-family: "Roboto" !important;
+    }
+
+  }
+
+  button {
+    background-color: rgb(100, 16, 32);
+    color: white !important;
+    border-radius: 10px;
+    cursor: pointer;
+    width: fit-content;
+    padding: 8px;
+    font-size: 1rem;
+    border: none;
+    color: inherit;
+
+    &:hover {
+      background-color: rgb(139, 26, 16);
+    }
+
+    &:disabled {
+      background-color: darkgray;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }

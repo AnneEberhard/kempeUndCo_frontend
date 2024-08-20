@@ -26,6 +26,12 @@ a {
   display: none !important;
 }
 
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .popUpInfoContainer {
   position: fixed;
   overflow: hidden;
@@ -46,6 +52,11 @@ a {
   width: 400px;
   padding: 48px;
 }
+
+textarea {
+  font-family: "Roboto" !important;
+}
+
 
 /* scroll */
 ::-webkit-scrollbar {
