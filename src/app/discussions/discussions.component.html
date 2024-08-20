@@ -11,7 +11,7 @@
       <h2>Diskussion zu {{ personName }}, geb. {{ personGebDate }}</h2>
       <input
         type="text"
-        placeholder="Suche nach Autor, Titel oder Inhalt..."
+        placeholder="Suche nach Autor, Betreff oder Inhalt..."
         (input)="filterEntries($event)"
         class="searchInput"
       />
@@ -80,9 +80,11 @@
       <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt
       die entsprechende Person aus, und klickt auf den Button Diskussion in den
       Personeninfos. Nur so können wir sicherstellen, dass es keine doppelte
-      Diskussionen gibt und die Zuordnung funktioniert.<br />
+      Diskussionen gibt und die Zuordnung funktioniert.<br /><br>
       Wenn ihr eine bereits existierende Diskussion auswählen wollt, findet ihr
-      diese in der Liste unten oder könnt über den Namen suchen.
+      diese in der Liste unten oder könnt über den Namen suchen.<br><br>
+      Jeder Nutzer kann auf der jeweiligen Diskussionsseite immer nur seinen eigenen Einträge bearbeiten oder löschen.
+       Sollten euch Beiträge auffallen, die problematisch sind, informiert uns bitte.
     </p>
     <div class="searchContainer">
       <input type="text" placeholder="Suche nach Diskussionen..." />
