@@ -64,8 +64,6 @@ export class DiscussionsComponent implements OnInit {
      
       this.selectedDiscussion = discussion;
       this.filteredEntries = discussion.entries;
-      console.log(discussion);
-      console.log(this.filteredEntries);
     });
   }
 
