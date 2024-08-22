@@ -31,12 +31,12 @@
           <img
             src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
             *ngIf="entry.author === userEmail"
-            (click)="showPopUp(entry)"
+            (click)="showPopUp('edit', entry)"
           />
           <img
             src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
             *ngIf="entry.author === userEmail"
-            (click)="deleteEntry(entry)"
+            (click)="showPopUp('delete', entry)"
           />
         </div>
       </div>
@@ -111,8 +111,7 @@
     <div
       class="editEntry"
       (click)="$event.stopPropagation()"
-      *ngIf="editEntryData"
-    >
+      *ngIf="editEntryData">
       <h3>Beitrag bearbeiten</h3>
       <label for="title">Betreff:</label>
       <input
@@ -135,6 +134,17 @@
         <button (click)="saveEntry()">Speichern</button>
       </div>
     </div>
+    <div
+    class="editEntry"
+    (click)="$event.stopPropagation()"
+    *ngIf="deleteEntryData">
+    <h3>Beitrag löschen</h3>
+    <p>Möchtest du diesen Beitrag löschen?</p>
+    <div class="buttonContainer">
+      <button (click)="hidePopUp()">Abbrechen</button>
+      <button (click)="deleteEntry()">Löschen</button>
+    </div>
+  </div>
   </div>
 </section>
 <app-scroll-to-top-button></app-scroll-to-top-button>

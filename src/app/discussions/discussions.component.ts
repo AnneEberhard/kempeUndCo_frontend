@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { DiscussionService } from '../services/discussion.service';
@@ -29,12 +29,14 @@ export class DiscussionsComponent implements OnInit {
   };
   filteredEntries: any[] = [];
   editEntryData: any = null;
+  deleteEntryData: any = null;
 
   constructor(
     private discussionService: DiscussionService,
     private familyService: FamilyService, 
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -118,33 +120,32 @@ export class DiscussionsComponent implements OnInit {
     });
   }
   
-  deleteEntry(entry: any) {
-    if (confirm('Möchtest du diesen Beitrag löschen?')) {
-      this.discussionService.deleteEntry(entry.id).subscribe(() => {
-        this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== entry.id);
-      });
-    }
-  }
 
- deleteEntryInPopUp() {
-   if (confirm('Bist du sicher, dass du diesen Beitrag löschen möchtest?')) {
-     this.discussionService.deleteEntry(this.editEntryData.id).subscribe(() => {
-       this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== this.editEntryData.id);
-       this.hidePopUp();
-     });
-   }
- }
+  deleteEntry() {
+    this.discussionService.deleteEntry(this.deleteEntryData.id).subscribe(() => {
+        this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== this.deleteEntryData.id);
+        this.loadDiscussion(this.selectedDiscussion.person.id);
+        this.hidePopUp();
+    });
+}
 
-  showPopUp(entry: any) {
-    this.editEntryData = { ...entry };  
+
+  showPopUp(mode: string, entry: any) {
+    if(mode === 'edit') {
+      this.editEntryData = { ...entry };  
+    } else if (mode === 'delete') {
+      this.deleteEntryData = { ...entry }
+    }    
     const popUpContainer = document.getElementById('popUpContainer');
     if (popUpContainer) {
       popUpContainer.classList.remove('dNone');
     }
   }
 
+
   hidePopUp() {
     this.editEntryData = null;
+    this.deleteEntryData = null;
     const popUpContainer = document.getElementById('popUpContainer');
     if (popUpContainer) {
       popUpContainer.classList.add('dNone');
@@ -168,5 +169,20 @@ export class DiscussionsComponent implements OnInit {
 
 
 
+  showPopUp2(entry: any) {
+    this.editEntryData = { ...entry };  
+    const popUpContainer = document.getElementById('popUpContainer');
+    if (popUpContainer) {
+      popUpContainer.classList.remove('dNone');
+    }
+  }
+
+  deleteEntry2(entry: any) {
+    if (confirm('Möchtest du diesen Beitrag löschen?')) {
+      this.discussionService.deleteEntry(entry.id).subscribe(() => {
+        this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== entry.id);
+      });
+    }
+  }
 
 }
