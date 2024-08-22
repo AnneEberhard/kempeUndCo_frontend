@@ -1,2 +1,111 @@
-<section>Familienrezepte</section>
+<section>
+    <h2>Familienrezepte</h2>
+    <p>
+      Willkommen auf der Seite für die Familienrezepte!!<br />
+     Hier könnt ihr Bilder und kurze Beschreibungen der Familienrepte hochladen. Bitte beachtet, dass wir aus Sicherheitsgründen nur jpg oder png Formate akzeptieren können.<br><br>
+      Jeder Nutzer kann immer nur seinen eigenen Beiträge bearbeiten oder löschen.
+       Sollten euch Beiträge auffallen, die problematisch sind, informiert uns bitte.
+    </p>
+    <ng-template #startPage>
+        <h2>Diskussionen</h2>
+        <p>
+          Willkommen auf der Diskussionsseite!<br />
+          Um eine neue Diskussion zu einer Person aus der Stammfolge zu starten,
+          geht bitte zuerst auf die Seite
+          <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt
+          die entsprechende Person aus, und klickt auf den Button Diskussion in den
+          Personenrecipes. Nur so können wir sicherstellen, dass es keine doppelte
+          Diskussionen gibt und die Zuordnung funktioniert.<br /><br>
+          Wenn ihr eine bereits existierende Diskussion auswählen wollt, findet ihr
+          diese in der Liste unten oder könnt über den Namen suchen.<br><br>
+          Jeder Nutzer kann auf der jeweiligen Diskussionsseite immer nur seinen eigenen Einträge bearbeiten oder löschen.
+           Sollten euch Beiträge auffallen, die problematisch sind, recipermiert uns bitte.
+        </p>
+        <div class="searchContainer">
+          <input type="text" placeholder="Suche nach recipes..." />
+          <button>Suchen</button>
+        </div>
+        <h3>Vorhandene recipes</h3>
+        <ul>
+          <li
+            *ngFor="let recipe of recipes"
+          >
+            Beitrag zu: {{ recipe.title }} 
+          </li>
+        </ul>
+      </ng-template>
+    <form (ngSubmit)="addEntry()">
+        <div class="entryHeader">
+          <h5>Dein Beitrag:</h5>
+          <input
+            class="entryInput"
+            type="text"
+            placeholder="Betreff"
+            [(ngModel)]="newEntry.title"
+            name="title"
+          />
+        </div>
+        <div>
+          <textarea
+            class="entryInput"
+            id="content"
+            [(ngModel)]="newEntry.content"
+            name="content"
+            placeholder="notwendig"
+            required
+          ></textarea>
+        </div>
+        <div class="buttonRightContainer">
+          <button type="submit" [disabled]="!newEntry.content">
+            Beitrag hinzufügen
+          </button>
+        </div>
+      </form>
+
+      <div
+      id="popUpContainer"
+      class="popUprecipeContainer"
+      (click)="hidePopUp()"
+      [class.dNone]="!editEntryData"
+    >
+      <div
+        class="editEntry"
+        (click)="$event.stopPropagation()"
+        *ngIf="editEntryData">
+        <h3>Beitrag bearbeiten</h3>
+        <label for="title">Betreff:</label>
+        <input
+          class="editInput"
+          type="text"
+          id="editTitle"
+          [(ngModel)]="editEntryData.title"
+        />
+  
+        <label for="content">Inhalt:</label>
+        <textarea
+          class="editInput"
+          id="editContent"
+          [(ngModel)]="editEntryData.content"
+          required
+        ></textarea>
+  
+        <div class="buttonContainer">
+          <button (click)="hidePopUp()">Abbrechen</button>
+          <button (click)="saveEntry()">Speichern</button>
+        </div>
+      </div>
+      <div
+      class="editEntry"
+      (click)="$event.stopPropagation()"
+      *ngIf="deleteEntryData">
+      <h3>Beitrag löschen</h3>
+      <p>Möchtest du diesen Beitrag löschen?</p>
+      <div class="buttonContainer">
+        <button (click)="hidePopUp()">Abbrechen</button>
+        <button (click)="deleteEntry()">Löschen</button>
+      </div>
+    </div>
+    </div>
+</section>
 <app-scroll-to-top-button></app-scroll-to-top-button>
+
