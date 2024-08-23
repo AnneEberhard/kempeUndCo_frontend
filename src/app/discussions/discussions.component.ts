@@ -18,6 +18,7 @@ export class DiscussionsComponent implements OnInit {
 
   discussions: any[] = [];
   selectedDiscussion: any = null;
+  filteredDiscussions: any[] = [];
   personId: string | null = null;
   personName: string | null = null;
   personGebDate: string = 'unbekannt';
@@ -56,12 +57,12 @@ export class DiscussionsComponent implements OnInit {
   loadAllDiscussions(): void {
     this.discussionService.getAllDiscussions().subscribe(discussions => {
       this.discussions = discussions;
+      this.filteredDiscussions = this.discussions;
     });
   }
 
   loadDiscussion(personId: string): void {
     this.discussionService.getDiscussionByPersonId(personId).subscribe(discussion => {
-     
       this.selectedDiscussion = discussion;
       this.filteredEntries = discussion.entries;
     });
@@ -77,6 +78,18 @@ export class DiscussionsComponent implements OnInit {
     });
   }
 
+  filterList(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const searchTerm = target.value.toLowerCase();
+    
+    if (!searchTerm) {
+      this.filteredDiscussions = this.discussions;
+    } else {
+      this.filteredDiscussions = this.discussions.filter((discussion) => 
+        discussion.person.name.toLowerCase().includes(searchTerm) 
+      );
+    }
+  }
 
   goToDiscussion(personId: string): void {
     this.router.navigate(['/discussions/', personId]);

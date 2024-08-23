@@ -21,6 +21,15 @@ a {
   flex-direction: row;
 }
 
+section {
+  padding: 8px;
+  min-height: 90vh;
+  min-width: 80vw;
+
+  a {
+    color: rgb(100, 16, 32);
+  }
+}
 
 .dNone {
   display: none !important;
@@ -51,6 +60,64 @@ a {
   border-radius: 10px;
   width: 400px;
   padding: 48px;
+}
+
+.searchContainer {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+
+  input {
+    line-height: 1;
+    font-size: 1rem;
+    color: inherit;
+    padding: 1rem;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: antiquewhite;
+    border-radius: 0.25rem;
+    ::placeholder {
+      color: #b2b8b8;
+    }
+  }
+}
+
+.searchInput {
+  line-height: 1.5;
+  font-size: 14px;
+  font-family: "Roboto";
+  margin-bottom: 16px;
+  color: inherit;
+  padding: 8px;
+  border: solid 1px #b2b8b8;
+  appearance: none;
+  background: transparent;
+  border-radius: 10px;
+  width: 60%;
+  ::placeholder {
+    color: #b2b8b8;
+  }
+}
+
+button {
+  background-color: rgb(100, 16, 32);
+  color: white !important;
+  border-radius: 10px;
+  cursor: pointer;
+  width: fit-content;
+  padding: 8px;
+  font-size: 1rem;
+  border: none;
+  color: inherit;
+
+  &:hover {
+    background-color: rgb(139, 26, 16);
+  }
+
+  &:disabled {
+    background-color: darkgray;
+    cursor: not-allowed;
+  }
 }
 
 textarea {

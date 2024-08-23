@@ -87,13 +87,17 @@
        Sollten euch Beiträge auffallen, die problematisch sind, informiert uns bitte.
     </p>
     <div class="searchContainer">
-      <input type="text" placeholder="Suche nach Diskussionen..." />
-      <button>Suchen</button>
+      <input
+        type="text"
+        placeholder="Suche nach Person..."
+        (input)="filterList($event)"
+        class="searchInput"
+      />
     </div>
     <h3>Vorhandene Diskussionen</h3>
     <ul>
       <li
-        *ngFor="let discussion of discussions"
+        *ngFor="let discussion of filteredDiscussions"
         (click)="goToDiscussion(discussion.person.id)"
       >
         Diskussion zu Person: {{ discussion.person.id }} -

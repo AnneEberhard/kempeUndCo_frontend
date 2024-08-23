@@ -4,11 +4,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { FormsModule } from '@angular/forms';
 import { InfoService } from '../sevices/info.service';
+import { QuillModule } from 'ngx-quill';
+
 
 @Component({
   selector: 'app-infos',
   standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule],
+  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
   templateUrl: './infos.component.html',
   styleUrl: './infos.component.scss'
 })
@@ -21,6 +23,7 @@ export class InfosComponent implements OnInit {
     title: '',
     content: ''
   };
+  imageFiles: File[] = [];
   filteredEntries: any[] = [];
   editEntryData: any = null;
   deleteEntryData: any = null;
@@ -72,14 +75,33 @@ export class InfosComponent implements OnInit {
     }
   }
 
+  onFileChange(event: any) {
+    const files = event.target.files;
+    if (files.length + this.imageFiles.length > 4) {
+      alert('Du kannst nur bis zu 4 Bilder hochladen.');
+      return;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type === 'image/jpeg' || file.type === 'image/png') {
+        this.imageFiles.push(file);
+      } else {
+        alert('Nur JPG und PNG Dateien sind erlaubt.');
+      }
+    }
+  }
 
   addEntry() {
-    const entry = {
-      title: this.newEntry.title,
-      content: this.newEntry.content,
-      author: this.userId,
-      info: this.selectedInfo.id,
-    };
+    const formData = new FormData();
+      formData.append('title', this.newEntry.title);
+      formData.append('content', this.newEntry.content);
+    if(this.userId) {
+      formData.append('author', this.userId);
+    }
+    this.imageFiles.forEach((file, index) => {
+      formData.append('images[]', file, file.name);
+    });
 
   //  this.infoService.addEntry(entry).subscribe((response) => {
   //    this.selectedInfo.entries.push(response);
