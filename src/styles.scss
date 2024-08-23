@@ -21,6 +21,10 @@ a {
   flex-direction: row;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
 section {
   padding: 8px;
   min-height: 90vh;
@@ -43,7 +47,7 @@ section {
 
 .popUpInfoContainer {
   position: fixed;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: center;

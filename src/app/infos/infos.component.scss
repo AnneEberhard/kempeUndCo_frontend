@@ -30,6 +30,7 @@
       background: transparent;
       border-radius: 10px;
       width: 100%;
+      box-sizing: border-box;
       ::placeholder {
         color: #b2b8b8;
       }
@@ -73,6 +74,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    overflow-y: auto;
   
     .editInput {
       line-height: 1.5;
@@ -102,7 +104,6 @@
 
   
   #images {
-    background: antiquewhite;
     border-radius: 10px;
     padding: 4px;
     cursor: pointer;

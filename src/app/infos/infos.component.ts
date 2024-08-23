@@ -3,8 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { FormsModule } from '@angular/forms';
-import { InfoService } from '../sevices/info.service';
+import { InfoService } from '../services/info.service';
 import { QuillModule } from 'ngx-quill';
+import { ScrollService } from '../services/scroll.service';
 
 
 @Component({
@@ -19,19 +20,20 @@ export class InfosComponent implements OnInit {
   userEmail: string | null = null;
   infos: any[] = [];
   selectedInfo: any = null;
-  newEntry = {
+  entry = {
     title: '',
     content: ''
   };
   imageFiles: File[] = [];
   filteredEntries: any[] = [];
-  editEntryData: any = null;
+  entryData: any = null;
   deleteEntryData: any = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private infoService: InfoService
+    private infoService: InfoService,
+    private scrollService: ScrollService,
   ) { }
 
   ngOnInit(): void {
@@ -41,23 +43,18 @@ export class InfosComponent implements OnInit {
   }
 
   loadAllinfo() {
-  // this.infoService.getAllinfos().subscribe(infos => {
-  //   this.infos = infos;
-  // });
+     this.infoService.getAllInfos().subscribe(infos => {
+       this.infos = infos;
+     });
   }
 
   loadinfo(infoId: string): void {
-  // this.infoService.getinfoById(infoId).subscribe(info => {
+    this.infoService.getinfoById(infoId).subscribe(info => {
 
-  //   this.selectedInfo = info;
-  //   this.filteredEntries = info.entries;
+      this.selectedInfo = info;
+      this.filteredEntries = info.entries;
 
-  // });
-  }
-
-  clearSelection(): void {
-    this.selectedInfo = null;
-    this.router.navigate(['/infos']);
+    });
   }
 
   filterEntries(event: Event): void {
@@ -94,67 +91,70 @@ export class InfosComponent implements OnInit {
 
   addEntry() {
     const formData = new FormData();
-      formData.append('title', this.newEntry.title);
-      formData.append('content', this.newEntry.content);
-    if(this.userId) {
-      formData.append('author', this.userId);
-    }
+    formData.append('title', this.entry.title);
+    formData.append('content', this.entry.content);
     this.imageFiles.forEach((file, index) => {
       formData.append('images[]', file, file.name);
     });
-
-  //  this.infoService.addEntry(entry).subscribe((response) => {
-  //    this.selectedInfo.entries.push(response);
-  //    this.newEntry.title = '';
-  //    this.newEntry.content = '';
-  //  });
+    console.log(formData);
+    this.infoService.addInfo(formData).subscribe((response: any) => {
+      this.selectedInfo.entries.push(response);
+      this.entry.title = '';
+      this.entry.content = '';
+    });
   }
 
 
   deleteEntry() {
-  // this.infoService.deleteEntry(this.deleteEntryData.id).subscribe(() => {
-  //   this.selectedInfo.entries = this.selectedInfo.entries.filter((e: any) => e.id !== this.deleteEntryData.id);
-  //   this.loadinfo(this.selectedInfo.person.id);
-  //   this.hidePopUp();
-  // });
+    // this.infoService.deleteEntry(this.deleteEntryData.id).subscribe(() => {
+    //   this.selectedInfo.entries = this.selectedInfo.entries.filter((e: any) => e.id !== this.deleteEntryData.id);
+    //   this.loadinfo(this.selectedInfo.person.id);
+    //   this.hidePopUp();
+    // });
   }
 
 
   showPopUp(mode: string, entry: any) {
     if (mode === 'edit') {
-      this.editEntryData = { ...entry };
+      this.entryData = { ...entry };
     } else if (mode === 'delete') {
       this.deleteEntryData = { ...entry }
     }
+    const popUp = document.getElementById('popUp');
     const popUpContainer = document.getElementById('popUpContainer');
     if (popUpContainer) {
       popUpContainer.classList.remove('dNone');
+    }
+    if (popUp) {
+      this.scrollService.setActiveScrollContainer(popUp);
     }
   }
 
 
   hidePopUp() {
-    this.editEntryData = null;
+    this.entryData = null;
     this.deleteEntryData = null;
+    const mainContainer = document.getElementById('mainContainer');
     const popUpContainer = document.getElementById('popUpContainer');
+    this.scrollService.setActiveScrollContainer(mainContainer);
     if (popUpContainer) {
       popUpContainer.classList.add('dNone');
     }
   }
 
   saveEntry() {
-  //  if (this.editEntryData && this.editEntryData.content) {
-  //    this.infoService.updateEntry(this.editEntryData.id, {
-  //      title: this.editEntryData.title,
-  //      content: this.editEntryData.content,
-  //    }).subscribe(updatedEntry => {
-  //      const index = this.selectedInfo.entries.findIndex((e: any) => e.id === this.editEntryData.id);
-  //      this.selectedInfo.entries[index] = updatedEntry;
-  //      this.hidePopUp();
-  //    });
-  //  } else {
-  //    alert('Inhalt darf nicht leer sein.');
-  //  }
+    //  if (this.entryData && this.entryData.content) {
+    //    this.infoService.updateEntry(this.entryData.id, {
+    //      title: this.entryData.title,
+    //      content: this.entryData.content,
+    //    }).subscribe(updatedEntry => {
+    //      const index = this.selectedInfo.entries.findIndex((e: any) => e.id === this.entryData.id);
+    //      this.selectedInfo.entries[index] = updatedEntry;
+    //      this.hidePopUp();
+    //    });
+    //  } else {
+    //    alert('Inhalt darf nicht leer sein.');
+    //  }
   }
 
 }
