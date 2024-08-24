@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { InfoService } from '../services/info.service';
 import { QuillModule } from 'ngx-quill';
 import { ScrollService } from '../services/scroll.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 
 @Component({
@@ -28,12 +29,15 @@ export class InfosComponent implements OnInit {
   filteredEntries: any[] = [];
   entryData: any = null;
   deleteEntryData: any = null;
+  sanitizedContent: SafeHtml | null = null;
+  showImageUrl: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private infoService: InfoService,
+    public infoService: InfoService,
     private scrollService: ScrollService,
+    public sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -46,15 +50,21 @@ export class InfosComponent implements OnInit {
      this.infoService.getAllInfos().subscribe(infos => {
        this.infos = infos;
      });
+     console.log(this.infos);
   }
 
-  loadinfo(infoId: string): void {
-    this.infoService.getinfoById(infoId).subscribe(info => {
-
-      this.selectedInfo = info;
-      this.filteredEntries = info.entries;
-
-    });
+  loadInfo(infoId: string): void {
+    this.infoService.getInfoById(infoId).subscribe(
+      info => {
+        this.selectedInfo = info;
+        this.filteredEntries = info.entries;
+        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+      },
+      error => {
+        console.error('Fehler beim Laden des Infos:', error);
+        // Zeige eine Benachrichtigung an oder leite den Benutzer weiter
+      }
+    );
   }
 
   filterEntries(event: Event): void {
@@ -70,6 +80,17 @@ export class InfosComponent implements OnInit {
         entry.content.toLowerCase().includes(searchTerm)
       );
     }
+  }
+
+  getImageArray(info: any): string[] {
+    const images: string[] = [];
+    
+    if (info.image_1) images.push(info.image_1);
+    if (info.image_2) images.push(info.image_2);
+    if (info.image_3) images.push(info.image_3);
+    if (info.image_4) images.push(info.image_4);
+  
+    return images;
   }
 
   onFileChange(event: any) {
@@ -93,16 +114,22 @@ export class InfosComponent implements OnInit {
     const formData = new FormData();
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
+  
     this.imageFiles.forEach((file, index) => {
-      formData.append('images[]', file, file.name);
+      formData.append(`image_${index + 1}`, file, file.name);
     });
-    console.log(formData);
+  
+    console.log(formData.getAll('image_1'));
+    console.log(formData.getAll('image_2'));
+  
     this.infoService.addInfo(formData).subscribe((response: any) => {
       this.selectedInfo.entries.push(response);
       this.entry.title = '';
       this.entry.content = '';
     });
+    this.hidePopUp();
   }
+  
 
 
   deleteEntry() {
@@ -119,6 +146,8 @@ export class InfosComponent implements OnInit {
       this.entryData = { ...entry };
     } else if (mode === 'delete') {
       this.deleteEntryData = { ...entry }
+    } else if (mode=== 'image') {
+      this.showImageUrl = entry;
     }
     const popUp = document.getElementById('popUp');
     const popUpContainer = document.getElementById('popUpContainer');

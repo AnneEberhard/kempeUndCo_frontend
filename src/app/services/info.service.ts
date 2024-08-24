@@ -15,7 +15,7 @@ export class InfoService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  getinfoById(infoId: string): Observable<any> {
+  getInfoById(infoId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}${infoId}/`);
   }
 
@@ -27,4 +27,5 @@ export class InfoService {
 
     return this.http.post(`${this.apiUrl}create/`, infoData, { headers });
   }
+
 }
