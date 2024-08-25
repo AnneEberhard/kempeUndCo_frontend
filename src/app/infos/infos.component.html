@@ -13,25 +13,33 @@
     Sollten euch Beiträge auffallen, die problematisch sind, informiert uns
     bitte.
   </p>
-
-  <div class="searchContainer">
-    <input type="text" placeholder="Suche nach Infos..." />
-    <button>Suchen</button>
+  <div class="subheader">
+    <div>
+      <button (click)="showPopUp('add', this.entry)">
+        Eigenen Beitrag erstellen
+      </button>
+    </div>
+    <div>
+      <h3>Vorhandene Beiträge</h3>
+      <input
+        type="text"
+        placeholder="Durchsuche Liste nach Autor oder Info..."
+        (input)="filterEntries($event)"
+        class="searchInput"
+      />
+      <ul>
+        <li *ngFor="let info of filteredInfos" (click)="goToInfo(info.id)">Beitrag zu: {{ info.title }}</li>
+      </ul>
+    </div>
   </div>
-  <button (click)="showPopUp('add', this.entry)">
-    Eigenen Beitrag erstellen
-  </button>
-  <h3>Vorhandene Beiträge</h3>
-  <ul>
-    <li *ngFor="let info of infos">Beitrag zu: {{ info.title }}</li>
-  </ul>
 
-  <div *ngFor="let info of infos" class="entryContainer">
-    <h2>{{ info.title }}</h2>
+  <div *ngFor="let info of infos" class="entryContainer" >
+    <h2 [id]="info.id">{{ info.title }}</h2>
     <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
+    <div class="entryImagesContainer">
     <div *ngFor="let image of getImageArray(info)">
       <img (click)="showPopUp('image', image)" [src]="image" alt="Info Image" />
-    </div>
+    </div></div>
     <div class="entryMeta">
       <p>Author: {{ info.author_email }}</p>
       <p>
@@ -45,12 +53,12 @@
         <img
           src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
           *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('edit', entry)"
+          (click)="showPopUp('edit', info)"
         />
         <img
           src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
           *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('delete', entry)"
+          (click)="showPopUp('delete', info)"
         />
       </div>
     </div>
@@ -58,14 +66,20 @@
 
   <div
     id="popUpContainer"
-    class="popUpInfoContainer"
+    class="popUpInfoContainer dNone"
     (click)="hidePopUp()"
-    class="dNone"
   >
-    <div id="popUp" class="editEntry" (click)="$event.stopPropagation()" [class.dNone]="!entryData">
-      <form (ngSubmit)="addEntry()" enctype="multipart/form-data">
+    <div
+      id="popUp"
+      class="editEntry"
+      (click)="$event.stopPropagation()"
+      *ngIf="entry"
+    >
+      <form (ngSubmit)="saveEntry()" enctype="multipart/form-data">
         <div class="entryHeader">
-          <h5>Dein Beitrag:</h5>
+          <h5>
+            {{ entry.id ? "Beitrag bearbeiten" : "Neuen Beitrag erstellen" }}
+          </h5>
           <input
             class="entryInput"
             type="text"
@@ -86,22 +100,38 @@
 
         <div>
           <label for="images">Bilder hochladen (max. 4):</label>
-          <input
-            type="file"
-            id="images"
-            (change)="onFileChange($event)"
-            multiple
-            accept=".jpg,.png"
-          />
+          <div *ngFor="let index of [1, 2, 3, 4]" class="image-upload-container">
+            <!-- Zeigt nur die verfügbaren Upload-Felder an, wenn noch Platz ist -->
+            <div *ngIf="isImageSlotAvailable(index)" class="upload-image-field">
+              <input
+                type="file"
+                [id]="'image' + index"
+                (change)="onFileChange($event, index)"
+                accept=".jpg,.png"
+              />
+            </div>
+          </div>
           <div *ngIf="imageFiles.length > 0">
-            <p>Ausgewählte Bilder:</p>
+            <p>Neue Bilder:</p>
             <ul>
               <li *ngFor="let file of imageFiles">{{ file.name }}</li>
             </ul>
           </div>
+          <div class="deleteImageContainer">
+          <div *ngFor="let imageUrl of getImageArray(entry)" >
+            <div *ngIf="imageUrl" class="deleteImage">
+              <img [src]="imageUrl" alt="Image" width="100" />
+              <button type="button" (click)="removeImageByUrl(imageUrl)">Bild löschen</button>
+            </div>
+          </div></div>
         </div>
 
-        <div class="buttonRightContainer">
+        <div class="buttonContainer">
+          <button
+          (click)="hidePopUp()"
+        >
+          Abbrechen
+        </button>
           <button
             type="submit"
             [disabled]="!entry.content || imageFiles.length > 4"
@@ -112,21 +142,23 @@
       </form>
     </div>
 
-    <div *ngIf="this.showImageUrl">
-      <img [src]="this.showImageUrl">
+    <div *ngIf="this.showImageUrl" class="showImage">
+      <img [src]="this.showImageUrl" />
+    </div>
+
+    <div
+      class="editEntry"
+      (click)="$event.stopPropagation()"
+      *ngIf="entryToDelete"
+    >
+      <h3>Beitrag löschen</h3>
+      <p>Möchtest du diesen Beitrag löschen?</p>
+      <div class="buttonContainer">
+        <button (click)="hidePopUp()">Abbrechen</button>
+        <button (click)="deleteEntry()">Löschen</button>
+      </div>
     </div>
   </div>
 </section>
-<div
-  class="editEntry"
-  (click)="$event.stopPropagation()"
-  *ngIf="deleteEntryData"
->
-  <h3>Beitrag löschen</h3>
-  <p>Möchtest du diesen Beitrag löschen?</p>
-  <div class="buttonContainer">
-    <button (click)="hidePopUp()">Abbrechen</button>
-    <button (click)="deleteEntry()">Löschen</button>
-  </div>
-</div>
+
 <app-scroll-to-top-button></app-scroll-to-top-button>

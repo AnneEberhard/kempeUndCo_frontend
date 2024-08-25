@@ -128,6 +128,25 @@ textarea {
   font-family: "Roboto" !important;
 }
 
+.subheader {
+  display:flex;
+  justify-content: space-evenly;
+
+  button {
+    margin-top:32px;
+  }
+
+  input {
+    width:100%;
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 8px;
+}
+
 
 /* scroll */
 ::-webkit-scrollbar {

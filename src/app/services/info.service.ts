@@ -7,16 +7,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InfoService {
-  private apiUrl = `${environment.baseUrl}/api/infos/`;
+  private apiUrl = `${environment.baseUrl}/api/infos`;
   
   constructor(private http: HttpClient) {}
 
   getAllInfos(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(`${this.apiUrl}/`);
   }
 
   getInfoById(infoId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}${infoId}/`);
+    return this.http.get<any>(`${this.apiUrl}/${infoId}/`);
   }
 
   addInfo(infoData: any) {
@@ -25,7 +25,25 @@ export class InfoService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.post(`${this.apiUrl}create/`, infoData, { headers });
+    return this.http.post(`${this.apiUrl}/create/`, infoData, { headers });
   }
 
+  
+  updateInfo(id: string, formData: FormData): Observable<any> {
+    const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.put<any>(`${this.apiUrl}/${id}/`, formData, { headers });
+  }
+
+  deleteInfo(id: string): Observable<any> {
+    const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.delete<any>(`${this.apiUrl}/${id}/`, { headers });
+  }
 }
