@@ -101,7 +101,6 @@
         <div>
           <label for="images">Bilder hochladen (max. 4):</label>
           <div *ngFor="let index of [1, 2, 3, 4]" class="image-upload-container">
-            <!-- Zeigt nur die verfügbaren Upload-Felder an, wenn noch Platz ist -->
             <div *ngIf="isImageSlotAvailable(index)" class="upload-image-field">
               <input
                 type="file"
