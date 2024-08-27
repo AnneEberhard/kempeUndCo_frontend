@@ -12,13 +12,16 @@ export class RecipeService {
   
   constructor(private http: HttpClient) {}
 
+  
   getAllRecipes(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/`);
   }
 
+
   getRecipeById(recipeId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${recipeId}/`);
   }
+
 
   addRecipe(recipeData: any) {
     const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage

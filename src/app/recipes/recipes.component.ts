@@ -42,12 +42,14 @@ export class RecipesComponent implements OnInit {
     public sanitizer: DomSanitizer
   ) { }
 
+  
   ngOnInit(): void {
     this.loadAllRecipe();
     this.userId = sessionStorage.getItem('userId');
     this.userEmail = sessionStorage.getItem('userEmail');
   }
 
+  
   loadAllRecipe() {
     this.recipeService.getAllRecipes().subscribe(recipes => {
       this.recipes = recipes;
@@ -55,19 +57,17 @@ export class RecipesComponent implements OnInit {
     });
   }
 
+  
   loadRecipe(recipeId: string): void {
     this.recipeService.getRecipeById(recipeId).subscribe(
       recipe => {
         this.selectedRecipe = recipe;
         this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(recipe.content);
-      },
-      error => {
-        console.error('Fehler beim Laden des Recipes:', error);
-        // Zeige eine Benachrichtigung an oder leite den Benutzer weiter
       }
     );
   }
 
+  
   filterEntries(event: Event): void {
     const target = event.target as HTMLInputElement;
     const searchTerm = target.value.toLowerCase();
@@ -83,6 +83,7 @@ export class RecipesComponent implements OnInit {
     }
   }
 
+  
   getImageArray(recipe: any): string[] {
     const images: string[] = [];
 
@@ -93,6 +94,7 @@ export class RecipesComponent implements OnInit {
 
     return images;
   }
+
 
   onFileChange(event: any, index: number) {
     const files = event.target.files;
@@ -108,7 +110,6 @@ export class RecipesComponent implements OnInit {
       }
     }
   }
-
 
 
   showPopUp(mode: string, recipe: any) {
@@ -140,6 +141,7 @@ export class RecipesComponent implements OnInit {
     }
   }
 
+
   removeImageByUrl(imageUrl: string): void {
     if (this.entry.image_1 === imageUrl) {
       this.entry.image_1 = null;
@@ -154,9 +156,11 @@ export class RecipesComponent implements OnInit {
 
   }
 
+
   isImageSlotAvailable(index: number): boolean {
     return !this.entry[`image_${index}`];
   }
+
 
   hidePopUp() {
     this.entry = null;
@@ -169,6 +173,7 @@ export class RecipesComponent implements OnInit {
       popUpContainer.classList.add('dNone');
     }
   }
+
 
   saveEntry(): void {
     const formData = new FormData();
@@ -195,6 +200,7 @@ export class RecipesComponent implements OnInit {
     formData.append('deletedImages', JSON.stringify(this.deletedImages));
 
     if (this.entry.id) {
+      console.log(formData);
       this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
         const index = this.recipes.findIndex((e: any) => e.id === this.entry.id);
         if (index !== -1) {
@@ -202,6 +208,7 @@ export class RecipesComponent implements OnInit {
         }
         this.resetEntryForm();
         this.hidePopUp();
+        console.log('Updated recipe data:', this.recipes[index]);
       });
     } else {
       this.addEntry();

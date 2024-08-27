@@ -29,9 +29,10 @@
         id="password"
         placeholder="Passwort"
       />
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
       <button type="submit" [disabled]="!form.valid">Einloggen</button>
     </form>
-    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+   
 
     <a class="center" routerLink="/forgot">Passwort vergessen?</a>
   </div>

@@ -37,7 +37,7 @@ export class LoginComponent {
         if (error.status === 400 && error.error.error === 'Account not activated') {
           this.errorMessage = 'Dein Account ist leider noch nicht aktiviert.';
         } else {
-          this.errorMessage = 'Fehler beim einloggen. Bitte überprüfe Login-Informationen.';
+          this.errorMessage = 'Fehler beim Einloggen. Bitte überprüfe Login-Informationen.';
         }
       }
     });

@@ -18,17 +18,21 @@ export class FamilyService {
 
   constructor(private http: HttpClient) { }
 
+
   getAllPersons(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/persons/`);
   }
+
 
   getPerson(id:number): Observable<Person> {
     return this.http.get<Person>(`${this.apiUrl}/persons/${id}/`);
   }
 
+
   getRelations(id:number): Observable<Relations> {
     return this.http.get<Relations>(`${this.apiUrl}/relations/${id}/`);
   }
+
 
   getFamily(id: number): Observable<Family> {
     return this.getRelations(id).pipe(
@@ -72,6 +76,7 @@ export class FamilyService {
     );
   }
 
+
   getGrandparents(father: Person | null, mother: Person | null): Observable<Person[]> {
     const unknownPerson = this.createUnknownPerson();
 
@@ -95,6 +100,7 @@ export class FamilyService {
       map(grandparentsArray => grandparentsArray.flat())
     );
   }
+
 
   private createUnknownPerson(): Person {
     return {
@@ -135,44 +141,5 @@ export class FamilyService {
     };
   }
 
-  getFamily2(id: number): Observable<Family> {
-    return this.getRelations(id).pipe(
-      switchMap(relations => {
-        const person$ = this.getPerson(relations.person);
-        const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn) : of(null);
-        const mother$ = relations.moth_refn ? this.getPerson(relations.moth_refn) : of(null);
-  
-        const marriages$ = [1, 2, 3, 4].map(i => {
-          const spouseRefn = relations[`marr_spou_refn_${i}` as keyof Relations];
-          const childrenIds = relations[`children_${i}` as keyof Relations] as number[];
-  
-          if (typeof spouseRefn === 'number') {
-            const spouse$ = this.getPerson(spouseRefn);
-            const children$ = childrenIds.length > 0 ? forkJoin(childrenIds.map(childId => this.getPerson(childId))) : of([]);
-  
-            return forkJoin([spouse$, children$]).pipe(
-              map(([spouse, children]) => ({
-                spouse,
-                children
-              }))
-            );
-          } else {
-            return of(null);
-          }
-        });
-  
-        return forkJoin([person$, father$, mother$, ...marriages$]).pipe(
-          map(([person, father, mother, ...marriages]) => {
-            return {
-              person,
-              grandparents: [],
-              parents: [father, mother] as (Person | null)[],
-              marriages: marriages.filter(marriage => marriage !== null) as { spouse: Person, children: Person[] }[]
-            };
-          })
-        );
-      })
-    );
-  }
 
 }
