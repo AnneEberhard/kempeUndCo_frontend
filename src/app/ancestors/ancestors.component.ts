@@ -37,8 +37,26 @@ export class AncestorsComponent implements OnInit {
   ngOnInit() {
     this.familyService.getAllPersons().subscribe(data => {
       this.allPersonsList = data;
+      this.setPersonIdByName("Daniel I Kempe");
     });
 
+ //  this.familyService.getFamily(this.personId).subscribe(family => {
+ //    this.family = family;
+ //  });
+  }
+
+  setPersonIdByName(name: string) {
+    // Sucht in allPersonsList nach der Person mit dem angegebenen Namen
+    const person = this.allPersonsList.find(p => `${p.givn} ${p.surn}` === name);
+    if (person) {
+      this.personId = person.id;
+      this.loadFamilyData();
+    } else {
+      console.error('Person mit dem angegebenen Namen nicht gefunden');
+    }
+  }
+
+  loadFamilyData() {
     this.familyService.getFamily(this.personId).subscribe(family => {
       this.family = family;
     });
