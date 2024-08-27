@@ -143,18 +143,19 @@ export class RecipesComponent implements OnInit {
 
 
   removeImageByUrl(imageUrl: string): void {
-    if (this.entry.image_1 === imageUrl) {
-      this.entry.image_1 = null;
-    } else if (this.entry.image_2 === imageUrl) {
-      this.entry.image_2 = null;
-    } else if (this.entry.image_3 === imageUrl) {
-      this.entry.image_3 = null;
-    } else if (this.entry.image_4 === imageUrl) {
-      this.entry.image_4 = null;
+    for (let i = 1; i <= 4; i++) {
+      const imageUrlField = `image_${i}_url` as keyof typeof this.entry;
+      const imageField = `image_${i}` as keyof typeof this.entry;
+  
+      if (this.entry[imageUrlField] === imageUrl) {
+        this.entry[imageUrlField] = null;
+        this.entry[imageField] = null;
+        this.deletedImages.push(imageUrl);
+        break;
+      }
     }
-    this.deletedImages.push(imageUrl);
-
   }
+  
 
 
   isImageSlotAvailable(index: number): boolean {
@@ -175,52 +176,70 @@ export class RecipesComponent implements OnInit {
   }
 
 
-  saveEntry(): void {
-    const formData = new FormData();
-    formData.append('title', this.entry.title);
-    formData.append('content', this.entry.content);
+// FormData erstellen und Titel/Inhalt hinzufügen
+assembleFormData(): FormData {
+  const formData = new FormData();
+  formData.append('title', this.entry.title);
+  formData.append('content', this.entry.content);
 
-    // Neue Bilder hinzufügen
-    this.imageFiles.forEach((file) => {
-      const imageField = this.getNextAvailableImageField();
-      if (imageField) {
-        formData.append(imageField, file, file.name);
-      }
-    });
+  this.addNewImages(formData);
+  this.addNullFields(formData);
 
-    // Alle `null` Felder hinzufügen (Bilder, die gelöscht wurden)
-    for (let i = 1; i <= 4; i++) {
-      const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
-        formData.append(imageField, '');  // Leere Felder als `null` senden
-      }
+  // Gelöschte Bilder hinzufügen
+  formData.append('deletedImages', JSON.stringify(this.deletedImages));
+
+  return formData;
+}
+
+// Neue Bilder hinzufügen
+addNewImages(formData: FormData): void {
+  this.imageFiles.forEach((file) => {
+    const imageField = this.getNextAvailableImageField();
+    if (imageField) {
+      formData.append(imageField, file, file.name);
     }
+  });
+}
 
-    // Gelöschte Bilder hinzufügen
-    formData.append('deletedImages', JSON.stringify(this.deletedImages));
-
-    if (this.entry.id) {
-      console.log(formData);
-      this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
-        const index = this.recipes.findIndex((e: any) => e.id === this.entry.id);
-        if (index !== -1) {
-          this.recipes[index] = response;
-        }
-        this.resetEntryForm();
-        this.hidePopUp();
-        console.log('Updated recipe data:', this.recipes[index]);
-      });
-    } else {
-      this.addEntry();
+// Leere Felder für gelöschte Bilder hinzufügen
+addNullFields(formData: FormData): void {
+  for (let i = 1; i <= 4; i++) {
+    const imageField = `image_${i}`;
+    if (!this.entry[imageField]) {
+      formData.append(imageField, '');  // Leere Felder als `null` senden
     }
   }
+}
+
+// Hauptfunktion
+saveEntry(): void {
+  const formData = this.assembleFormData();
+
+  if (this.entry.id) {
+    this.updateEntry(formData);
+  } else {
+    this.addEntry();
+  }
+}
+
+// Funktion zum Aktualisieren eines vorhandenen Rezepts
+updateEntry(formData: FormData): void {
+  this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
+    const index = this.recipes.findIndex((e: any) => e.id === this.entry.id);
+    if (index !== -1) {
+      this.recipes[index] = response;
+    }
+    this.entry = null;
+    this.resetEntryForm();
+    this.hidePopUp();
+  });
+}
 
 
   getNextAvailableImageField(): string | null {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
       if (!this.entry[imageField]) {
-        console.log(imageField);
         return imageField;
       }
     }

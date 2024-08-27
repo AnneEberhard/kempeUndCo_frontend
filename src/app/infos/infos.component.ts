@@ -64,10 +64,6 @@ export class InfosComponent implements OnInit {
       info => {
         this.selectedInfo = info;
         this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
-      },
-      error => {
-        console.error('Fehler beim Laden des Infos:', error);
-        // Zeige eine Benachrichtigung an oder leite den Benutzer weiter
       }
     );
   }
@@ -90,10 +86,10 @@ export class InfosComponent implements OnInit {
   getImageArray(info: any): string[] {
     const images: string[] = [];
 
-    if (info.image_1) images.push(info.image_1);
-    if (info.image_2) images.push(info.image_2);
-    if (info.image_3) images.push(info.image_3);
-    if (info.image_4) images.push(info.image_4);
+    if (info.image_1_url) images.push(info.image_1_url);
+    if (info.image_2_url) images.push(info.image_2_url);
+    if (info.image_3_url) images.push(info.image_3_url);
+    if (info.image_4_url) images.push(info.image_4_url);
 
     return images;
   }
@@ -145,17 +141,20 @@ export class InfosComponent implements OnInit {
   }
 
   removeImageByUrl(imageUrl: string): void {
-    if (this.entry.image_1 === imageUrl) {
+    if (this.entry.image_1_url === imageUrl) {
+      this.entry.image_1_url = null;
       this.entry.image_1 = null;
-    } else if (this.entry.image_2 === imageUrl) {
+    } else if (this.entry.image_2_url === imageUrl) {
+      this.entry.image_2_url = null;
       this.entry.image_2 = null;
-    } else if (this.entry.image_3 === imageUrl) {
+    } else if (this.entry.image_3_url === imageUrl) {
+      this.entry.image_3_url = null;
       this.entry.image_3 = null;
-    } else if (this.entry.image_4 === imageUrl) {
+    } else if (this.entry.image_4_url === imageUrl) {
+      this.entry.image_4_url = null;
       this.entry.image_4 = null;
     }
     this.deletedImages.push(imageUrl);
-
   }
 
   isImageSlotAvailable(index: number): boolean {
@@ -174,7 +173,68 @@ export class InfosComponent implements OnInit {
     }
   }
 
-  saveEntry(): void {
+// FormData erstellen und Titel/Inhalt hinzufügen
+assembleFormData(): FormData {
+  const formData = new FormData();
+  formData.append('title', this.entry.title);
+  formData.append('content', this.entry.content);
+
+  this.addNewImages(formData);
+  this.addNullFields(formData);
+
+  // Gelöschte Bilder hinzufügen
+  formData.append('deletedImages', JSON.stringify(this.deletedImages));
+
+  return formData;
+}
+
+// Neue Bilder hinzufügen
+addNewImages(formData: FormData): void {
+  this.imageFiles.forEach((file) => {
+    const imageField = this.getNextAvailableImageField();
+    if (imageField) {
+      formData.append(imageField, file, file.name);
+    }
+  });
+}
+
+// Leere Felder für gelöschte Bilder hinzufügen
+addNullFields(formData: FormData): void {
+  for (let i = 1; i <= 4; i++) {
+    const imageField = `image_${i}`;
+    if (!this.entry[imageField]) {
+      formData.append(imageField, '');  // Leere Felder als `null` senden
+    }
+  }
+}
+
+// Hauptfunktion
+saveEntry(): void {
+  const formData = this.assembleFormData();
+
+  if (this.entry.id) {
+    this.updateEntry(formData);
+  } else {
+    this.addEntry();
+  }
+}
+
+// Funktion zum Aktualisieren eines vorhandenen Rezepts
+updateEntry(formData: FormData): void {
+  this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
+    const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
+    if (index !== -1) {
+      this.infos[index] = response;
+    }
+    this.entry = null;
+    this.resetEntryForm();
+    this.hidePopUp();
+  });
+}
+
+
+
+  saveEntry2(): void {
     const formData = new FormData();
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
@@ -217,7 +277,6 @@ export class InfosComponent implements OnInit {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
       if (!this.entry[imageField]) {
-        console.log(imageField);
         return imageField;
       }
     }

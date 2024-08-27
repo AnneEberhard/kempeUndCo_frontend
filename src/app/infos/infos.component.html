@@ -37,8 +37,8 @@
     <h2 [id]="info.id">{{ info.title }}</h2>
     <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
     <div class="entryImagesContainer">
-    <div *ngFor="let image of getImageArray(info)">
-      <img (click)="showPopUp('image', image)" [src]="image" alt="Info Image" />
+    <div *ngFor="let imageUrl of getImageArray(info)">
+      <img (click)="showPopUp('image', imageUrl)" [src]="imageUrl" alt="Info Image" />
     </div></div>
     <div class="entryMeta">
       <p>Author: {{ info.author_email }}</p>
