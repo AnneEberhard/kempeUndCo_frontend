@@ -39,14 +39,9 @@ export class AncestorsComponent implements OnInit {
       this.allPersonsList = data;
       this.setPersonIdByName("Daniel I Kempe");
     });
-
- //  this.familyService.getFamily(this.personId).subscribe(family => {
- //    this.family = family;
- //  });
   }
 
   setPersonIdByName(name: string) {
-    // Sucht in allPersonsList nach der Person mit dem angegebenen Namen
     const person = this.allPersonsList.find(p => `${p.givn} ${p.surn}` === name);
     if (person) {
       this.personId = person.id;

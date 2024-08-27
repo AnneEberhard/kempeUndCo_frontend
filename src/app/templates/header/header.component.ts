@@ -15,7 +15,7 @@ export class HeaderComponent {
 
   logout(): void {
     this.authService.logout();
-    location.reload();  // Reload the page to switch the layout
+    location.reload();
   }
 
 }
