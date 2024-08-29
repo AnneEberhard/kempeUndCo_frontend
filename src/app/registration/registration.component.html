@@ -82,6 +82,28 @@
         Passwörter entsprechen einander nicht.
       </div>
       <div class="registerInputBox">
+        <label for="families">Ich möchte mich für diese Familie(n) registrieren:</label>
+        <div class="checkboxContainer">
+          <input
+            type="checkbox"
+            id="kempe"
+            value="kempe"
+            (change)="onCheckboxChange('kempe')"
+          />
+          <label for="kempe">Stammbaum Kempe</label>
+        </div>
+        <div class="checkboxContainer">
+          <input
+            type="checkbox"
+            id="huenten"
+            value="huenten"
+            (change)="onCheckboxChange('huenten')"
+          />
+          <label for="huenten">Stammbaum Hünten</label>
+        </div>
+      </div>
+      
+      <div class="registerInputBox">
         <div div class="checkboxContainer">
           <input
             type="checkbox"

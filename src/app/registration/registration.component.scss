@@ -17,7 +17,7 @@
   justify-content: center;
   margin: 16px;
   border-radius: 20px;
-  min-width: 50vw;
+  width: 70vw;
 
   h2 {
     margin-bottom: 28px;
@@ -60,6 +60,18 @@ form {
   display: flex;
   flex-direction: column;
 
+  select {
+    line-height: 1.5;
+    font-size: 1rem;
+    color: inherit;
+    padding: 8px 4px 0 4px;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
+    border-radius: 0.25rem;
+    min-width: 25vw;
+  }
+
   input {
     line-height: 1.5;
     font-size: 1rem;
@@ -85,6 +97,7 @@ form {
     line-height: 1.5;
     font-size: 1rem;
     border: none;
+    width: 100%;
 
     &:hover {
       background-color: rgb(139, 26, 16);

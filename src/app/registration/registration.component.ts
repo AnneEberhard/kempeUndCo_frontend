@@ -34,7 +34,7 @@ export class RegistrationComponent {
     guarantorEmail: '',
     guarantor: false,
     noGuarantor: false,
-    family: 'kempe'
+    selectedFamilies: [] as string[]
   };
 
   constructor(private authService: AuthService, private router: Router) { }
@@ -44,7 +44,9 @@ export class RegistrationComponent {
    * @param {string} type to differentiate between the two checkboxes 
    */
   onCheckboxChange(type: string) {
-    if (type === 'guarantor') {
+    if (type === 'kempe' || type === 'huenten') {
+      this.formData.selectedFamilies.push(type)
+    } else if (type === 'guarantor') {
       this.formData.noGuarantor = false;
       this.formData.guarantor = !this.formData.guarantor;
     } else {
@@ -86,6 +88,8 @@ export class RegistrationComponent {
             if (error.status === 400 && error.error && error.error.email && error.error.email[0] === "user with this email already exists.") {
               this.errorMessage = 'Ein Nutzer mit dieser Email ist bereits bei uns registriert.';
               this.renderPasswordForgotLink();
+            } else if (error.error === "Der Bürge ist für die ausgewählten Familien nicht berechtigt.") {
+              this.errorMessage = 'Der Bürge ist für die ausgewählten Familien nicht berechtigt. Bitte wählen Sie nur Familien aus, für die Ihr Bürge autorisiert ist.';
             } else {
               console.error('An error occurred:', error);
               this.errorMessage = 'Ein Fehler ist vorgefallen!';
@@ -109,14 +113,14 @@ export class RegistrationComponent {
         this.renderAlert("email");
         return false;
       }
-           if (!this.validatePassword(this.formData.password)) {
-             this.renderAlert("password");
-             return false;
-           }
-           if (this.formData.password !== this.formData.confirmPassword) {
-             this.renderAlert("passwordMatch");
-             return false;
-           }
+      if (!this.validatePassword(this.formData.password)) {
+        this.renderAlert("password");
+        return false;
+      }
+      if (this.formData.password !== this.formData.confirmPassword) {
+        this.renderAlert("passwordMatch");
+        return false;
+      }
       if (!this.formData.guarantor && !this.formData.noGuarantor) {
         this.renderAlert("chooseGuarantor");
         return false;
@@ -220,7 +224,7 @@ export class RegistrationComponent {
       last_name: this.formData.last_name,
       guarantor: this.formData.guarantor,
       guarantor_email: this.formData.guarantorEmail,
-      family: this.formData.family
+      selected_families: this.formData.selectedFamilies
     };
     return userData;
   }
@@ -267,10 +271,10 @@ export class RegistrationComponent {
   * shows overlay with password rules
   */
   showRules() {
-  const div = document.getElementById('popUpInfoContainer');
-  if (div) {
-    div.classList.remove('dNone');
-  }
+    const div = document.getElementById('popUpInfoContainer');
+    if (div) {
+      div.classList.remove('dNone');
+    }
   }
 
   /**
