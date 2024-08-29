@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.prod';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,11 @@ export class InfoService {
   constructor(private http: HttpClient) {}
 
   getAllInfos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/`);
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      catchError(error => {
+        console.error('Error fetching infos:', error);
+        return of([]); // Leeres Array zurückgeben, wenn ein Fehler auftritt
+      }));
   }
 
   getInfoById(infoId: string): Observable<any> {
