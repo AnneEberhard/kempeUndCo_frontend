@@ -34,19 +34,17 @@ export class InfosComponent implements OnInit {
   filteredInfos: any[] = [];
   entry: any = null;
   entryToDelete: any = null;
-  comment: any = null;
-  commentToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
   deletedImages: string[] = [];
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
+  comment: any = null;
   newComment: { [key: number]: string } = {};
   commentToUpdate: any;
+  commentToDelete: any = null;
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     public infoService: InfoService,
     private commentService: CommentService,
     private scrollService: ScrollService,
@@ -63,7 +61,7 @@ export class InfosComponent implements OnInit {
     this.infoService.getAllInfos().subscribe(infos => {
       this.infos = infos;
       this.filteredInfos = this.infos;
-      this.loadCommentsForInfos();
+      this.loadComments();
     });
   }
 
@@ -91,6 +89,15 @@ export class InfosComponent implements OnInit {
     }
   }
 
+  
+  goToInfo(infoId: number): void {
+    const element = document.getElementById(infoId.toString());
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+
   getImageArray(info: any): string[] {
     const images: string[] = [];
 
@@ -101,6 +108,7 @@ export class InfosComponent implements OnInit {
 
     return images;
   }
+
 
   onFileChange(event: any, index: number) {
     const files = event.target.files;
@@ -116,7 +124,6 @@ export class InfosComponent implements OnInit {
       }
     }
   }
-
 
 
   showPopUp(mode: string, data: any) {
@@ -179,6 +186,7 @@ export class InfosComponent implements OnInit {
     this.showImageUrl = null;
     this.comment = null;
     this.commentToDelete = null;
+    this.commentToUpdate = null;
     const mainContainer = document.getElementById('mainContainer');
     const popUpContainer = document.getElementById('popUpContainer');
     this.scrollService.setActiveScrollContainer(mainContainer);
@@ -187,64 +195,64 @@ export class InfosComponent implements OnInit {
     }
   }
 
-// FormData erstellen und Titel/Inhalt hinzufügen
-assembleFormData(): FormData {
-  const formData = new FormData();
-  formData.append('title', this.entry.title);
-  formData.append('content', this.entry.content);
+  // FormData erstellen und Titel/Inhalt hinzufügen
+  assembleFormData(): FormData {
+    const formData = new FormData();
+    formData.append('title', this.entry.title);
+    formData.append('content', this.entry.content);
 
-  this.addNewImages(formData);
-  this.addNullFields(formData);
+    this.addNewImages(formData);
+    this.addNullFields(formData);
 
-  // Gelöschte Bilder hinzufügen
-  formData.append('deletedImages', JSON.stringify(this.deletedImages));
+    // Gelöschte Bilder hinzufügen
+    formData.append('deletedImages', JSON.stringify(this.deletedImages));
 
-  return formData;
-}
+    return formData;
+  }
 
-// Neue Bilder hinzufügen
-addNewImages(formData: FormData): void {
-  this.imageFiles.forEach((file) => {
-    const imageField = this.getNextAvailableImageField();
-    if (imageField) {
-      formData.append(imageField, file, file.name);
-    }
-  });
-}
+  // Neue Bilder hinzufügen
+  addNewImages(formData: FormData): void {
+    this.imageFiles.forEach((file) => {
+      const imageField = this.getNextAvailableImageField();
+      if (imageField) {
+        formData.append(imageField, file, file.name);
+      }
+    });
+  }
 
-// Leere Felder für gelöschte Bilder hinzufügen
-addNullFields(formData: FormData): void {
-  for (let i = 1; i <= 4; i++) {
-    const imageField = `image_${i}`;
-    if (!this.entry[imageField]) {
-      formData.append(imageField, '');  // Leere Felder als `null` senden
+  // Leere Felder für gelöschte Bilder hinzufügen
+  addNullFields(formData: FormData): void {
+    for (let i = 1; i <= 4; i++) {
+      const imageField = `image_${i}`;
+      if (!this.entry[imageField]) {
+        formData.append(imageField, '');  // Leere Felder als `null` senden
+      }
     }
   }
-}
 
-// Hauptfunktion
-saveEntry(): void {
-  const formData = this.assembleFormData();
+  // Hauptfunktion
+  saveEntry(): void {
+    const formData = this.assembleFormData();
 
-  if (this.entry.id) {
-    this.updateEntry(formData);
-  } else {
-    this.addEntry();
-  }
-}
-
-
-updateEntry(formData: FormData): void {
-  this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
-    const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
-    if (index !== -1) {
-      this.infos[index] = response;
+    if (this.entry.id) {
+      this.updateEntry(formData);
+    } else {
+      this.addEntry();
     }
-    this.entry = null;
-    this.resetEntryForm();
-    this.hidePopUp();
-  });
-}
+  }
+
+
+  updateEntry(formData: FormData): void {
+    this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
+      const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
+      if (index !== -1) {
+        this.infos[index] = response;
+      }
+      this.entry = null;
+      this.resetEntryForm();
+      this.hidePopUp();
+    });
+  }
 
 
   getNextAvailableImageField(): string | null {
@@ -297,50 +305,15 @@ updateEntry(formData: FormData): void {
     });
   }
 
-  deleteComment() {
-    this.commentService.deleteComment(this.commentToDelete.id).subscribe(() => {
-      this.loadAllInfo();
-      this.hidePopUp();
-    });
-  }
 
-saveComment() {
-      this.commentService.updateComment(this.commentToUpdate.id, { content: this.commentToUpdate.content }).subscribe((response: any) => {
-        const infoId = this.findInfoIdByCommentId(this.commentToUpdate.id);
-        const index = this.comments[infoId].findIndex(c => c.id === this.commentToUpdate.id);
-        if (index !== -1) {
-          this.comments[infoId][index] = response;
-        this.commentToUpdate = null;
-      this.resetEntryForm();
-      this.hidePopUp();
-    }})}
-  
-
-  findInfoIdByCommentId(commentId: number): number {
-    // Finde die Info-ID anhand der Kommentar-ID (diese Methode musst du implementieren)
-    for (const infoId in this.comments) {
-      if (this.comments[infoId].some(c => c.id === commentId)) {
-        return +infoId;
-      }
-    }
-    return 0;
-  }
-
-  goToInfo(infoId: number): void {
-    const element = document.getElementById(infoId.toString());
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-
-  loadCommentsForInfos() {
+  loadComments() {
     this.infos.forEach(info => {
-      this.commentService.getComments(info.id).subscribe(comments => {
+      this.commentService.getCommentsForInfo(info.id).subscribe(comments => {
         this.comments[info.id] = comments;
       });
     });
   }
+
 
   addComment(infoId: number, commentContent: string) {
     const comment = {
@@ -355,5 +328,37 @@ saveComment() {
       }
     });
   }
+
+
+  deleteComment() {
+    this.commentService.deleteComment(this.commentToDelete.id).subscribe(() => {
+      this.loadAllInfo();
+      this.hidePopUp();
+    });
+  }
+
+  saveComment() {
+    this.commentService.updateComment(this.commentToUpdate.id, { content: this.commentToUpdate.content }).subscribe((response: any) => {
+      const infoId = this.findInfoIdByCommentId(this.commentToUpdate.id);
+      const index = this.comments[infoId].findIndex(c => c.id === this.commentToUpdate.id);
+      if (index !== -1) {
+        this.comments[infoId][index] = response;
+        this.commentToUpdate = null;
+        this.resetEntryForm();
+        this.hidePopUp();
+      }
+    })
+  }
+
+
+  findInfoIdByCommentId(commentId: number): number {
+    for (const infoId in this.comments) {
+      if (this.comments[infoId].some(c => c.id === commentId)) {
+        return +infoId;
+      }
+    }
+    return 0;
+  }
+
 }
 

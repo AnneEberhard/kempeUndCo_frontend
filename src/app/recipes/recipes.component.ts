@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ScrollService } from '../services/scroll.service';
+import { CommentService } from '../services/comment.service';
 
 @Component({
   selector: 'app-recipes',
@@ -35,25 +36,32 @@ export class RecipesComponent implements OnInit {
   showImageUrl: string | null = null;
   deletedImages: string[] = [];
   clearedFields: string[] = [];
+  comments: { [key: number]: any[] } = {};
+  comment: any = null;
+  newComment: { [key: number]: string } = {};
+  commentToUpdate: any;
+  commentToDelete: any = null;
 
   constructor(
     public recipeService: RecipeService,
+    private commentService: CommentService,
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer
   ) { }
 
   
   ngOnInit(): void {
-    this.loadAllRecipe();
+    this.loadAllRecipes();
     this.userId = sessionStorage.getItem('userId');
     this.userEmail = sessionStorage.getItem('userEmail');
   }
 
   
-  loadAllRecipe() {
+  loadAllRecipes() {
     this.recipeService.getAllRecipes().subscribe(recipes => {
       this.recipes = recipes;
       this.filteredRecipes = this.recipes;
+      this.loadComments();
     });
   }
 
@@ -84,6 +92,13 @@ export class RecipesComponent implements OnInit {
   }
 
   
+  goToRecipe(recipeId: number): void {
+    const element = document.getElementById(recipeId.toString());
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  
   getImageArray(recipe: any): string[] {
     const images: string[] = [];
 
@@ -112,7 +127,7 @@ export class RecipesComponent implements OnInit {
   }
 
 
-  showPopUp(mode: string, recipe: any) {
+  showPopUp(mode: string, data: any) {
     if (mode === 'add') {
       this.entry = {
         title: '',
@@ -123,11 +138,15 @@ export class RecipesComponent implements OnInit {
         image_4: null
       };
     } else if (mode === 'edit') {
-      this.entry = { ...recipe };
+      this.entry = { ...data };
     } else if (mode === 'image') {
-      this.showImageUrl = recipe;
+      this.showImageUrl = data;
     } else if (mode === 'delete') {
-      this.entryToDelete = { ...recipe };
+      this.entryToDelete = { ...data };
+    } else if (mode === 'editComment') {
+      this.commentToUpdate = { ...data };
+    } else if (mode === 'deleteComment') {
+      this.commentToDelete = { ...data };
     }
 
     const popUpContainer = document.getElementById('popUpContainer');
@@ -167,6 +186,9 @@ export class RecipesComponent implements OnInit {
     this.entry = null;
     this.entryToDelete = null;
     this.showImageUrl = null;
+    this.comment = null;
+    this.commentToDelete = null;
+    this.commentToUpdate = null;
     const mainContainer = document.getElementById('mainContainer');
     const popUpContainer = document.getElementById('popUpContainer');
     this.scrollService.setActiveScrollContainer(mainContainer);
@@ -281,16 +303,65 @@ updateEntry(formData: FormData): void {
   deleteEntry() {
     this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe(() => {
       this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
-      this.loadAllRecipe();
+      this.loadAllRecipes();
       this.hidePopUp();
     });
   }
 
-  goToRecipe(recipeId: number): void {
-    const element = document.getElementById(recipeId.toString());
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+
+
+  loadComments() {
+    this.recipes.forEach(recipe => {
+      this.commentService.getCommentsForRecipe(recipe.id).subscribe(comments => {
+        this.comments[recipe.id] = comments;
+      });
+    });
+    console.log(this.comments)
   }
 
+
+  addComment(recipeId: number, commentContent: string) {
+    const comment = {
+      content: commentContent,
+      recipe: recipeId
+    };
+    this.commentService.addComment(comment).subscribe(newComment => {
+      if (this.comments[recipeId]) {
+        this.comments[recipeId].push(newComment);
+      } else {
+        this.comments[recipeId] = [newComment];
+      }
+    });
+  }
+
+
+  deleteComment() {
+    this.commentService.deleteComment(this.commentToDelete.id).subscribe(() => {
+      this.loadAllRecipes();
+      this.hidePopUp();
+    });
+  }
+
+  saveComment() {
+    this.commentService.updateComment(this.commentToUpdate.id, { content: this.commentToUpdate.content }).subscribe((response: any) => {
+      const recipeId = this.findInfoIdByCommentId(this.commentToUpdate.id);
+      const index = this.comments[recipeId].findIndex(c => c.id === this.commentToUpdate.id);
+      if (index !== -1) {
+        this.comments[recipeId][index] = response;
+        this.commentToUpdate = null;
+        this.resetEntryForm();
+        this.hidePopUp();
+      }
+    })
+  }
+
+
+  findInfoIdByCommentId(commentId: number): number {
+    for (const infoId in this.comments) {
+      if (this.comments[infoId].some(c => c.id === commentId)) {
+        return +infoId;
+      }
+    }
+    return 0;
+  }
 }

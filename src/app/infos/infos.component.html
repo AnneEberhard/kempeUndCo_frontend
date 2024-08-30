@@ -1,4 +1,5 @@
 <section>
+  <!-- header part inlcuding search and list of all entries -->
   <h2>Infos für alle</h2>
   <p>
     Willkommen auf der Infoseite!<br />
@@ -34,7 +35,7 @@
       </ul>
     </div>
   </div>
-
+  <!-- single entry containers -->
   <div *ngFor="let info of infos" class="entryContainer">
     <h2 [id]="info.id">{{ info.title }}</h2>
     <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
@@ -69,6 +70,7 @@
         />
       </div>
     </div>
+    <!-- comment section of single entry containers -->
     <div *ngIf="comments[info.id]" class="comments">
       <h4>Kommentare:</h4>
 
@@ -103,7 +105,7 @@
     </div>
   </div>
 
-   <!-- PopUp container for all popups on this site -->
+  <!-- PopUp container for all popups on this site -->
   <div
     id="popUpContainer"
     class="popUpInfoContainer dNone"
@@ -201,11 +203,19 @@
       </div>
     </div>
     <!-- PopUp box for editing a comment -->
-    <div class="editEntry" (click)="$event.stopPropagation()" *ngIf="commentToUpdate">
+    <div
+      class="editEntry"
+      (click)="$event.stopPropagation()"
+      *ngIf="commentToUpdate"
+    >
       <form (ngSubmit)="saveComment()">
         <div class="entryHeader">
           <h5>Kommentar bearbeiten</h5>
-          <textarea [(ngModel)]="commentToUpdate.content" name="content"></textarea>
+          <textarea
+            [(ngModel)]="commentToUpdate.content"
+            name="content"
+            class="editComment"
+          ></textarea>
         </div>
         <div class="buttonContainer">
           <button type="button" (click)="hidePopUp()">Abbrechen</button>

@@ -1,10 +1,13 @@
 <section>
+  <!-- header part inlcuding search and list of all recipes -->
   <h2>Familienrezepte</h2>
   <p>
-    Es gibt ja das eine oder andere leckere Familienrezept, welches über die Generationen weitergereicht wurde.
-    Ihr könnt dies hier einfach per Foto oder im Text hochladen. Insgesamt können vier Fotos hochgeladen werden.<br /><br />
+    Es gibt ja das eine oder andere leckere Familienrezept, welches über die
+    Generationen weitergereicht wurde. Ihr könnt dies hier einfach per Foto oder
+    im Text hochladen. Insgesamt können vier Fotos hochgeladen werden.<br /><br />
     Jeder Nutzer kann immer nur seinen eigenen Beiträge bearbeiten oder löschen.
-    Sollten euch Beiträge auffallen, die problematisch sind, informiert uns bitte.
+    Sollten euch Beiträge auffallen, die problematisch sind, informiert uns
+    bitte.
   </p>
   <div class="subheader">
     <div>
@@ -21,18 +24,29 @@
         class="searchInput"
       />
       <ul class="indexList">
-        <li *ngFor="let recipe of filteredRecipes" (click)="goToRecipe(recipe.id)">Rezept für: {{ recipe.title }}</li>
+        <li
+          *ngFor="let recipe of filteredRecipes"
+          (click)="goToRecipe(recipe.id)"
+        >
+          Rezept für: {{ recipe.title }}
+        </li>
       </ul>
     </div>
   </div>
 
-  <div *ngFor="let recipe of recipes" class="entryContainer" >
+  <!-- single recipes containers -->
+  <div *ngFor="let recipe of recipes" class="entryContainer">
     <h2 [id]="recipe.id">{{ recipe.title }}</h2>
     <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(recipe.content)"></div>
     <div class="entryImagesContainer">
       <div *ngFor="let imageUrl of getImageArray(recipe)">
-        <img (click)="showPopUp('image', imageUrl)" [src]="imageUrl" alt="recipe Image" />
-    </div></div>
+        <img
+          (click)="showPopUp('image', imageUrl)"
+          [src]="imageUrl"
+          alt="recipe Image"
+        />
+      </div>
+    </div>
     <div class="entryMeta">
       <p>Author: {{ recipe.author_email }}</p>
       <p>
@@ -55,13 +69,49 @@
         />
       </div>
     </div>
+    <!-- comment section of single recipes containers -->
+    <div *ngIf="comments[recipe.id]" class="comments">
+      <h4>Kommentare:</h4>
+      <div *ngFor="let comment of comments[recipe.id]" class="singleComment">
+        <div>
+          <p>{{ comment.content }}</p>
+          <small
+            >Von: {{ comment.author_email }} am
+            {{ comment.created_at | date : "short" }}</small
+          >
+        </div>
+        <div class="editOrDeleteContainer">
+          <img
+            src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+            *ngIf="comment.author_email === userEmail"
+            (click)="showPopUp('editComment', comment)"
+          />
+          <img
+            src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+            *ngIf="comment.author_email === userEmail"
+            (click)="showPopUp('deleteComment', comment)"
+          />
+        </div>
+      </div>
+      <div class="newComments">
+        <textarea
+          [(ngModel)]="newComment[recipe.id]"
+          placeholder="Neuen Kommentar hinzufügen..."
+        ></textarea>
+        <button (click)="addComment(recipe.id, newComment[recipe.id])">
+          +
+        </button>
+      </div>
+    </div>
   </div>
 
+  <!-- PopUp container for all popups on this site -->
   <div
     id="popUpContainer"
     class="popUpInfoContainer dNone"
     (click)="hidePopUp()"
   >
+    <!-- PopUp box for adding or editing an entry -->
     <div
       id="popUp"
       class="editEntry"
@@ -93,7 +143,10 @@
 
         <div>
           <label for="images">Bilder hochladen (max. 4):</label>
-          <div *ngFor="let index of [1, 2, 3, 4]" class="image-upload-container">
+          <div
+            *ngFor="let index of [1, 2, 3, 4]"
+            class="image-upload-container"
+          >
             <div *ngIf="isImageSlotAvailable(index)" class="upload-image-field">
               <input
                 type="file"
@@ -110,20 +163,19 @@
             </ul>
           </div>
           <div class="deleteImageContainer">
-          <div *ngFor="let imageUrl of getImageArray(entry)" >
-            <div *ngIf="imageUrl" class="deleteImage">
-              <img [src]="imageUrl" alt="Image" width="100" />
-              <button type="button" (click)="removeImageByUrl(imageUrl)">Bild löschen</button>
+            <div *ngFor="let imageUrl of getImageArray(entry)">
+              <div *ngIf="imageUrl" class="deleteImage">
+                <img [src]="imageUrl" alt="Image" width="100" />
+                <button type="button" (click)="removeImageByUrl(imageUrl)">
+                  Bild löschen
+                </button>
+              </div>
             </div>
-          </div></div>
+          </div>
         </div>
 
         <div class="buttonContainer">
-          <button
-          (click)="hidePopUp()"
-        >
-          Abbrechen
-        </button>
+          <button (click)="hidePopUp()">Abbrechen</button>
           <button
             type="submit"
             [disabled]="!entry.content || imageFiles.length > 4"
@@ -133,11 +185,11 @@
         </div>
       </form>
     </div>
-
+    <!-- PopUp box for showing image -->
     <div *ngIf="this.showImageUrl" class="showImage">
       <img [src]="this.showImageUrl" />
     </div>
-
+    <!-- PopUp box for deleting an entry -->
     <div
       class="editEntry"
       (click)="$event.stopPropagation()"
@@ -148,6 +200,42 @@
       <div class="buttonContainer">
         <button (click)="hidePopUp()">Abbrechen</button>
         <button (click)="deleteEntry()">Löschen</button>
+      </div>
+    </div>
+    <!-- PopUp box for editing a comment -->
+    <div
+      class="editEntry"
+      (click)="$event.stopPropagation()"
+      *ngIf="commentToUpdate"
+    >
+      <form (ngSubmit)="saveComment()">
+        <div class="entryHeader">
+          <h5>Kommentar bearbeiten</h5>
+          <textarea
+            [(ngModel)]="commentToUpdate.content"
+            name="content"
+          ></textarea>
+        </div>
+        <div class="buttonContainer">
+          <button type="button" (click)="hidePopUp()">Abbrechen</button>
+          <button type="submit" [disabled]="!commentToUpdate.content">
+            Beitrag speichern
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Popup box for deleting a comment -->
+    <div
+      class="editEntry"
+      (click)="$event.stopPropagation()"
+      *ngIf="commentToDelete"
+    >
+      <h3>Kommentar löschen</h3>
+      <p>Möchtest du diesen Kommentar löschen?</p>
+      <div class="buttonContainer">
+        <button (click)="hidePopUp()">Abbrechen</button>
+        <button (click)="deleteComment()">Löschen</button>
       </div>
     </div>
   </div>

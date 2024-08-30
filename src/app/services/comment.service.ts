@@ -11,8 +11,12 @@ export class CommentService {
 
   constructor(private http: HttpClient) {}
 
-  getComments(infoId: number): Observable<any> {
+  getCommentsForInfo(infoId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}?info=${infoId}`);
+  }
+
+  getCommentsForRecipe(infoId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}?recipe=${infoId}`);
   }
 
   getCommentById(infoId: string): Observable<any> {
