@@ -143,6 +143,10 @@
       <div class="alert" *ngIf="showErrorGuarantorEmailAlert">
         Bitte gibt eine valide Email ein.
       </div>
+      <div>
+        <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+        <p id="infoBox"></p>
+      </div>
       <button
         id="submitButton"
         type="submit"
@@ -151,10 +155,7 @@
         {{ this.buttonText }}
       </button>
     </form>
-    <div>
-      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <p id="infoBox"></p>
-    </div>
+
     <p>
       Hast du schon einen Account? Gehe zum <a routerLink="/login">Login</a>
     </p>

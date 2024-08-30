@@ -40,12 +40,18 @@ export class RegistrationComponent {
   constructor(private authService: AuthService, private router: Router) { }
 
   /**
+   * handles look and info on selected family checkboxes
    * handles look and info of the guarantor checkboxes
-   * @param {string} type to differentiate between the two checkboxes 
+   * @param {string} type to differentiate between the checkboxes 
    */
   onCheckboxChange(type: string) {
     if (type === 'kempe' || type === 'huenten') {
-      this.formData.selectedFamilies.push(type)
+      const index = this.formData.selectedFamilies.indexOf(type);
+      if (index === -1) {
+        this.formData.selectedFamilies.push(type);
+      } else {
+        this.formData.selectedFamilies.splice(index, 1);
+      }
     } else if (type === 'guarantor') {
       this.formData.noGuarantor = false;
       this.formData.guarantor = !this.formData.guarantor;
@@ -64,6 +70,7 @@ export class RegistrationComponent {
   * @returns boolean
   */
   onSubmit(form: NgForm) {
+    this.errorMessage = '';
     if (this.checkForm(form)) {
       const userData = this.assembleData(form);
       console.log(userData);
@@ -81,15 +88,15 @@ export class RegistrationComponent {
       .subscribe({
         next: (response) => {
           this.renderInfo();
-          setTimeout(this.clearForm, 3000);
+          setTimeout(this.clearForm, 4000);
         },
         error: (error) => {
           if (error instanceof HttpErrorResponse) {
             if (error.status === 400 && error.error && error.error.email && error.error.email[0] === "user with this email already exists.") {
               this.errorMessage = 'Ein Nutzer mit dieser Email ist bereits bei uns registriert.';
               this.renderPasswordForgotLink();
-            } else if (error.error === "Der Bürge ist für die ausgewählten Familien nicht berechtigt.") {
-              this.errorMessage = 'Der Bürge ist für die ausgewählten Familien nicht berechtigt. Bitte wählen Sie nur Familien aus, für die Ihr Bürge autorisiert ist.';
+            } else if (error.error.includes('Der Bürge ist für die ausgewählten Familien nicht berechtigt.')) {
+              this.errorMessage = 'Der Bürge ist für die ausgewählte Familien nicht berechtigt. Bitte nur Familien auswählen, für die der Bürge autorisiert ist.';
             } else {
               console.error('An error occurred:', error);
               this.errorMessage = 'Ein Fehler ist vorgefallen!';
