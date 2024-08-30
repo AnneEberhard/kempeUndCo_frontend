@@ -20,7 +20,7 @@
         (input)="filterEntries($event)"
         class="searchInput"
       />
-      <ul>
+      <ul class="indexList">
         <li *ngFor="let recipe of filteredRecipes" (click)="goToRecipe(recipe.id)">Rezept für: {{ recipe.title }}</li>
       </ul>
     </div>

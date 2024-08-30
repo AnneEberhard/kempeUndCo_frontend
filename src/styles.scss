@@ -141,6 +141,16 @@ textarea {
   }
 }
 
+.indexList {
+  li {
+    cursor: pointer;
+  
+    &:hover {
+      font-weight: bold;
+    }
+  }
+}
+
 .buttonContainer {
   display: flex;
   justify-content: space-evenly;

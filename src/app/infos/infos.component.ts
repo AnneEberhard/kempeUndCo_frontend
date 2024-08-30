@@ -7,6 +7,7 @@ import { InfoService } from '../services/info.service';
 import { QuillModule } from 'ngx-quill';
 import { ScrollService } from '../services/scroll.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { CommentService } from '../services/comment.service';
 
 
 @Component({
@@ -33,15 +34,21 @@ export class InfosComponent implements OnInit {
   filteredInfos: any[] = [];
   entry: any = null;
   entryToDelete: any = null;
+  comment: any = null;
+  commentToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
   deletedImages: string[] = [];
   clearedFields: string[] = [];
+  comments: { [key: number]: any[] } = {};
+  newComment: { [key: number]: string } = {};
+  commentToUpdate: any;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public infoService: InfoService,
+    private commentService: CommentService,
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer
   ) { }
@@ -56,6 +63,7 @@ export class InfosComponent implements OnInit {
     this.infoService.getAllInfos().subscribe(infos => {
       this.infos = infos;
       this.filteredInfos = this.infos;
+      this.loadCommentsForInfos();
     });
   }
 
@@ -111,7 +119,7 @@ export class InfosComponent implements OnInit {
 
 
 
-  showPopUp(mode: string, info: any) {
+  showPopUp(mode: string, data: any) {
     if (mode === 'add') {
       this.entry = {
         title: '',
@@ -121,12 +129,16 @@ export class InfosComponent implements OnInit {
         image_3: null,
         image_4: null
       };
-    } else if (mode === 'edit') {
-      this.entry = { ...info };
+    } else if (mode === 'editInfo') {
+      this.entry = { ...data };
     } else if (mode === 'image') {
-      this.showImageUrl = info;
-    } else if (mode === 'delete') {
-      this.entryToDelete = { ...info };
+      this.showImageUrl = data;
+    } else if (mode === 'deleteInfo') {
+      this.entryToDelete = { ...data };
+    } else if (mode === 'editComment') {
+      this.commentToUpdate = { ...data };
+    } else if (mode === 'deleteComment') {
+      this.commentToDelete = { ...data };
     }
 
     const popUpContainer = document.getElementById('popUpContainer');
@@ -165,6 +177,8 @@ export class InfosComponent implements OnInit {
     this.entry = null;
     this.entryToDelete = null;
     this.showImageUrl = null;
+    this.comment = null;
+    this.commentToDelete = null;
     const mainContainer = document.getElementById('mainContainer');
     const popUpContainer = document.getElementById('popUpContainer');
     this.scrollService.setActiveScrollContainer(mainContainer);
@@ -219,7 +233,7 @@ saveEntry(): void {
   }
 }
 
-// Funktion zum Aktualisieren eines vorhandenen Rezepts
+
 updateEntry(formData: FormData): void {
   this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
     const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
@@ -231,46 +245,6 @@ updateEntry(formData: FormData): void {
     this.hidePopUp();
   });
 }
-
-
-
-  saveEntry2(): void {
-    const formData = new FormData();
-    formData.append('title', this.entry.title);
-    formData.append('content', this.entry.content);
-
-    // Neue Bilder hinzufügen
-    this.imageFiles.forEach((file) => {
-      const imageField = this.getNextAvailableImageField();
-      if (imageField) {
-        formData.append(imageField, file, file.name);
-      }
-    });
-
-    // Alle `null` Felder hinzufügen (Bilder, die gelöscht wurden)
-    for (let i = 1; i <= 4; i++) {
-      const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
-        formData.append(imageField, '');  // Leere Felder als `null` senden
-      }
-    }
-
-    // Gelöschte Bilder hinzufügen
-    formData.append('deletedImages', JSON.stringify(this.deletedImages));
-
-    if (this.entry.id) {
-      this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
-        const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
-        if (index !== -1) {
-          this.infos[index] = response;
-        }
-        this.resetEntryForm();
-        this.hidePopUp();
-      });
-    } else {
-      this.addEntry();
-    }
-  }
 
 
   getNextAvailableImageField(): string | null {
@@ -323,6 +297,35 @@ updateEntry(formData: FormData): void {
     });
   }
 
+  deleteComment() {
+    this.commentService.deleteComment(this.commentToDelete.id).subscribe(() => {
+      this.loadAllInfo();
+      this.hidePopUp();
+    });
+  }
+
+saveComment() {
+      this.commentService.updateComment(this.commentToUpdate.id, { content: this.commentToUpdate.content }).subscribe((response: any) => {
+        const infoId = this.findInfoIdByCommentId(this.commentToUpdate.id);
+        const index = this.comments[infoId].findIndex(c => c.id === this.commentToUpdate.id);
+        if (index !== -1) {
+          this.comments[infoId][index] = response;
+        this.commentToUpdate = null;
+      this.resetEntryForm();
+      this.hidePopUp();
+    }})}
+  
+
+  findInfoIdByCommentId(commentId: number): number {
+    // Finde die Info-ID anhand der Kommentar-ID (diese Methode musst du implementieren)
+    for (const infoId in this.comments) {
+      if (this.comments[infoId].some(c => c.id === commentId)) {
+        return +infoId;
+      }
+    }
+    return 0;
+  }
+
   goToInfo(infoId: number): void {
     const element = document.getElementById(infoId.toString());
     if (element) {
@@ -330,4 +333,27 @@ updateEntry(formData: FormData): void {
     }
   }
 
+
+  loadCommentsForInfos() {
+    this.infos.forEach(info => {
+      this.commentService.getComments(info.id).subscribe(comments => {
+        this.comments[info.id] = comments;
+      });
+    });
+  }
+
+  addComment(infoId: number, commentContent: string) {
+    const comment = {
+      content: commentContent,
+      info: infoId
+    };
+    this.commentService.addComment(comment).subscribe(newComment => {
+      if (this.comments[infoId]) {
+        this.comments[infoId].push(newComment);
+      } else {
+        this.comments[infoId] = [newComment];
+      }
+    });
+  }
 }
+

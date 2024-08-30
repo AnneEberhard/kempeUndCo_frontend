@@ -1,17 +1,8 @@
-li {
-  cursor: pointer;
-
-  &:hover {
-    font-weight: bold;
-  }
-}
-
-
 .entryContainer {
   background-color: antiquewhite;
   border-radius: 10px;
   padding: 8px;
-  margin: 4px;
+  margin: 16px;
 
   img {
     height: 50px;
