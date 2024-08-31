@@ -118,6 +118,12 @@ section {
     &:hover {
       background-color: white;
     }
+
+    &:disabled {
+      background-color: lightgray;
+      color: gray !important;
+      cursor: not-allowed;
+    }
   }
 }
 
@@ -162,8 +168,6 @@ section {
 .imageModal .close:hover {
   color: #000;
 }
-
-
 
 
 /* family-tree.scss */
@@ -222,4 +226,55 @@ section {
 .mainPerson {
   font-weight: bold;
   border: 2px solid rgb(100, 16, 32);
+}
+
+@media (max-width: 1200px) {
+  .person {
+    padding: 4px;
+    width: 150px;
+    min-height: 40px;
+  }
+}
+
+@media(max-width: 750px) {
+  .person {
+    width: 120px;
+    font-size: 14px;
+    margin: 4px;
+  }
+}
+
+@media(max-width: 580px) {
+  .personList {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .searchContainer {
+    margin-top:60px;
+  }
+}
+
+@media(max-width: 400px) {
+  #infoBar {
+    width: 250px;
+  }
+
+  .infoHeader {
+    flex-direction: column-reverse;
+  }
+
+  .imageModalContent {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    padding: 36px 8px;
+  }
+
+  .imageModalContent img {
+    max-height: auto;
+    width: 80vw;
+  }
 }

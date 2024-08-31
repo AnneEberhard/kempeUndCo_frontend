@@ -18,4 +18,32 @@ export class HeaderComponent {
     location.reload();
   }
 
-}
+  showNav() {
+    const header = document.querySelector('header');
+    const logo = document.getElementById('mobileLogo');
+    if (header) {
+      header.style.display = 'flex';
+      header.style.opacity = '1';
+      header.style.transform = 'translateX(0)';
+    }
+    if(logo) {
+      logo.classList.add('dNone');
+    }
+  }
+
+  hideNav() {
+    const header = document.querySelector('header');
+    const logo = document.getElementById('mobileLogo');
+    if (header) {
+      header.style.opacity = '0';
+      header.style.transform = 'translateX(-200px)';
+      setTimeout(() => {
+        header.style.display = 'none';
+      }, 300);
+    }
+    if(logo) {
+      logo.classList.remove('dNone');
+    }
+  }
+  
+  }

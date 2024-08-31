@@ -5,6 +5,7 @@ header {
     align-items: center;
     background-color: rgb(100,16,32);
     height: 100%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 
     img {
         width: 50px;
@@ -61,4 +62,33 @@ header {
   .active {
     font-weight: bold;
     color: rgba(19, 79, 92, 1);
+  }
+
+  #mobileLogo {
+    position: absolute;
+    display: none;
+    top:0;
+    right:0;
+  }
+
+
+  @media(max-width:900px) {
+    header {
+      display: none;
+
+      img {
+        cursor: pointer;
+      }
+    }
+
+    #mobileLogo {
+      display:flex;
+      margin:8px;
+      height: 38px;
+      cursor: pointer;
+
+      &:hover {
+        height: 40px;
+      }
+    }
   }

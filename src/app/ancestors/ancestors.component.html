@@ -127,12 +127,13 @@
   </div>
   <div id="popUpInfoContainer" class="popUpInfoContainer dNone">
     <div (click)="hideInfos()" id="filler"></div>
-    <div id="infoBar">
+    <div id="infoBar" *ngIf="selectedPerson">
       <div class="infoHeader">
         <h4>Personeninformationen</h4>
-        <button (click)="goToDiscussions()" class="discussionButton">Diskussion</button>
+        <button (click)="goToDiscussions()" class="discussionButton"
+        [disabled]="selectedPerson.name === 'vertraulich'">Diskussion</button>
       </div>
-      <div *ngIf="selectedPerson">
+      <div>
         <p><strong>ID:</strong> {{ selectedPerson.id }}</p>
         <p *ngIf="selectedPerson.name"><strong>Name:</strong> {{ selectedPerson.name }}</p>
         <p *ngIf="selectedPerson.surn"><strong>Nachname:</strong> {{ selectedPerson.surn }}</p>
