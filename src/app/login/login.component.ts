@@ -34,7 +34,7 @@ export class LoginComponent {
         this.router.navigate(['/welcome']);
       },
       error: (error) => {
-        if (error.status === 400 && error.error.error === 'Account not activated') {
+        if (error.status === 400 && error.error.non_field_errors[0] === 'Inactive account') {
           this.errorMessage = 'Dein Account ist leider noch nicht aktiviert.';
         } else {
           this.errorMessage = 'Fehler beim Einloggen. Bitte überprüfe Login-Informationen.';

@@ -29,10 +29,10 @@ export class ForgotComponent {
       let resp: any = await this.authService.forgot(this.email);
       this.renderInfo();
     } catch (error: any) {
-      if (error.status === 400 && error.error.error === 'Account not activated') {
-        this.errorMessage = 'Your account is not yet activated. Please check your emails and click on the activation link we have sent you.';
+      if (error.status === 400 && error.error.non_field_errors[0] === 'Inactive account') {
+        this.errorMessage = 'Dein Account ist leider noch nicht aktiviert.';
       } else {
-        this.errorMessage = 'Error in sending. Please check your input.';
+        this.errorMessage = 'Fehler beim Senden. Bitte überprüfe deine Eingabe.';
       }
     }
   }

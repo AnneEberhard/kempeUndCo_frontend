@@ -29,7 +29,7 @@
         id="password"
         placeholder="Passwort"
       />
-      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+      <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
       <button type="submit" [disabled]="!form.valid">Einloggen</button>
     </form>
    
