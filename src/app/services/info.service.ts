@@ -15,7 +15,7 @@ export class InfoService {
     return this.http.get<any[]>(this.apiUrl).pipe(
       catchError(error => {
         console.error('Error fetching infos:', error);
-        return of([]); // Leeres Array zurückgeben, wenn ein Fehler auftritt
+        return of([]);
       }));
   }
 
@@ -24,7 +24,7 @@ export class InfoService {
   }
 
   addInfo(infoData: any) {
-    const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
+    const token = sessionStorage.getItem('accessToken');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });

@@ -8,12 +8,13 @@ import { QuillModule } from 'ngx-quill';
 import { ScrollService } from '../services/scroll.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
+import { CapitalizePipe } from "../pipes/capitalize.pipe";
 
 
 @Component({
   selector: 'app-infos',
   standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
+  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule, CapitalizePipe],
   templateUrl: './infos.component.html',
   styleUrl: './infos.component.scss'
 })
@@ -44,19 +45,27 @@ export class InfosComponent implements OnInit {
   commentToUpdate: any;
   commentToDelete: any = null;
   thumbnailPath = 'infos/thumbnails/';
+  family_1: string | null;
+  family_2: string | null;
+  families: string[] = [];
+
 
   constructor(
     public infoService: InfoService,
     private commentService: CommentService,
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer
-  ) { }
+  ) {
+    this.family_1 = sessionStorage.getItem('family_1');
+    this.family_2 = sessionStorage.getItem('family_2');
+  }
 
   ngOnInit(): void {
     this.loadAllInfo();
     this.userId = sessionStorage.getItem('userId');
     this.userEmail = sessionStorage.getItem('userEmail');
   }
+
 
   loadAllInfo() {
     this.infoService.getAllInfos().subscribe(infos => {
@@ -82,14 +91,15 @@ export class InfosComponent implements OnInit {
     if (!searchTerm) {
       this.filteredInfos = this.infos;
     } else {
-      this.filteredInfos = this.infos.filter((info: { author_email: string; title: string; content: string; }) =>
+      this.filteredInfos = this.infos.filter((info: { author_email: string; title: string; content: string; family_1: string; family_2: string }) =>
         info.author_email.toLowerCase().includes(searchTerm) ||
         (info.title && info.title.toLowerCase().includes(searchTerm)) ||
-        info.content.toLowerCase().includes(searchTerm)
+        info.content.toLowerCase().includes(searchTerm) ||
+        (info.family_1 && info.family_1.toLowerCase().includes(searchTerm)) ||
+        (info.family_2 && info.family_2.toLowerCase().includes(searchTerm))
       );
     }
   }
-
 
   goToInfo(infoId: number): void {
     const element = document.getElementById(infoId.toString());
@@ -151,7 +161,9 @@ export class InfosComponent implements OnInit {
         image_1: null,
         image_2: null,
         image_3: null,
-        image_4: null
+        image_4: null,
+        family_1: '',
+        family_2: ''
       };
     } else if (mode === 'editInfo') {
       this.entry = { ...data };
@@ -218,11 +230,16 @@ export class InfosComponent implements OnInit {
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
 
+    if (this.entry.family_1) {
+      formData.append('family_1', this.entry.family_1);
+    }
+
+    if (this.entry.family_2) {
+      formData.append('family_2', this.entry.family_2);
+    }
+
     this.addNewImages(formData);
     this.addNullFields(formData);
-
-    // Gelöschte Bilder hinzufügen
-    formData.append('deletedImages', JSON.stringify(this.deletedImages));
 
     return formData;
   }
@@ -250,11 +267,14 @@ export class InfosComponent implements OnInit {
   // Hauptfunktion
   saveEntry(): void {
     const formData = this.assembleFormData();
-
+    if (!this.entry.family_1 && !this.entry.family_2) {
+      alert('Bitte wählen Sie mindestens eine Familie aus.');
+      return;
+    }
     if (this.entry.id) {
       this.updateEntry(formData);
     } else {
-      this.addEntry();
+      this.addEntry(formData);
     }
   }
 
@@ -283,19 +303,10 @@ export class InfosComponent implements OnInit {
   }
 
 
-  addEntry() {
-    const formData = new FormData();
-    formData.append('title', this.entry.title);
-    formData.append('content', this.entry.content);
-
-    this.imageFiles.forEach((file, index) => {
-      formData.append(`image_${index + 1}`, file, file.name);
-    });
-
+  addEntry(formData: FormData) {
     this.infoService.addInfo(formData).subscribe((response: any) => {
       this.infos.push(response);
-      this.entry.title = '';
-      this.entry.content = '';
+      this.entry = null;
     });
     this.hidePopUp();
     this.resetEntryForm();
@@ -375,6 +386,26 @@ export class InfosComponent implements OnInit {
       }
     }
     return 0;
+  }
+
+
+  onFamilySelectionChange(event: Event, familyKey: 'family_1' | 'family_2') {
+    const checkbox = event.target as HTMLInputElement;
+    const familyValue = familyKey === 'family_1' ? this.family_1 : this.family_2;
+
+    if (checkbox.checked) {
+      if (this.entry.family_1 === '' || this.entry.family_1 === familyValue) {
+        this.entry.family_1 = familyValue;
+      } else {
+        this.entry.family_2 = familyValue;
+      }
+    } else {
+      if (this.entry.family_1 === familyValue) {
+        this.entry.family_1 = '';
+      } else if (this.entry.family_2 === familyValue) {
+        this.entry.family_2 = '';
+      }
+    }
   }
 
 }

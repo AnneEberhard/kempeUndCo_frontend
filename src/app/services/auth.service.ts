@@ -37,13 +37,13 @@ export class AuthService {
    * @param {string} accessToken - The access token to set.
    * @param {string} refreshToken - The refresh token to set.
    */
-  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail:string, username: string): void {
+  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail:string, family_1: string, family_2: string): void {
     sessionStorage.setItem('accessToken', accessToken);
     sessionStorage.setItem('refreshToken', refreshToken);
     sessionStorage.setItem('userId', userId);
     sessionStorage.setItem('userEmail', userEmail);
-    sessionStorage.setItem('username', username);
-    sessionStorage.setItem('kempeLogin', 'True');
+    sessionStorage.setItem('family_1', family_1);
+    sessionStorage.setItem('family_2', family_2);
   }
 
   /**
@@ -86,8 +86,8 @@ export class AuthService {
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('userId');
         sessionStorage.removeItem('userEmail');
-        sessionStorage.removeItem('username');
-        sessionStorage.removeItem('kempeLogin');
+        sessionStorage.removeItem('family_1');
+        sessionStorage.removeItem('family_2');
         this.router.navigate(['/login']);
       },
       error: (err) => {
@@ -95,8 +95,8 @@ export class AuthService {
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('username');
-        sessionStorage.removeItem('kempeLogin');
+        sessionStorage.removeItem('family_1');
+        sessionStorage.removeItem('family_2');
         this.router.navigate(['/login']);
       }
     });
