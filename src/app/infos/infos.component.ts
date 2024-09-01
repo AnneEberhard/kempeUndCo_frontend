@@ -43,6 +43,7 @@ export class InfosComponent implements OnInit {
   newComment: { [key: number]: string } = {};
   commentToUpdate: any;
   commentToDelete: any = null;
+  thumbnailPath = 'infos/thumbnails/';
 
   constructor(
     public infoService: InfoService,
@@ -89,7 +90,7 @@ export class InfosComponent implements OnInit {
     }
   }
 
-  
+
   goToInfo(infoId: number): void {
     const element = document.getElementById(infoId.toString());
     if (element) {
@@ -107,6 +108,22 @@ export class InfosComponent implements OnInit {
     if (info.image_4_url) images.push(info.image_4_url);
 
     return images;
+  }
+
+
+  getThumbnailUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+    const baseUrl = imageUrl.replace('/media/infos/', '/media/infos/thumbnails/');
+    const extensions = ['.jpg', '.jpeg', '.png'];
+    for (let ext of extensions) {
+      const lowerBaseUrl = baseUrl.toLowerCase();
+      const lowerExt = ext.toLowerCase();
+
+      if (lowerBaseUrl.endsWith(lowerExt)) {
+        return baseUrl.slice(0, -lowerExt.length) + `_thumbnail.jpg`;
+      }
+    }
+    return baseUrl;
   }
 
 

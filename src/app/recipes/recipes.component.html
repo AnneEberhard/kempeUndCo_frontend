@@ -42,7 +42,7 @@
       <div *ngFor="let imageUrl of getImageArray(recipe)">
         <img
           (click)="showPopUp('image', imageUrl)"
-          [src]="imageUrl"
+          [src]="getThumbnailUrl(imageUrl)"
           alt="recipe Image"
         />
       </div>
@@ -165,7 +165,7 @@
           <div class="deleteImageContainer">
             <div *ngFor="let imageUrl of getImageArray(entry)">
               <div *ngIf="imageUrl" class="deleteImage">
-                <img [src]="imageUrl" alt="Image" width="100" />
+                <img [src]="getThumbnailUrl(imageUrl)" alt="Image" width="100" />
                 <button type="button" (click)="removeImageByUrl(imageUrl)">
                   Bild löschen
                 </button>

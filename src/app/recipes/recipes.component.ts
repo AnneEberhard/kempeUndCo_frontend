@@ -110,6 +110,21 @@ export class RecipesComponent implements OnInit {
     return images;
   }
 
+  getThumbnailUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+    const baseUrl = imageUrl.replace('/media/recipes/', '/media/recipes/thumbnails/');
+    const extensions = ['.jpg', '.jpeg', '.png'];
+    for (let ext of extensions) {
+      const lowerBaseUrl = baseUrl.toLowerCase();
+      const lowerExt = ext.toLowerCase();
+
+      if (lowerBaseUrl.endsWith(lowerExt)) {
+        return baseUrl.slice(0, -lowerExt.length) + `_thumbnail.jpg`;
+      }
+    }
+    return baseUrl;
+  }
+
 
   onFileChange(event: any, index: number) {
     const files = event.target.files;
@@ -228,12 +243,12 @@ addNullFields(formData: FormData): void {
   for (let i = 1; i <= 4; i++) {
     const imageField = `image_${i}`;
     if (!this.entry[imageField]) {
-      formData.append(imageField, '');  // Leere Felder als `null` senden
+      formData.append(imageField, '');
     }
   }
 }
 
-// Hauptfunktion
+
 saveEntry(): void {
   const formData = this.assembleFormData();
 
@@ -244,7 +259,7 @@ saveEntry(): void {
   }
 }
 
-// Funktion zum Aktualisieren eines vorhandenen Rezepts
+
 updateEntry(formData: FormData): void {
   this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
     const index = this.recipes.findIndex((e: any) => e.id === this.entry.id);
@@ -316,7 +331,6 @@ updateEntry(formData: FormData): void {
         this.comments[recipe.id] = comments;
       });
     });
-    console.log(this.comments)
   }
 
 
