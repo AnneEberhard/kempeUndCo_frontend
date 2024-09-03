@@ -124,7 +124,7 @@
           <h5>
             {{ entry.id ? "Beitrag bearbeiten" : "Neuen Beitrag erstellen" }}
           </h5>
-          <div *ngIf="this.family_1 && this.family_2" class="chooseFamily">
+          <div *ngIf="family_1 && family_2 && family_1 !== 'null' && family_2 !== 'null' && family_1 !== '' && family_2 !== ''" class="chooseFamily">
             <h6>Für Familie(n)</h6>
             <label>
               <input

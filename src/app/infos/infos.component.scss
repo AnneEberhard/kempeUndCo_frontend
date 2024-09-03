@@ -1,178 +1,172 @@
-  .entryContainer {
-    background-color: antiquewhite;
-    border-radius: 10px;
-    padding: 8px;
-    margin: 16px;
+.entryContainer {
+  background-color: antiquewhite;
+  border-radius: 10px;
+  padding: 8px;
+  margin: 16px;
 
-    img {
-      height: 50px;
-      cursor: pointer;
-    }
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  
-    .entryInput {
-      line-height: 1.5;
-      font-size: 14px;
-      font-family: "Roboto";
-      margin-bottom: 16px;
-      color: inherit;
-      padding: 8px;
-      border: solid 1px #b2b8b8;
-      appearance: none;
-      background: transparent;
-      border-radius: 10px;
-      width: 100%;
-      box-sizing: border-box;
-      ::placeholder {
-        color: #b2b8b8;
-      }
-    }
-
-  }
-  
-  .buttonRightContainer {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .entryMeta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .editOrDeleteContainer {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-  
-    img {
-      height: 20px;
-      cursor: pointer;
-      &:hover {
-        height: 22px;
-      }
-    }
-  }
-  
-
-  
-  .editEntry {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 60vw;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow-y: auto;
-  
-    .editInput {
-      line-height: 1.5;
-      font-size: 14px;
-      margin-bottom: 16px;
-      color: inherit;
-      padding: 8px;
-      border: solid 1px #b2b8b8;
-      appearance: none;
-      background: transparent;
-      border-radius: 10px;
-      ::placeholder {
-        color: #b2b8b8;
-        font-family: "Roboto" !important;
-      }
-  
-    }
-  
-
-  }
-  
-  .buttonContainer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-
-  
-  #images {
-    border-radius: 10px;
-    padding: 4px;
+  img {
+    height: 50px;
     cursor: pointer;
   }
+}
 
-  .showImage {
-    background-color: antiquewhite;
-    border-radius: 10px;
-    padding: 8px;
-    margin: 4px;
+form {
+  display: flex;
+  flex-direction: column;
 
-    img {
-      height: 500px;
-      cursor: pointer;
-    }
-  }
-
-  .deleteImageContainer {
-    display: flex;
-    gap: 4px;
-  }
-
-  .deleteImage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    button {
-      font-size: 12px;
-    }
-  }
-
-  .entryImagesContainer {
-    display: flex;
-    gap: 8px;
-  }
-
-  .newComments {
-    display: flex;
-    width: 100%;
-    margin-top: 8px;
-
-    textarea {
-      flex:1;
-      font-size: 12px;
-      margin-bottom: 4px;
-      color: inherit;
-      padding: 8px;
-      border: solid 1px #b2b8b8;
-      appearance: none;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 10px;
-    }
-  }
-
-  .singleComment {
-    border: solid 1px #b2b8b8;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.2);
-    margin-bottom: 4px;
-    padding: 0 8px 0 8px;
+  .entryInput {
+    line-height: 1.5;
     font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .editComment {
-    width: 100%;
+    font-family: "Roboto";
+    margin-bottom: 16px;
+    color: inherit;
+    padding: 8px;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
     border-radius: 10px;
-    padding: 4px;
+    box-sizing: border-box;
+    width: 100%;
+    box-sizing: border-box;
+    ::placeholder {
+      color: #b2b8b8;
+    }
   }
+}
 
-  .chooseFamily {
-    display: flex;
-    justify-content: flex-end;
+.buttonRightContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.entryMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editOrDeleteContainer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+
+  img {
+    height: 20px;
+    cursor: pointer;
+    &:hover {
+      height: 22px;
+    }
   }
+}
+
+.editEntry {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 60vw;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+
+  .editInput {
+    line-height: 1.5;
+    font-size: 14px;
+    margin-bottom: 16px;
+    color: inherit;
+    padding: 8px;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
+    border-radius: 10px;
+    ::placeholder {
+      color: #b2b8b8;
+      font-family: "Roboto" !important;
+    }
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+#images {
+  border-radius: 10px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.showImage {
+  background-color: antiquewhite;
+  border-radius: 10px;
+  padding: 8px;
+  margin: 4px;
+
+  img {
+    height: 500px;
+    cursor: pointer;
+  }
+}
+
+.deleteImageContainer {
+  display: flex;
+  gap: 4px;
+}
+
+.deleteImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  button {
+    font-size: 12px;
+  }
+}
+
+.entryImagesContainer {
+  display: flex;
+  gap: 8px;
+}
+
+.newComments {
+  display: flex;
+  width: 100%;
+  margin-top: 8px;
+
+  textarea {
+    flex: 1;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: inherit;
+    padding: 8px;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+  }
+}
+
+.singleComment {
+  border: solid 1px #b2b8b8;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  margin-bottom: 4px;
+  padding: 0 8px 0 8px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editComment {
+  width: 100%;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.chooseFamily {
+  display: flex;
+  justify-content: flex-end;
+}

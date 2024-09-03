@@ -70,6 +70,9 @@ export class InfosComponent implements OnInit {
   loadAllInfo() {
     this.infoService.getAllInfos().subscribe(infos => {
       this.infos = infos;
+      this.infos.sort((a, b) => {
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      });
       this.filteredInfos = this.infos;
       this.loadComments();
     });
