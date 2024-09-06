@@ -82,22 +82,23 @@ export class AuthService {
     const url = environment.baseUrl + '/token/blacklist/';
     this.http.post(url, { refresh: refreshToken }).subscribe({
       next: () => {
+        this.router.navigate(['/login']);
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('userId');
         sessionStorage.removeItem('userEmail');
         sessionStorage.removeItem('family_1');
         sessionStorage.removeItem('family_2');
-        this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error('Logout failed', err);
+        this.router.navigate(['/login']);
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('userEmail');
         sessionStorage.removeItem('family_1');
         sessionStorage.removeItem('family_2');
-        this.router.navigate(['/login']);
       }
     });
   }
