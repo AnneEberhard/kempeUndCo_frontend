@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    baseUrl: 'https://kempeundco.pythonanywhere.com/', 
+    baseUrl: 'http://localhost:8000',
   };
   

@@ -139,7 +139,6 @@ export class DiscussionsComponent implements OnInit {
 
 
   
-
   deleteEntry() {
     this.discussionService.deleteEntry(this.entryToDelete.id).subscribe(() => {
         this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== this.entryToDelete.id);
@@ -192,6 +191,7 @@ export class DiscussionsComponent implements OnInit {
 
   
   addEntry(formData: FormData) {
+    formData.append('discussion', this.selectedDiscussion.id);
     this.discussionService.addEntry(formData).subscribe((response) => {
       this.selectedDiscussion.entries.push(response);
       this.hidePopUp();
@@ -221,20 +221,6 @@ export class DiscussionsComponent implements OnInit {
     this.imageFiles = [];
   }
 
-  saveEntry2() {
-    const formData = this.assembleFormData();
-    if (this.editEntryData && this.editEntryData.content) {
-      this.discussionService.updateEntry(this.editEntryData.id, {
-        formData
-      }).subscribe(updatedEntry => {
-        const index = this.selectedDiscussion.entries.findIndex((e: any) => e.id === this.editEntryData.id);
-        this.selectedDiscussion.entries[index] = updatedEntry;
-        this.hidePopUp();
-      });
-    } else {
-      alert('Inhalt darf nicht leer sein.');
-    }
-  }
 
 
   getImageArray(info: any): string[] {
