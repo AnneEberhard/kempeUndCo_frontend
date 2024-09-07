@@ -1,10 +1,11 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, take, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { lastValueFrom } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
+
 
 
 @Injectable({
@@ -80,27 +81,21 @@ export class AuthService {
   logout(): void {
     const refreshToken = this.getRefreshToken();
     const url = environment.baseUrl + '/token/blacklist/';
-    this.http.post(url, { refresh: refreshToken }).subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('userEmail');
-        sessionStorage.removeItem('family_1');
-        sessionStorage.removeItem('family_2');
+    this.http.post(url, { refresh: refreshToken }, { withCredentials: true }).subscribe({
+      next: (response) => {
+        console.error('Logout successful', response);
       },
       error: (err) => {
         console.error('Logout failed', err);
-        this.router.navigate(['/login']);
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('userEmail');
-        sessionStorage.removeItem('family_1');
-        sessionStorage.removeItem('family_2');
       }
     });
+    this.router.navigate(['/login']);
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('userEmail');
+    sessionStorage.removeItem('family_1');
+    sessionStorage.removeItem('family_2');
   }
 
   /**

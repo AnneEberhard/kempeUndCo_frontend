@@ -5,7 +5,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Person } from "../interfaces/person";
 import { Relations } from "../interfaces/relations";
 import { Family } from "../interfaces/family";
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
