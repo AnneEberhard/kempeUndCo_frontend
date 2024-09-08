@@ -62,12 +62,12 @@
         <img
           src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
           *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('editInfo', info)"
+          (click)="showPopUp('edit', info)"
         />
         <img
           src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
           *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('deleteInfo', info)"
+          (click)="showPopUp('delete', info)"
         />
       </div>
     </div>

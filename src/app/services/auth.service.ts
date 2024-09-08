@@ -68,14 +68,6 @@ export class AuthService {
   }
 
   /**
-   * Retrieves the login status flag from sessionStorage.
-   * @returns {string | null} The login status flag ('True' or null) if available, or null if not found.
-   */
-  getKempelogin(): string | null {
-    return sessionStorage.getItem('kempelogin');
-  }
-
-  /**
    * handles user logout in front and backend
    */
   logout(): void {
@@ -132,11 +124,19 @@ export class AuthService {
     };
     return lastValueFrom(this.http.post(url, body));
   }
-  
+
+/**
+ * Stores the access token in `sessionStorage`.
+ * @param {string} token - The access token to be stored.
+ */
   setAccessToken(token: string): void {
     sessionStorage.setItem('accessToken', token);
   }
 
+/**
+ * Sends a request to refresh the access token using the stored refresh token.
+ * @returns {Observable<any>} An Observable containing the response from the refresh token request.
+ */
   refreshToken(): Observable<any> {
     const refreshToken = sessionStorage.getItem('refreshToken');
     return this.http.post(`${environment.baseUrl}/login/refresh/`, { refresh: refreshToken });

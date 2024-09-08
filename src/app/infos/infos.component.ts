@@ -60,13 +60,18 @@ export class InfosComponent implements OnInit {
     this.family_2 = sessionStorage.getItem('family_2');
   }
 
+  /**
+   * Initializes the component by loading all information and retrieving user data from session storage.
+   */
   ngOnInit(): void {
     this.loadAllInfo();
     this.userId = sessionStorage.getItem('userId');
     this.userEmail = sessionStorage.getItem('userEmail');
   }
 
-
+  /**
+   * Loads all information from the info service and sorts them by the updated date.
+   */
   loadAllInfo() {
     this.infoService.getAllInfos().subscribe(infos => {
       this.infos = infos;
@@ -78,6 +83,11 @@ export class InfosComponent implements OnInit {
     });
   }
 
+  /**
+   * Loads a specific info item by its ID and sanitizes its content for safe display.
+   *
+   * @param {string} infoId - The ID of the info item to be loaded.
+   */
   loadInfo(infoId: string): void {
     this.infoService.getInfoById(infoId).subscribe(
       info => {
@@ -87,6 +97,11 @@ export class InfosComponent implements OnInit {
     );
   }
 
+  /**
+   * Filters the list of information items based on the search term from the event input.
+   *
+   * @param {Event} event - The input event containing the search term.
+   */
   filterEntries(event: Event): void {
     const target = event.target as HTMLInputElement;
     const searchTerm = target.value.toLowerCase();
@@ -104,6 +119,11 @@ export class InfosComponent implements OnInit {
     }
   }
 
+  /**
+   * Scrolls the page to the element with the specified info ID.
+   *
+   * @param {number} infoId - The ID of the info item to scroll to.
+   */
   goToInfo(infoId: number): void {
     const element = document.getElementById(infoId.toString());
     if (element) {
@@ -111,7 +131,12 @@ export class InfosComponent implements OnInit {
     }
   }
 
-
+  /**
+   * Retrieves an array of image URLs from the given info object.
+   *
+   * @param {any} info - The info object containing image URLs.
+   * @returns {string[]} An array of image URLs.
+   */
   getImageArray(info: any): string[] {
     const images: string[] = [];
 
@@ -123,7 +148,12 @@ export class InfosComponent implements OnInit {
     return images;
   }
 
-
+  /**
+   * Generates the thumbnail URL for a given image URL.
+   *
+   * @param {string} imageUrl - The URL of the image.
+   * @returns {string} The URL of the thumbnail image.
+   */
   getThumbnailUrl(imageUrl: string): string {
     if (!imageUrl) return '';
     const baseUrl = imageUrl.replace('/media/infos/', '/media/infos/thumbnails/');
@@ -139,7 +169,12 @@ export class InfosComponent implements OnInit {
     return baseUrl;
   }
 
-
+  /**
+   * Handles file input changes and updates the image files array.
+   *
+   * @param {any} event - The change event from the file input.
+   * @param {number} index - The index of the image slot being updated.
+   */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
     if (files.length > 0) {
@@ -155,7 +190,13 @@ export class InfosComponent implements OnInit {
     }
   }
 
-
+  /**
+   * Displays a pop-up based on the specified mode and data.
+   * The mode determines what type of pop-up to show (e.g., add, edit, delete).
+   *
+   * @param {string} mode - The mode for the pop-up (e.g., 'add', 'editInfo', 'image', 'deleteInfo', 'editComment', 'deleteComment').
+   * @param {any} data - The data to be used in the pop-up, which varies depending on the mode.
+   */
   showPopUp(mode: string, data: any) {
     if (mode === 'add') {
       this.entry = {
@@ -168,11 +209,11 @@ export class InfosComponent implements OnInit {
         family_1: '',
         family_2: ''
       };
-    } else if (mode === 'editInfo') {
+    } else if (mode === 'edit') {
       this.entry = { ...data };
     } else if (mode === 'image') {
       this.showImageUrl = data;
-    } else if (mode === 'deleteInfo') {
+    } else if (mode === 'delete') {
       this.entryToDelete = { ...data };
     } else if (mode === 'editComment') {
       this.commentToUpdate = { ...data };
@@ -191,6 +232,11 @@ export class InfosComponent implements OnInit {
     }
   }
 
+  /**
+   * Removes an image by its URL from the entry and marks it as deleted.
+   *
+   * @param {string} imageUrl - The URL of the image to be removed.
+   */
   removeImageByUrl(imageUrl: string): void {
     if (this.entry.image_1_url === imageUrl) {
       this.entry.image_1_url = null;
@@ -208,10 +254,19 @@ export class InfosComponent implements OnInit {
     this.deletedImages.push(imageUrl);
   }
 
+  /**
+   * Checks if an image slot is available for a new image.
+   *
+   * @param {number} index - The index of the image slot to check (1 to 4).
+   * @returns {boolean} `true` if the image slot is available, otherwise `false`.
+   */
   isImageSlotAvailable(index: number): boolean {
     return !this.entry[`image_${index}`];
   }
 
+  /**
+   * Hides the pop-up and resets the state of various properties related to entries and comments.
+   */
   hidePopUp() {
     this.entry = null;
     this.entryToDelete = null;
@@ -227,7 +282,11 @@ export class InfosComponent implements OnInit {
     }
   }
 
-  // FormData erstellen und Titel/Inhalt hinzufügen
+  /**
+   * Assembles the form data for the entry, including title, content, family details, and images.
+   * differs from recipe due to family information
+   * @returns {FormData} The assembled form data.
+   */
   assembleFormData(): FormData {
     const formData = new FormData();
     formData.append('title', this.entry.title);
@@ -247,7 +306,11 @@ export class InfosComponent implements OnInit {
     return formData;
   }
 
-  // Neue Bilder hinzufügen
+  /**
+   * Adds new images to the form data.
+   *
+   * @param {FormData} formData - The form data to which images will be added.
+   */
   addNewImages(formData: FormData): void {
     this.imageFiles.forEach((file) => {
       const imageField = this.getNextAvailableImageField();
@@ -257,7 +320,11 @@ export class InfosComponent implements OnInit {
     });
   }
 
-  // Leere Felder für gelöschte Bilder hinzufügen
+  /**
+   * Adds fields for any deleted images to the form data, marking them as empty.
+   *
+   * @param {FormData} formData - The form data to which empty fields will be added.
+   */
   addNullFields(formData: FormData): void {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
@@ -267,7 +334,11 @@ export class InfosComponent implements OnInit {
     }
   }
 
-  // Hauptfunktion
+  /**
+   * Saves the entry by either adding a new one or updating an existing one.
+   * Displays an alert if no family is selected.
+   * differs from recipe due to family info
+   */
   saveEntry(): void {
     const formData = this.assembleFormData();
     if (!this.entry.family_1 && !this.entry.family_2) {
@@ -281,7 +352,11 @@ export class InfosComponent implements OnInit {
     }
   }
 
-
+  /**
+   * Updates an existing entry with the given form data.
+   * differs from recipe due to service
+   * @param {FormData} formData - The form data containing updated information for the entry.
+   */
   updateEntry(formData: FormData): void {
     this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
       const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
@@ -294,7 +369,11 @@ export class InfosComponent implements OnInit {
     });
   }
 
-
+  /**
+   * Gets the next available image field for a new image.
+   * differs from recipe due to service
+   * @returns {string | null} The name of the next available image field (e.g., 'image_1'), or `null` if all fields are occupied.
+   */
   getNextAvailableImageField(): string | null {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
@@ -305,7 +384,11 @@ export class InfosComponent implements OnInit {
     return null;
   }
 
-
+  /**
+   * Adds a new entry using the provided form data.
+   * differs from recipe due to param
+   * @param {FormData} formData - The form data containing information for the new entry.
+   */
   addEntry(formData: FormData) {
     this.infoService.addInfo(formData).subscribe((response: any) => {
       this.infos.push(response);
@@ -315,7 +398,9 @@ export class InfosComponent implements OnInit {
     this.resetEntryForm();
   }
 
-
+  /**
+   * Resets the entry form to its initial state.
+   */
   resetEntryForm(): void {
     this.entry = {
       title: '',
@@ -328,6 +413,10 @@ export class InfosComponent implements OnInit {
     this.imageFiles = [];
   }
 
+  /**
+  * Deletes an entry based on the entry to delete.
+  * differs from recipe due to service
+  */
   deleteEntry() {
     this.infoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
       this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
@@ -336,7 +425,10 @@ export class InfosComponent implements OnInit {
     });
   }
 
-
+  /**
+   * Loads comments for each info entry and stores them in the `comments` object.
+   * differs from recipe with regard to function in commentservice
+   */
   loadComments() {
     this.infos.forEach(info => {
       this.commentService.getCommentsForInfo(info.id).subscribe(comments => {
@@ -345,7 +437,12 @@ export class InfosComponent implements OnInit {
     });
   }
 
-
+  /**
+   * Adds a new comment to the specified info entry.
+   * differs from recipe due to key
+   * @param {number} infoId - The ID of the info entry to which the comment will be added.
+   * @param {string} commentContent - The content of the comment.
+   */
   addComment(infoId: number, commentContent: string) {
     const comment = {
       content: commentContent,
@@ -360,7 +457,9 @@ export class InfosComponent implements OnInit {
     });
   }
 
-
+  /**
+   * Deletes a comment based on the comment to delete.
+   */
   deleteComment() {
     this.commentService.deleteComment(this.commentToDelete.id).subscribe(() => {
       this.loadAllInfo();
@@ -368,6 +467,9 @@ export class InfosComponent implements OnInit {
     });
   }
 
+  /**
+   * Saves updates to a comment.
+   */
   saveComment() {
     this.commentService.updateComment(this.commentToUpdate.id, { content: this.commentToUpdate.content }).subscribe((response: any) => {
       const infoId = this.findInfoIdByCommentId(this.commentToUpdate.id);
@@ -381,7 +483,12 @@ export class InfosComponent implements OnInit {
     })
   }
 
-
+  /**
+   * Finds the ID of the info entry associated with a specific comment.
+   *
+   * @param {number} commentId - The ID of the comment.
+   * @returns {number} The ID of the associated info entry, or `0` if not found.
+   */
   findInfoIdByCommentId(commentId: number): number {
     for (const infoId in this.comments) {
       if (this.comments[infoId].some(c => c.id === commentId)) {
@@ -392,6 +499,12 @@ export class InfosComponent implements OnInit {
   }
 
 
+  /**
+   * Handles changes in family selection and updates the entry's family fields accordingly.
+   *
+   * @param {Event} event - The event triggered by the family selection change.
+   * @param {'family_1' | 'family_2'} familyKey - The key for the family field being updated.
+   */
   onFamilySelectionChange(event: Event, familyKey: 'family_1' | 'family_2') {
     const checkbox = event.target as HTMLInputElement;
     const familyValue = familyKey === 'family_1' ? this.family_1 : this.family_2;

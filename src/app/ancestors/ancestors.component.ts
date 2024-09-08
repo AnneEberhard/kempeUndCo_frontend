@@ -24,7 +24,7 @@ export class AncestorsComponent implements OnInit {
   family: Family | undefined;
   personId: number;
   searchTerm: string = '';
-  searchResults: (Person[] | any)  = [];
+  searchResults: (Person[] | any) = [];
   showNoResultsMessage: boolean = false;
   selectedPerson: Person | null = null;
   currentImage: string | null = null;
@@ -33,7 +33,9 @@ export class AncestorsComponent implements OnInit {
     this.personId = 3571;
   }
 
-
+  /**
+   * Initializes the component by fetching all persons and setting the ID for a specific person by name.
+   */
   ngOnInit() {
     this.familyService.getAllPersons().subscribe(data => {
       this.allPersonsList = data;
@@ -41,6 +43,11 @@ export class AncestorsComponent implements OnInit {
     });
   }
 
+  /**
+   * Sets the person ID based on the provided name and loads the corresponding family data.
+   *
+   * @param {string} name - The full name of the person to find.
+   */
   setPersonIdByName(name: string) {
     const person = this.allPersonsList.find(p => `${p.givn} ${p.surn}` === name);
     if (person) {
@@ -51,13 +58,18 @@ export class AncestorsComponent implements OnInit {
     }
   }
 
+  /**
+   * Loads family data for the currently selected person.
+   */
   loadFamilyData() {
     this.familyService.getFamily(this.personId).subscribe(family => {
       this.family = family;
     });
   }
 
-
+  /**
+   * Searches for persons based on the search term and updates the search results.
+   */
   search(): void {
     const term = this.searchTerm.toLowerCase();
     this.searchResults = this.allPersonsList.filter(person =>
@@ -66,6 +78,11 @@ export class AncestorsComponent implements OnInit {
     this.showNoResultsMessage = this.searchResults.length === 0;
   }
 
+  /**
+   * Selects a person and loads their family data.
+   *
+   * @param {Person} person - The person to be selected.
+   */
   selectPerson(person: Person): void {
     this.personId = person.id;
     this.familyService.getFamily(this.personId).subscribe(family => {
@@ -74,12 +91,20 @@ export class AncestorsComponent implements OnInit {
     });
   }
 
+  /**
+   * Clears the search term and search results.
+   */
   clearSearch(): void {
     this.searchTerm = '';
     this.searchResults = [];
     this.showNoResultsMessage = false;
   }
 
+  /**
+   * Updates the family data based on the provided person ID.
+   *
+   * @param {number} id - The ID of the person whose family data is to be fetched.
+   */
   getNewData(id: number) {
     if (id != 0) {
       this.personId = id;
@@ -90,8 +115,8 @@ export class AncestorsComponent implements OnInit {
   }
 
   /**
-* shows overlay with hints
-*/
+  * shows overlay with hints
+  */
   showHint() {
     const div = document.getElementById('popUpHintContainer');
     if (div) {
@@ -109,7 +134,12 @@ export class AncestorsComponent implements OnInit {
     }
   }
 
-  showInfos(person:Person) {
+  /**
+   * Displays information about the selected person in a popup container.
+   *
+   * @param {Person} person - The person whose information is to be displayed.
+   */
+  showInfos(person: Person) {
     this.selectedPerson = person;
     const div = document.getElementById('popUpInfoContainer');
     if (div) {
@@ -117,6 +147,9 @@ export class AncestorsComponent implements OnInit {
     }
   }
 
+  /**
+   * Hides the information popup and resets the selected person.
+   */
   hideInfos() {
     this.selectedPerson = null;
     const div = document.getElementById('popUpInfoContainer');
@@ -126,6 +159,10 @@ export class AncestorsComponent implements OnInit {
     this.hideImage();
   }
 
+
+  /**
+   * Navigates to the discussions page for the currently selected person.
+   */
   goToDiscussions(): void {
     if (this.selectedPerson) {
       const url = `/discussions/${this.selectedPerson.id}`;
@@ -133,12 +170,20 @@ export class AncestorsComponent implements OnInit {
     }
   }
 
+  /**
+   * Displays an image in a modal.
+   *
+   * @param {string} imageUrl - The URL of the image to display.
+   */
   showImage(imageUrl: string): void {
     console.log(imageUrl);
     this.currentImage = imageUrl;
     document.getElementById('imageModal')?.classList.remove('dNone');
   }
 
+  /**
+   * Hides the image modal and resets the current image.
+   */
   hideImage(): void {
     this.currentImage = null;
     document.getElementById('imageModal')?.classList.add('dNone');

@@ -18,22 +18,41 @@ export class FamilyService {
 
   constructor(private http: HttpClient) { }
 
-
+  /**
+   * Retrieves all persons.
+   *
+   * @returns {Observable<any[]>} An observable containing an array of all persons.
+   */
   getAllPersons(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/persons/`);
   }
 
-
-  getPerson(id:number): Observable<Person> {
+  /**
+   * Retrieves a person by their ID.
+   *
+   * @param {number} id - The ID of the person to be retrieved.
+   * @returns {Observable<Person>} An observable containing the person with the specified ID.
+   */
+  getPerson(id: number): Observable<Person> {
     return this.http.get<Person>(`${this.apiUrl}/persons/${id}/`);
   }
 
-
-  getRelations(id:number): Observable<Relations> {
+  /**
+   * Retrieves relations for a person by their ID.
+   *
+   * @param {number} id - The ID of the person whose relations are to be retrieved.
+   * @returns {Observable<Relations>} An observable containing the relations for the specified person.
+   */
+  getRelations(id: number): Observable<Relations> {
     return this.http.get<Relations>(`${this.apiUrl}/relations/${id}/`);
   }
 
-
+  /**
+   * Retrieves the family information for a person, including their parents, grandparents, and marriages.
+   *
+   * @param {number} id - The ID of the person whose family information is to be retrieved.
+   * @returns {Observable<Family>} An observable containing the family information, including the person, their parents, grandparents, and marriages.
+   */
   getFamily(id: number): Observable<Family> {
     return this.getRelations(id).pipe(
       switchMap(relations => {
@@ -94,7 +113,16 @@ export class FamilyService {
     );
   }
 
-
+  /**
+   * Retrieves the grandparents of the given father and mother.
+   * 
+   * For each parent, this method fetches their respective relations to determine their parents (the grandparents).
+   * If any parent or grandparent cannot be found, an "unknown person" placeholder is used.
+   *
+   * @param {Person | null} father - The father of the person whose grandparents are to be retrieved.
+   * @param {Person | null} mother - The mother of the person whose grandparents are to be retrieved.
+   * @returns {Observable<Person[]>} An observable containing an array of grandparents, which may include unknown persons if any are not found.
+   */
   getGrandparents(father: Person | null, mother: Person | null): Observable<Person[]> {
     const unknownPerson = this.createUnknownPerson();
 
@@ -103,11 +131,11 @@ export class FamilyService {
         const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn).pipe(
           catchError(() => of(unknownPerson))  // Fängt Fehler ab, wenn die Person nicht gefunden wird
         ) : of(unknownPerson);
-        
+
         const mother$ = relations.moth_refn ? this.getPerson(relations.moth_refn).pipe(
           catchError(() => of(unknownPerson))  // Fängt Fehler ab, wenn die Person nicht gefunden wird
         ) : of(unknownPerson);
-        
+
         return forkJoin([father$, mother$]);
       }),
       catchError(() => of([unknownPerson, unknownPerson]))  // Fängt Fehler ab, wenn die Relation nicht gefunden wird
@@ -118,11 +146,11 @@ export class FamilyService {
         const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn).pipe(
           catchError(() => of(unknownPerson))  // Fängt Fehler ab, wenn die Person nicht gefunden wird
         ) : of(unknownPerson);
-        
+
         const mother$ = relations.moth_refn ? this.getPerson(relations.moth_refn).pipe(
           catchError(() => of(unknownPerson))  // Fängt Fehler ab, wenn die Person nicht gefunden wird
         ) : of(unknownPerson);
-        
+
         return forkJoin([father$, mother$]);
       }),
       catchError(() => of([unknownPerson, unknownPerson]))  // Fängt Fehler ab, wenn die Relation nicht gefunden wird
@@ -131,14 +159,19 @@ export class FamilyService {
     return forkJoin([fatherParents$, motherParents$]).pipe(
       map(grandparentsArray => grandparentsArray.flat())
     );
-}
+  }
 
-
-
+  /**
+   * Creates a placeholder "unknown person" object with default values.
+   * 
+   * This is used when a person cannot be found or when placeholder data is needed.
+   *
+   * @returns {Person} A "Person" object with default or placeholder values.
+   */
   private createUnknownPerson(): Person {
     return {
       id: 0,
-      refn:'',
+      refn: '',
       name: '...',
       surn: '',
       givn: '',
