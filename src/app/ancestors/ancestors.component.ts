@@ -100,6 +100,17 @@ export class AncestorsComponent implements OnInit {
     this.showNoResultsMessage = false;
   }
 
+  /*
+  * sets the page back to initial setting
+  */
+refreshPage() {
+  this.setPersonIdByName("Daniel I Kempe");
+}
+
+showOverview() {
+  this.showImage('assets/images/Overview Stammbaum Kempe.jpg');
+}
+
   /**
    * Updates the family data based on the provided person ID.
    *

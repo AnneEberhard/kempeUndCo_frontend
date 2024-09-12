@@ -56,8 +56,8 @@ export class InfosComponent implements OnInit {
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer
   ) {
-    this.family_1 = sessionStorage.getItem('family_1');
-    this.family_2 = sessionStorage.getItem('family_2');
+    this.family_1 = localStorage.getItem('family_1');
+    this.family_2 = localStorage.getItem('family_2');
   }
 
   /**
@@ -65,8 +65,8 @@ export class InfosComponent implements OnInit {
    */
   ngOnInit(): void {
     this.loadAllInfo();
-    this.userId = sessionStorage.getItem('userId');
-    this.userEmail = sessionStorage.getItem('userEmail');
+    this.userId = localStorage.getItem('userId');
+    this.userEmail = localStorage.getItem('userEmail');
   }
 
   /**
@@ -454,6 +454,7 @@ export class InfosComponent implements OnInit {
       } else {
         this.comments[infoId] = [newComment];
       }
+      this.newComment[infoId] = '';
     });
   }
 

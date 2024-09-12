@@ -48,7 +48,7 @@ export class CommentService {
   * @returns {Observable<any>} An observable containing the response from the server.
   */
   addComment(comment: any): Observable<any> {
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -63,7 +63,7 @@ export class CommentService {
    * @returns {Observable<any>} An observable containing the updated comment.
    */
   updateComment(id: string, content: any): Observable<any> {
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -79,7 +79,7 @@ export class CommentService {
    * @returns {Observable<any>} An observable containing the response from the server.
    */
   deleteComment(id: string): Observable<any> {
-    const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
+    const token = localStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });

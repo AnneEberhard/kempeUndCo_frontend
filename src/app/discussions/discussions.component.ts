@@ -65,8 +65,8 @@ export class DiscussionsComponent implements OnInit {
         this.loadAllDiscussions();
       }
     });
-    this.userId = sessionStorage.getItem('userId');
-    this.userEmail = sessionStorage.getItem('userEmail');
+    this.userId = localStorage.getItem('userId');
+    this.userEmail = localStorage.getItem('userEmail');
   }
 
   /**

@@ -51,7 +51,7 @@ export class RecipeService {
    * @returns {Observable<any>} An observable containing the response from the server.
    */
   addRecipe(recipeData: any) {
-    const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
+    const token = localStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -70,7 +70,7 @@ export class RecipeService {
   * @returns {Observable<any>} An observable containing the response from the server.
   */
   updateRecipe(id: string, formData: FormData): Observable<any> {
-    const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
+    const token = localStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -89,7 +89,7 @@ export class RecipeService {
    * @returns {Observable<any>} An observable containing the response from the server.
    */
   deleteRecipe(id: string): Observable<any> {
-    const token = sessionStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
+    const token = localStorage.getItem('accessToken');  // JWT Token aus dem Session Storage
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });

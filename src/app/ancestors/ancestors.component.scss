@@ -12,15 +12,38 @@ section {
   padding: 4px;
 }
 
+.topBar {
+  display: flex;
+  justify-content: space-around;
+}
+
 .hint {
-  position: absolute;
-  top: 16px;
   padding: 8px;
+  height: max-content;
   border-radius: 10px;
   border: 2px solid rgba(100, 16, 32);
   background-color: antiquewhite;
   color: rgba(100, 16, 32);
   cursor: pointer;
+
+  &:hover {
+    box-shadow: 5px 5px 5px rgba(100, 16, 32);
+  }
+}
+
+.refreshContainer {
+  padding: 8px;
+  display: flex;
+  gap: 16px;
+
+  img {
+    height: 32px;
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 5px 5px 5px rgba(100, 16, 32);
+    }
+  }
 }
 
 /* search.scss */
@@ -28,7 +51,7 @@ section {
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
-  
+
   input {
     line-height: 1;
     font-size: 1rem;
@@ -133,7 +156,6 @@ section {
   align-items: center;
 }
 
-
 #filler {
   width: 100%;
   height: 100%;
@@ -168,7 +190,6 @@ section {
 .imageModal .close:hover {
   color: #000;
 }
-
 
 /* family-tree.scss */
 .familyTree {
@@ -237,7 +258,7 @@ section {
   }
 }
 
-@media(max-width: 750px) {
+@media (max-width: 750px) {
   .person {
     width: 120px;
     font-size: 14px;
@@ -245,7 +266,7 @@ section {
   }
 }
 
-@media(max-width: 580px) {
+@media (max-width: 580px) {
   .personList {
     display: flex;
     justify-content: center;
@@ -254,11 +275,11 @@ section {
   }
 
   .searchContainer {
-    margin-top:60px;
+    margin-top: 60px;
   }
 }
 
-@media(max-width: 400px) {
+@media (max-width: 400px) {
   #infoBar {
     width: 250px;
   }

@@ -54,8 +54,8 @@ export class RecipesComponent implements OnInit {
    */
   ngOnInit(): void {
     this.loadAllRecipes();
-    this.userId = sessionStorage.getItem('userId');
-    this.userEmail = sessionStorage.getItem('userEmail');
+    this.userId = localStorage.getItem('userId');
+    this.userEmail = localStorage.getItem('userEmail');
   }
 
 
@@ -428,6 +428,7 @@ export class RecipesComponent implements OnInit {
       } else {
         this.comments[recipeId] = [newComment];
       }
+      this.newComment[recipeId] = '';
     });
   }
 

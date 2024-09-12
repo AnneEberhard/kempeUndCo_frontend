@@ -1,43 +1,30 @@
 <section>
   <div class="contentContainer">
-    <div (click)="showHint()" class="hint">Hinweise</div>
-    <div
-      id="popUpHintContainer"
-      class="popUpInfoContainer dNone"
-      (click)="hideHint()"
-    >
-      <div class="popUpInfo">
-        <h4>Benutzerhinweise:</h4>
-        <p>
-          Um weitere Infos zu bekommen, bitte auf den Namen der Person klicken.
-          Um den Stammbaum einer anderen Person zu sehen, bitte auf diesen Namen
-          klicken.<br />
-          Wenn ihr Fehler seht, könnt ihr über die Infos zur Diskussionsseite
-          wechseln oder eine neue Diskussion starten. <br />
-        </p>
-        <h4>Vertraulichkeitshinweise:</h4>
-        <p>
-          Als Standard wird bei allen lebenden Personen nur der Name angezeigt,
-          keine weiteren Infos (wie Z.B. Geburtsdaten). Wenn ihr euren Namen
-          ausgeblendet haben wollt, informiert uns bitte. Ebenso, wenn ihr
-          einverstanden seid, mehr als nur euren Namen anzuzeigen.
-        </p>
+    <div class="topBar">
+      <div class="refreshContainer">
+        <img
+          (click)="refreshPage()"
+          src="assets/images/refresh.png"
+          alt="refresh"
+        />
+        <div (click)="showOverview()" class="hint">Übersicht</div>
       </div>
-    </div>
 
-    <div class="searchContainer">
-      <input [(ngModel)]="searchTerm" required placeholder="Name eingeben" />
-      <button (click)="search()">Suchen</button>
+      <div class="searchContainer">
+        <input [(ngModel)]="searchTerm" required placeholder="Name eingeben" />
+        <button (click)="search()">Suchen</button>
+      </div>
+      <div
+        *ngIf="searchResults.length > 0 || showNoResultsMessage"
+        class="popUpInfoContainer"
+        (click)="clearSearch()"
+      >
+        <div *ngIf="showNoResultsMessage" class="popUpInfo">
+          Keine Ergebnisse gefunden.
+        </div>
+      </div>
+      <div (click)="showHint()" class="hint">Hinweise</div>
     </div>
-    <div
-    *ngIf="searchResults.length > 0 || showNoResultsMessage"
-      class="popUpInfoContainer"
-      (click)="clearSearch()"
-    >
-    <div *ngIf="showNoResultsMessage" class="popUpInfo">
-      Keine Ergebnisse gefunden.
-    </div>
-  </div>
 
     <div *ngIf="searchResults.length > 0" class="searchResultsContainer">
       <div class="searchResults">
@@ -49,6 +36,33 @@
         </div>
       </div>
     </div>
+
+    
+      <div
+        id="popUpHintContainer"
+        class="popUpInfoContainer dNone"
+        (click)="hideHint()"
+      >
+        <div class="popUpInfo">
+          <h4>Benutzerhinweise:</h4>
+          <p>
+            Um weitere Infos zu bekommen, bitte auf den Namen der Person
+            klicken. Um den Stammbaum einer anderen Person zu sehen, bitte auf
+            diesen Namen klicken.<br />
+            Wenn ihr Fehler seht, könnt ihr über die Infos zur Diskussionsseite
+            wechseln oder eine neue Diskussion starten. <br />
+          </p>
+          <h4>Vertraulichkeitshinweise:</h4>
+          <p>
+            Als Standard wird bei allen lebenden Personen nur der Name
+            angezeigt, keine weiteren Infos (wie Z.B. Geburtsdaten). Wenn ihr
+            euren Namen ausgeblendet haben wollt, informiert uns bitte. Ebenso,
+            wenn ihr einverstanden seid, mehr als nur euren Namen anzuzeigen.
+          </p>
+        </div>
+      </div>
+
+
 
     <div class="familyTree" *ngIf="family">
       <div
@@ -125,55 +139,140 @@
       </div>
     </div>
   </div>
+
+  
+  <div
+  id="popUpHintContainer"
+  class="popUpInfoContainer dNone"
+  (click)="hideHint()"
+>
+  <div class="popUpInfo">
+    <h4>Benutzerhinweise:</h4>
+    <p>
+      Um weitere Infos zu bekommen, bitte auf den Namen der Person
+      klicken. Um den Stammbaum einer anderen Person zu sehen, bitte auf
+      diesen Namen klicken.<br />
+      Wenn ihr Fehler seht, könnt ihr über die Infos zur Diskussionsseite
+      wechseln oder eine neue Diskussion starten. <br />
+    </p>
+    <h4>Vertraulichkeitshinweise:</h4>
+    <p>
+      Als Standard wird bei allen lebenden Personen nur der Name
+      angezeigt, keine weiteren Infos (wie Z.B. Geburtsdaten). Wenn ihr
+      euren Namen ausgeblendet haben wollt, informiert uns bitte. Ebenso,
+      wenn ihr einverstanden seid, mehr als nur euren Namen anzuzeigen.
+    </p>
+  </div>
+</div>
+
   <div id="popUpInfoContainer" class="popUpInfoContainer dNone">
     <div (click)="hideInfos()" id="filler"></div>
     <div id="infoBar" *ngIf="selectedPerson">
       <div class="infoHeader">
         <h4>Personeninformationen</h4>
-        <button (click)="goToDiscussions()" class="discussionButton"
-        [disabled]="selectedPerson.name === 'vertraulich'">Diskussion</button>
+        <button
+          (click)="goToDiscussions()"
+          class="discussionButton"
+          [disabled]="selectedPerson.name === 'vertraulich'"
+        >
+          Diskussion
+        </button>
       </div>
       <div>
         <p><strong>ID:</strong> {{ selectedPerson.id }}</p>
-        <p *ngIf="selectedPerson.name"><strong>Name:</strong> {{ selectedPerson.name }}</p>
-        <p *ngIf="selectedPerson.surn"><strong>Nachname:</strong> {{ selectedPerson.surn }}</p>
-        <p *ngIf="selectedPerson.givn"><strong>Vorname:</strong> {{ selectedPerson.givn }}</p>
-        <p *ngIf="selectedPerson.name_rufname"><strong>Rufname:</strong> {{ selectedPerson.name_rufname }}</p>
-        <p *ngIf="selectedPerson.name_npfx"><strong>Namenspräfix:</strong> {{ selectedPerson.name_npfx }}</p>
-        <p *ngIf="selectedPerson.name_nick"><strong>Spitzname:</strong> {{ selectedPerson.name_nick }}</p>
-        <p *ngIf="selectedPerson.name_marnm"><strong>Ehename:</strong> {{ selectedPerson.name_marnm }}</p>
-        <p *ngIf="selectedPerson.sex"><strong>Geschlecht:</strong> {{ selectedPerson.sex }}</p>
-        <p *ngIf="selectedPerson.occu"><strong>Beruf:</strong> {{ selectedPerson.occu }}</p>
-        <p *ngIf="selectedPerson.birt_date"><strong>Geburtsdatum:</strong> {{ selectedPerson.birt_date }}</p>
-        <p *ngIf="selectedPerson.birt_plac"><strong>Geburtsort:</strong> {{ selectedPerson.birt_plac }}</p>
-        <p *ngIf="selectedPerson.deat_date"><strong>Sterbedatum:</strong> {{ selectedPerson.deat_date }}</p>
-        <p *ngIf="selectedPerson.deat_plac"><strong>Sterbeort:</strong> {{ selectedPerson.deat_plac }}</p>
-        <p *ngIf="selectedPerson.note"><strong>Notizen:</strong> {{ selectedPerson.note }}</p>
-        <p *ngIf="selectedPerson.chr_date"><strong>Taufdatum:</strong> {{ selectedPerson.chr_date }}</p>
-        <p *ngIf="selectedPerson.chr_plac"><strong>Taufort:</strong> {{ selectedPerson.chr_plac }}</p>
-        <p *ngIf="selectedPerson.chr_addr"><strong>Taufadresse:</strong> {{ selectedPerson.chr_addr }}</p>
-        <p *ngIf="selectedPerson.buri_date"><strong>Beerdigungsdatum:</strong> {{ selectedPerson.buri_date }}</p>
-        <p *ngIf="selectedPerson.buri_plac"><strong>Beerdigungsort:</strong> {{ selectedPerson.buri_plac }}</p>
-        <p *ngIf="selectedPerson.reli"><strong>Religion:</strong> {{ selectedPerson.reli }}</p>
-        <p *ngIf="selectedPerson.sour"><strong>Quellen:</strong> {{ selectedPerson.sour }}</p>
+        <p *ngIf="selectedPerson.name">
+          <strong>Name:</strong> {{ selectedPerson.name }}
+        </p>
+        <p *ngIf="selectedPerson.surn">
+          <strong>Nachname:</strong> {{ selectedPerson.surn }}
+        </p>
+        <p *ngIf="selectedPerson.givn">
+          <strong>Vorname:</strong> {{ selectedPerson.givn }}
+        </p>
+        <p *ngIf="selectedPerson.name_rufname">
+          <strong>Rufname:</strong> {{ selectedPerson.name_rufname }}
+        </p>
+        <p *ngIf="selectedPerson.name_npfx">
+          <strong>Namenspräfix:</strong> {{ selectedPerson.name_npfx }}
+        </p>
+        <p *ngIf="selectedPerson.name_nick">
+          <strong>Spitzname:</strong> {{ selectedPerson.name_nick }}
+        </p>
+        <p *ngIf="selectedPerson.name_marnm">
+          <strong>Ehename:</strong> {{ selectedPerson.name_marnm }}
+        </p>
+        <p *ngIf="selectedPerson.sex">
+          <strong>Geschlecht:</strong> {{ selectedPerson.sex }}
+        </p>
+        <p *ngIf="selectedPerson.occu">
+          <strong>Beruf:</strong> {{ selectedPerson.occu }}
+        </p>
+        <p *ngIf="selectedPerson.birt_date">
+          <strong>Geburtsdatum:</strong> {{ selectedPerson.birt_date }}
+        </p>
+        <p *ngIf="selectedPerson.birt_plac">
+          <strong>Geburtsort:</strong> {{ selectedPerson.birt_plac }}
+        </p>
+        <p *ngIf="selectedPerson.deat_date">
+          <strong>Sterbedatum:</strong> {{ selectedPerson.deat_date }}
+        </p>
+        <p *ngIf="selectedPerson.deat_plac">
+          <strong>Sterbeort:</strong> {{ selectedPerson.deat_plac }}
+        </p>
+        <p *ngIf="selectedPerson.note">
+          <strong>Notizen:</strong> {{ selectedPerson.note }}
+        </p>
+        <p *ngIf="selectedPerson.chr_date">
+          <strong>Taufdatum:</strong> {{ selectedPerson.chr_date }}
+        </p>
+        <p *ngIf="selectedPerson.chr_plac">
+          <strong>Taufort:</strong> {{ selectedPerson.chr_plac }}
+        </p>
+        <p *ngIf="selectedPerson.chr_addr">
+          <strong>Taufadresse:</strong> {{ selectedPerson.chr_addr }}
+        </p>
+        <p *ngIf="selectedPerson.buri_date">
+          <strong>Beerdigungsdatum:</strong> {{ selectedPerson.buri_date }}
+        </p>
+        <p *ngIf="selectedPerson.buri_plac">
+          <strong>Beerdigungsort:</strong> {{ selectedPerson.buri_plac }}
+        </p>
+        <p *ngIf="selectedPerson.reli">
+          <strong>Religion:</strong> {{ selectedPerson.reli }}
+        </p>
+        <p *ngIf="selectedPerson.sour">
+          <strong>Quellen:</strong> {{ selectedPerson.sour }}
+        </p>
         <!-- Bildverlinkungen  -->
         <p *ngIf="selectedPerson.obje_file_1">
-          <button (click)="showImage(selectedPerson.obje_file_1)">Bild 1 anzeigen</button>
+          <button (click)="showImage(selectedPerson.obje_file_1)">
+            Bild 1 anzeigen
+          </button>
         </p>
         <p *ngIf="selectedPerson.obje_file_2">
-          <button (click)="showImage(selectedPerson.obje_file_2)">Bild 2 anzeigen</button>
+          <button (click)="showImage(selectedPerson.obje_file_2)">
+            Bild 2 anzeigen
+          </button>
         </p>
         <p *ngIf="selectedPerson.obje_file_3">
-          <button (click)="showImage(selectedPerson.obje_file_3)">Bild 3 anzeigen</button>
+          <button (click)="showImage(selectedPerson.obje_file_3)">
+            Bild 3 anzeigen
+          </button>
         </p>
         <p *ngIf="selectedPerson.obje_file_4">
-          <button (click)="showImage(selectedPerson.obje_file_4)">Bild 4 anzeigen</button>
+          <button (click)="showImage(selectedPerson.obje_file_4)">
+            Bild 4 anzeigen
+          </button>
         </p>
         <p *ngIf="selectedPerson.obje_file_5">
-          <button (click)="showImage(selectedPerson.obje_file_5)">Bild 5 anzeigen</button>
+          <button (click)="showImage(selectedPerson.obje_file_5)">
+            Bild 5 anzeigen
+          </button>
         </p>
         <p *ngIf="selectedPerson.obje_file_6">
-          <button (click)="showImage(selectedPerson.obje_file_6)">Bild 6 anzeigen</button>
+          <button (click)="showImage(selectedPerson.obje_file_6)">
+            Bild 6 anzeigen
+          </button>
         </p>
       </div>
     </div>
@@ -181,7 +280,7 @@
   <div id="imageModal" class="imageModal dNone">
     <div class="imageModalContent">
       <span class="close" (click)="hideImage()">&times;</span>
-      <img [src]="currentImage" alt="Bild anzeigen">
+      <img [src]="currentImage" alt="Bild anzeigen" />
     </div>
   </div>
 </section>

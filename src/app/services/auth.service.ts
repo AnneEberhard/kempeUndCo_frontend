@@ -34,37 +34,37 @@ export class AuthService {
   }
 
   /**
-   * Sets the access token, refresh token, and login status flag in sessionStorage.
+   * Sets the access token, refresh token, and login status flag in localStorage.
    * @param {string} accessToken - The access token to set.
    * @param {string} refreshToken - The refresh token to set.
    */
   setTokens(accessToken: string, refreshToken: string, userId: string, userEmail:string, family_1: string, family_2: string): void {
-    sessionStorage.setItem('accessToken', accessToken);
-    sessionStorage.setItem('refreshToken', refreshToken);
-    sessionStorage.setItem('userId', userId);
-    sessionStorage.setItem('userEmail', userEmail);
-    sessionStorage.setItem('family_1', family_1);
-    sessionStorage.setItem('family_2', family_2);
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('userEmail', userEmail);
+    localStorage.setItem('family_1', family_1);
+    localStorage.setItem('family_2', family_2);
   }
 
   /**
-   * Retrieves the access token from sessionStorage.
+   * Retrieves the access token from localStorage.
    * if ensures that no error shows up in vscode
    * @returns {string | null} The access token if available, or null if not found.
    */
   getAccessToken(): string | null {
     if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('accessToken');
+      return localStorage.getItem('accessToken');
     }
     return null;
   }
 
   /**
-   * Retrieves the refresh token from sessionStorage.
+   * Retrieves the refresh token from localStorage.
    * @returns {string | null} The refresh token if available, or null if not found.
    */
   getRefreshToken(): string | null {
-    return sessionStorage.getItem('refreshToken');
+    return localStorage.getItem('refreshToken');
   }
 
   /**
@@ -82,12 +82,12 @@ export class AuthService {
       }
     });
     this.router.navigate(['/login']);
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('refreshToken');
-    sessionStorage.removeItem('userId');
-    sessionStorage.removeItem('userEmail');
-    sessionStorage.removeItem('family_1');
-    sessionStorage.removeItem('family_2');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('family_1');
+    localStorage.removeItem('family_2');
   }
 
   /**
@@ -126,11 +126,11 @@ export class AuthService {
   }
 
 /**
- * Stores the access token in `sessionStorage`.
+ * Stores the access token in `localStorage`.
  * @param {string} token - The access token to be stored.
  */
   setAccessToken(token: string): void {
-    sessionStorage.setItem('accessToken', token);
+    localStorage.setItem('accessToken', token);
   }
 
 /**
@@ -138,7 +138,7 @@ export class AuthService {
  * @returns {Observable<any>} An Observable containing the response from the refresh token request.
  */
   refreshToken(): Observable<any> {
-    const refreshToken = sessionStorage.getItem('refreshToken');
+    const refreshToken = localStorage.getItem('refreshToken');
     return this.http.post(`${environment.baseUrl}/login/refresh/`, { refresh: refreshToken });
   }
 }
