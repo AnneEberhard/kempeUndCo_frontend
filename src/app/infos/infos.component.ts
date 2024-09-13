@@ -78,6 +78,7 @@ export class InfosComponent implements OnInit {
       this.infos.sort((a, b) => {
         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
       });
+      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
       this.filteredInfos = this.infos;
       this.loadComments();
     });
@@ -129,6 +130,15 @@ export class InfosComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  }
+
+  /**
+   * toggles visibility of each entry
+   *
+   * @param {number} index - number of the *ngFor.
+   */
+  toggleVisibility(index: number): void {
+    this.infos[index].isHidden = !this.infos[index].isHidden;
   }
 
   /**

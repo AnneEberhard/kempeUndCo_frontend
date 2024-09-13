@@ -246,6 +246,7 @@ section {
 
 .mainPerson {
   font-weight: bold;
+  text-align: center;
   border: 2px solid rgb(100, 16, 32);
 }
 
@@ -299,4 +300,25 @@ section {
     max-height: auto;
     width: 80vw;
   }
+}
+
+.tree {
+  background: antiquewhite;
+  padding: 16px;
+  border-radius: 10px;
+  font-size:12px;
+  display: flex;
+}
+
+
+.no-border {
+  border: none;
+}
+
+td {
+  text-align: center;
+  border-top: 1px solid black;
+  border-left: none;
+  border-right:none;
+  border-bottom:none;
 }

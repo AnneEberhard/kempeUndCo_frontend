@@ -39,7 +39,8 @@ export class AncestorsComponent implements OnInit {
   ngOnInit() {
     this.familyService.getAllPersons().subscribe(data => {
       this.allPersonsList = data;
-      this.setPersonIdByName("Daniel I Kempe");
+      //this.setPersonIdByName("Daniel I Kempe");
+      this.setPersonIdByRefn('@I5@')
     });
   }
 
@@ -57,6 +58,22 @@ export class AncestorsComponent implements OnInit {
       console.error('Person mit dem angegebenen Namen nicht gefunden');
     }
   }
+
+
+    /**
+   * Sets the person ID based on the provided name and loads the corresponding family data.
+   *
+   * @param {string} refn - The unique refn of the person to find, independent of database.
+   */
+    setPersonIdByRefn(refn: string) {
+      const person = this.allPersonsList.find(p => p.refn === refn);
+      if (person) {
+        this.personId = person.id;
+        this.loadFamilyData();
+      } else {
+        console.error('Person mit dem angegebenen Namen nicht gefunden');
+      }
+    }
 
   /**
    * Loads family data for the currently selected person.
@@ -107,7 +124,7 @@ refreshPage() {
   this.setPersonIdByName("Daniel I Kempe");
 }
 
-showOverview() {
+showOverview2() {
   this.showImage('assets/images/Overview Stammbaum Kempe.jpg');
 }
 
@@ -198,5 +215,19 @@ showOverview() {
   hideImage(): void {
     this.currentImage = null;
     document.getElementById('imageModal')?.classList.add('dNone');
+  }
+
+
+showOverview() {
+  document.getElementById('popUpOverviewContainer')?.classList.remove('dNone');
+}
+
+  showPerson(refn: string) {
+    this.setPersonIdByRefn(refn);
+    this.hideOverview();
+  }
+
+  hideOverview() {
+    document.getElementById('popUpOverviewContainer')?.classList.add('dNone');
   }
 }

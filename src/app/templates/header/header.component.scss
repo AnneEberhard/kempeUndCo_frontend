@@ -1,7 +1,7 @@
 header {
     display: flex;
     flex-direction: column;
-    padding: 16px;
+    padding: 80px 16px;
     align-items: center;
     background-color: rgb(100,16,32);
     height: 100%;
@@ -40,16 +40,9 @@ header {
   
   
   .logo {
-    height: 120px;
+    display: none;
   }
-  
-  .translationButtons {
-    top: 32px;
-    color: rgba(19, 79, 92, 1);
-    &:hover {
-      scale: (1.1);
-    }
-  }
+
   
    .dNone {
     display: none !important;
@@ -75,9 +68,15 @@ header {
   @media(max-width:1000px) {
     header {
       display: none;
+      padding: 80px 16px;
 
       img {
         cursor: pointer;
+      }
+
+      .logo {
+        display: flex;
+        height: 120px;
       }
     }
 

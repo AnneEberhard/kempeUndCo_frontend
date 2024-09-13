@@ -1,5 +1,6 @@
 <section>
   <div class="contentContainer">
+    <!--top part with buttons and search-->
     <div class="topBar">
       <div class="refreshContainer">
         <img
@@ -26,6 +27,7 @@
       <div (click)="showHint()" class="hint">Hinweise</div>
     </div>
 
+    <!--the search results with position fixed-->
     <div *ngIf="searchResults.length > 0" class="searchResultsContainer">
       <div class="searchResults">
         <div
@@ -37,33 +39,7 @@
       </div>
     </div>
 
-    
-      <div
-        id="popUpHintContainer"
-        class="popUpInfoContainer dNone"
-        (click)="hideHint()"
-      >
-        <div class="popUpInfo">
-          <h4>Benutzerhinweise:</h4>
-          <p>
-            Um weitere Infos zu bekommen, bitte auf den Namen der Person
-            klicken. Um den Stammbaum einer anderen Person zu sehen, bitte auf
-            diesen Namen klicken.<br />
-            Wenn ihr Fehler seht, könnt ihr über die Infos zur Diskussionsseite
-            wechseln oder eine neue Diskussion starten. <br />
-          </p>
-          <h4>Vertraulichkeitshinweise:</h4>
-          <p>
-            Als Standard wird bei allen lebenden Personen nur der Name
-            angezeigt, keine weiteren Infos (wie Z.B. Geburtsdaten). Wenn ihr
-            euren Namen ausgeblendet haben wollt, informiert uns bitte. Ebenso,
-            wenn ihr einverstanden seid, mehr als nur euren Namen anzuzeigen.
-          </p>
-        </div>
-      </div>
-
-
-
+    <!--Family tree area-->
     <div class="familyTree" *ngIf="family">
       <div
         class="generation grandparents"
@@ -140,31 +116,32 @@
     </div>
   </div>
 
-  
+  <!--following are several popup container position absolute-->
+  <!--popUp for hints-->
   <div
-  id="popUpHintContainer"
-  class="popUpInfoContainer dNone"
-  (click)="hideHint()"
->
-  <div class="popUpInfo">
-    <h4>Benutzerhinweise:</h4>
-    <p>
-      Um weitere Infos zu bekommen, bitte auf den Namen der Person
-      klicken. Um den Stammbaum einer anderen Person zu sehen, bitte auf
-      diesen Namen klicken.<br />
-      Wenn ihr Fehler seht, könnt ihr über die Infos zur Diskussionsseite
-      wechseln oder eine neue Diskussion starten. <br />
-    </p>
-    <h4>Vertraulichkeitshinweise:</h4>
-    <p>
-      Als Standard wird bei allen lebenden Personen nur der Name
-      angezeigt, keine weiteren Infos (wie Z.B. Geburtsdaten). Wenn ihr
-      euren Namen ausgeblendet haben wollt, informiert uns bitte. Ebenso,
-      wenn ihr einverstanden seid, mehr als nur euren Namen anzuzeigen.
-    </p>
+    id="popUpHintContainer"
+    class="popUpInfoContainer dNone"
+    (click)="hideHint()"
+  >
+    <div class="popUpInfo">
+      <h4>Benutzerhinweise:</h4>
+      <p>
+        Um weitere Infos zu bekommen, bitte auf den Namen der Person klicken. Um
+        den Stammbaum einer anderen Person zu sehen, bitte auf diesen Namen
+        klicken.<br />
+        Wenn ihr Fehler seht, könnt ihr über die Infos zur Diskussionsseite
+        wechseln oder eine neue Diskussion starten. <br />
+      </p>
+      <h4>Vertraulichkeitshinweise:</h4>
+      <p>
+        Als Standard wird bei allen lebenden Personen nur der Name angezeigt,
+        keine weiteren Infos (wie Z.B. Geburtsdaten). Wenn ihr euren Namen
+        ausgeblendet haben wollt, informiert uns bitte. Ebenso, wenn ihr
+        einverstanden seid, mehr als nur euren Namen anzuzeigen.
+      </p>
+    </div>
   </div>
-</div>
-
+  <!--popUp for infos on a person-->
   <div id="popUpInfoContainer" class="popUpInfoContainer dNone">
     <div (click)="hideInfos()" id="filler"></div>
     <div id="infoBar" *ngIf="selectedPerson">
@@ -277,10 +254,227 @@
       </div>
     </div>
   </div>
+  <!--popUp for a picture-->
   <div id="imageModal" class="imageModal dNone">
     <div class="imageModalContent">
       <span class="close" (click)="hideImage()">&times;</span>
       <img [src]="currentImage" alt="Bild anzeigen" />
+    </div>
+  </div>
+
+  <!--popUp for overview-->
+  <div id="popUpOverviewContainer" class="popUpInfoContainer dNone">
+    
+    <div class="tree">
+      <table class="no-border" cellpadding="5" cellspacing="0">
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I1@')">Hans Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I5@')">Daniel (I) Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td (click)="showPerson('@I12@')">Enno Friedrich (I) Kempe</td>
+          <td></td>
+          <td></td>
+          <td (click)="showPerson('@I13@')">Johann Ludwig (I) Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I22@')">Daniel (II) Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td (click)="showPerson('@I32@')">Enno Friedrich (II P) Kempe
+            <br><i>Pewsumer Ast</i>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td (click)="showPerson('@I35@')">Daniel (III A) Kempe<br><i>Auricher Ast</i><br></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I241@')">Daniel (III P Kempe)</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I330@')">Daniel (IV A) Kempe</td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td (click)="showPerson('@I862@')">Paul (I PG) Kempe<br><i>Groothusener Zweig</i></td>
+          <td (click)="showPerson('@I870@')">Friedrich Wilhelm Otto (PD) Kempe<br><i>Düsseldorfer Zweig</i></td>
+          <td (click)="showPerson('@I872@')">Eberhard Johann Leonard Kempe<br><i>Dresdener Zweig</i></td>
+          <td></td>
+          <td (click)="showPerson('@I873@')">Enno Friedrich (III PB) Kempe<br><i>Bunder Zweig</i></td>
+          <td></td>
+          <td (click)="showPerson('@I874@')">Daniel (IV PW) Kempe<br><i>Weener Zweig</i></td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I2080@')">Johann Ludwig (II A) Kempe</td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border" (click)="showPerson('@I881@')">Klaas Heykes (I) Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I944@')">Alfred Friedrich Ferdinand Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I971@')">Fritz Georg Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td (click)="showPerson('@I2076@')">Daniel (V A) Kempe</td>
+          <td (click)="showPerson('@I2091@')">Johann Ludwig (III A) Kempe</td>
+        </tr>
+        <tr>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+        </tr>
+        <tr>
+          <td class="no-border" (click)="showPerson('@I887@')">Enno Friedrich Albert Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I950@')">Friedrich Karl Kempe</td>
+          <td class="no-border"></td>
+          <td (click)="showPerson('@I1079@')">Enno Friedrich (IV PB Kempe)</td>
+          <td (click)="showPerson('@I1080@')">Fonger Bellinga Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border" (click)="showPerson('@I2126@')">Henning Kempe</td>
+        </tr>
+      </table>
+      <span class="close" (click)="hideOverview()">X</span>
     </div>
   </div>
 </section>

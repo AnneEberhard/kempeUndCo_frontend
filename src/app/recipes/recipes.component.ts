@@ -58,19 +58,26 @@ export class RecipesComponent implements OnInit {
     this.userEmail = localStorage.getItem('userEmail');
   }
 
-
+  /**
+   * Loads all information from the recipe service and sorts them by the updated date.
+   */
   loadAllRecipes() {
     this.recipeService.getAllRecipes().subscribe(recipes => {
       this.recipes = recipes;
       this.recipes.sort((a, b) => {
         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
       });
+      this.recipes = recipes.map((recipe: any) => ({ ...recipe, isHidden: false }));
       this.filteredRecipes = this.recipes;
       this.loadComments();
     });
   }
 
-
+  /**
+   * Loads a specific recipe item by its ID and sanitizes its content for safe display.
+   *
+   * @param {string} recipeId - The ID of the recipe item to be loaded.
+   */
   loadRecipe(recipeId: string): void {
     this.recipeService.getRecipeById(recipeId).subscribe(
       recipe => {
@@ -110,6 +117,15 @@ export class RecipesComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  }
+
+  /**
+   * toggles visibility of each entry
+   *
+   * @param {number} index - number of the *ngFor.
+   */
+  toggleVisibility(index: number): void {
+    this.recipes[index].isHidden = !this.recipes[index].isHidden;
   }
 
   /**

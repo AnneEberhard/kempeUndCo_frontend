@@ -35,72 +35,92 @@
   </div>
 
   <!-- single recipes containers -->
-  <div *ngFor="let recipe of recipes" class="entryContainer">
-    <h2 [id]="recipe.id">{{ recipe.title }}</h2>
-    <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(recipe.content)"></div>
-    <div class="entryImagesContainer">
-      <div *ngFor="let imageUrl of getImageArray(recipe)">
-        <img
-          (click)="showPopUp('image', imageUrl)"
-          [src]="getThumbnailUrl(imageUrl)"
-          alt="recipe Image"
-        />
-      </div>
+  <div *ngFor="let recipe of recipes; let i = index" class="entryContainer">
+    <div class="entryHeader">
+      <h2 [id]="recipe.id">{{ recipe.title }}</h2>
+      <img
+        *ngIf="!recipe.isHidden"
+        src="assets/images/arrow_up.png"
+        alt="Show"
+        (click)="toggleVisibility(i)"
+      />
+      <img
+        *ngIf="recipe.isHidden"
+        src="assets/images/arrow_down.png"
+        alt="Hide"
+        (click)="toggleVisibility(i)"
+      />
     </div>
-    <div class="entryMeta">
-      <p>Author: {{ recipe.author_email }}</p>
-      <p>
-        <small>Erstellt am: {{ recipe.created_at | date : "short" }}</small
-        ><br />
-        <small
-          >Zuletzt bearbeitet: {{ recipe.updated_at | date : "short" }}</small
-        >
-      </p>
-      <div class="editOrDeleteContainer">
-        <img
-          src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-          *ngIf="recipe.author_email === userEmail"
-          (click)="showPopUp('edit', recipe)"
-        />
-        <img
-          src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-          *ngIf="recipe.author_email === userEmail"
-          (click)="showPopUp('delete', recipe)"
-        />
-      </div>
-    </div>
-    <!-- comment section of single recipes containers -->
-    <div *ngIf="comments[recipe.id]" class="comments">
-      <h4>Kommentare:</h4>
-      <div *ngFor="let comment of comments[recipe.id]" class="singleComment">
-        <div>
-          <p>{{ comment.content }}</p>
-          <small
-            >Von: {{ comment.author_email }} am
-            {{ comment.created_at | date : "short" }}</small
-          >
+    <div [hidden]="recipe.isHidden">
+      <div
+        [innerHTML]="sanitizer.bypassSecurityTrustHtml(recipe.content)"
+      ></div>
+      <div class="entryImagesContainer">
+        <div *ngFor="let imageUrl of getImageArray(recipe)">
+          <img
+            (click)="showPopUp('image', imageUrl)"
+            [src]="getThumbnailUrl(imageUrl)"
+            alt="recipe Image"
+          />
         </div>
+      </div>
+      <div class="entryMeta">
+        <p>Author: {{ recipe.author_email }}</p>
+        <p>
+          <small>Erstellt am: {{ recipe.created_at | date : "short" }}</small
+          ><br />
+          <small
+            >Zuletzt bearbeitet: {{ recipe.updated_at | date : "short" }}</small
+          >
+        </p>
         <div class="editOrDeleteContainer">
           <img
             src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-            *ngIf="comment.author_email === userEmail"
-            (click)="showPopUp('editComment', comment)"
+            *ngIf="recipe.author_email === userEmail"
+            (click)="showPopUp('edit', recipe)"
           />
           <img
             src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-            *ngIf="comment.author_email === userEmail"
-            (click)="showPopUp('deleteComment', comment)"
+            *ngIf="recipe.author_email === userEmail"
+            (click)="showPopUp('delete', recipe)"
           />
         </div>
       </div>
-      <div class="newComments">
-        <textarea
-          [(ngModel)]="newComment[recipe.id]"
-          placeholder="Neuen Kommentar hinzufügen..."
-        ></textarea>
-        <button (click)="addComment(recipe.id, newComment[recipe.id])">
-          +
-        </button>
+
+      <!-- comment section of single recipes containers -->
+      <div *ngIf="comments[recipe.id]" class="comments">
+        <h4>Kommentare:</h4>
+        <div *ngFor="let comment of comments[recipe.id]" class="singleComment">
+          <div>
+            <p>{{ comment.content }}</p>
+            <small
+              >Von: {{ comment.author_email }} am
+              {{ comment.created_at | date : "short" }}</small
+            >
+          </div>
+          <div class="editOrDeleteContainer">
+            <img
+              src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+              *ngIf="comment.author_email === userEmail"
+              (click)="showPopUp('editComment', comment)"
+            />
+            <img
+              src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+              *ngIf="comment.author_email === userEmail"
+              (click)="showPopUp('deleteComment', comment)"
+            />
+          </div>
+        </div>
+        <div class="newComments">
+          <textarea
+            [(ngModel)]="newComment[recipe.id]"
+            placeholder="Neuen Kommentar hinzufügen..."
+            (keyup.enter)="addComment(recipe.id, newComment[recipe.id])"
+          ></textarea>
+          <button (click)="addComment(recipe.id, newComment[recipe.id])">
+            +
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -165,7 +185,11 @@
           <div class="deleteImageContainer">
             <div *ngFor="let imageUrl of getImageArray(entry)">
               <div *ngIf="imageUrl" class="deleteImage">
-                <img [src]="getThumbnailUrl(imageUrl)" alt="Image" width="100" />
+                <img
+                  [src]="getThumbnailUrl(imageUrl)"
+                  alt="Image"
+                  width="100"
+                />
                 <button type="button" (click)="removeImageByUrl(imageUrl)">
                   Bild löschen
                 </button>

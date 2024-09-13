@@ -36,73 +36,81 @@
     </div>
   </div>
   <!-- single entry containers -->
-  <div *ngFor="let info of infos" class="entryContainer">
-    <h2 [id]="info.id">{{ info.title }}</h2>
-    <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
-    <div class="entryImagesContainer">
-      <div *ngFor="let imageUrl of getImageArray(info)">
-        <img
-          (click)="showPopUp('image', imageUrl)"
-          loading="lazy"
-          [src]="getThumbnailUrl(imageUrl)"
-          alt="Info Image"
-        />
-      </div>
+  <div *ngFor="let info of infos; let i = index" class="entryContainer">
+    <div class="entryHeader">
+      <h2 [id]="info.id">{{ info.title }}</h2>
+      <img *ngIf="!info.isHidden" src="assets/images/arrow_up.png" alt="Show" (click)="toggleVisibility(i)">
+      <img *ngIf="info.isHidden" src="assets/images/arrow_down.png" alt="Hide" (click)="toggleVisibility(i)">
     </div>
-    <div class="entryMeta">
-      <p>Author: {{ info.author_email }}</p>
-      <p>
-        <small>Erstellt am: {{ info.created_at | date : "short" }}</small
-        ><br />
-        <small
-          >Zuletzt bearbeitet: {{ info.updated_at | date : "short" }}</small
-        >
-      </p>
-      <div class="editOrDeleteContainer">
-        <img
-          src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-          *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('edit', info)"
-        />
-        <img
-          src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-          *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('delete', info)"
-        />
-      </div>
-    </div>
-    <!-- comment section of single entry containers -->
-    <div *ngIf="comments[info.id]" class="comments">
-      <h4>Kommentare:</h4>
 
-      <div *ngFor="let comment of comments[info.id]" class="singleComment">
-        <div>
-          <p>{{ comment.content }}</p>
-          <small
-            >Von: {{ comment.author_email }} am
-            {{ comment.created_at | date : "short" }}</small
-          >
+    <div [hidden]="info.isHidden">
+      <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
+      <div class="entryImagesContainer">
+        <div *ngFor="let imageUrl of getImageArray(info)">
+          <img
+            (click)="showPopUp('image', imageUrl)"
+            loading="lazy"
+            [src]="getThumbnailUrl(imageUrl)"
+            alt="Info Image"
+          />
         </div>
+      </div>
+      <div class="entryMeta">
+        <p>Author: {{ info.author_email }}</p>
+        <p>
+          <small>Erstellt am: {{ info.created_at | date : "short" }}</small
+          ><br />
+          <small
+            >Zuletzt bearbeitet: {{ info.updated_at | date : "short" }}</small
+          >
+        </p>
         <div class="editOrDeleteContainer">
           <img
             src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-            *ngIf="comment.author_email === userEmail"
-            (click)="showPopUp('editComment', comment)"
+            *ngIf="info.author_email === userEmail"
+            (click)="showPopUp('edit', info)"
           />
           <img
             src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-            *ngIf="comment.author_email === userEmail"
-            (click)="showPopUp('deleteComment', comment)"
+            *ngIf="info.author_email === userEmail"
+            (click)="showPopUp('delete', info)"
           />
         </div>
       </div>
-    </div>
-    <div class="newComments">
-      <textarea
-        [(ngModel)]="newComment[info.id]"
-        placeholder="Neuen Kommentar hinzufügen..."
-      ></textarea>
-      <button (click)="addComment(info.id, newComment[info.id])">+</button>
+      <!-- comment section of single entry containers -->
+      <div *ngIf="comments[info.id]" class="comments">
+        <h4>Kommentare:</h4>
+
+        <div *ngFor="let comment of comments[info.id]" class="singleComment">
+          <div>
+            <p>{{ comment.content }}</p>
+            <small
+              >Von: {{ comment.author_email }} am
+              {{ comment.created_at | date : "short" }}</small
+            >
+          </div>
+          <div class="editOrDeleteContainer">
+            <img
+              src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+              *ngIf="comment.author_email === userEmail"
+              (click)="showPopUp('editComment', comment)"
+            />
+            <img
+              src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+              *ngIf="comment.author_email === userEmail"
+              (click)="showPopUp('deleteComment', comment)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="newComments">
+        <textarea
+          [(ngModel)]="newComment[info.id]"
+          placeholder="Neuen Kommentar hinzufügen..."
+          (keyup.enter)="addComment(info.id, newComment[info.id])"
+        ></textarea>
+        <button (click)="addComment(info.id, newComment[info.id])">+</button>
+      </div>
     </div>
   </div>
 
@@ -124,25 +132,39 @@
           <h5>
             {{ entry.id ? "Beitrag bearbeiten" : "Neuen Beitrag erstellen" }}
           </h5>
-          <div *ngIf="family_1 && family_2 && family_1 !== 'null' && family_2 !== 'null' && family_1 !== '' && family_2 !== ''" class="chooseFamily">
+          <div
+            *ngIf="
+              family_1 &&
+              family_2 &&
+              family_1 !== 'null' &&
+              family_2 !== 'null' &&
+              family_1 !== '' &&
+              family_2 !== ''
+            "
+            class="chooseFamily"
+          >
             <h6>Für Familie(n)</h6>
             <label>
               <input
                 type="checkbox"
                 [value]="entry.family_1"
                 (change)="onFamilySelectionChange($event, entry.family_1)"
-                [checked]="entry.family_1 === family_1 || entry.family_2 === family_1"
+                [checked]="
+                  entry.family_1 === family_1 || entry.family_2 === family_1
+                "
                 name="selectedFamilies1"
               />
               {{ family_1 | capitalize }}
             </label>
-    
+
             <label>
               <input
                 type="checkbox"
                 [value]="entry.family_2"
                 (change)="onFamilySelectionChange($event, entry.family_2)"
-                [checked]="entry.family_1 === family_2 || entry.family_2 === family_2"
+                [checked]="
+                  entry.family_1 === family_2 || entry.family_2 === family_2
+                "
                 name="selectedFamilies2"
               />
               {{ family_2 | capitalize }}
@@ -190,7 +212,11 @@
           <div class="deleteImageContainer">
             <div *ngFor="let imageUrl of getImageArray(entry)">
               <div *ngIf="imageUrl" class="deleteImage">
-                <img [src]="getThumbnailUrl(imageUrl)" alt="Image" width="100" />
+                <img
+                  [src]="getThumbnailUrl(imageUrl)"
+                  alt="Image"
+                  width="100"
+                />
                 <button type="button" (click)="removeImageByUrl(imageUrl)">
                   Bild löschen
                 </button>
