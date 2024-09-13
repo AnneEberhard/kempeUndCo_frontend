@@ -19,6 +19,7 @@ section {
 
 .hint {
   padding: 8px;
+  max-width: fit-content;
   height: max-content;
   border-radius: 10px;
   border: 2px solid rgba(100, 16, 32);
@@ -250,12 +251,37 @@ section {
   border: 2px solid rgb(100, 16, 32);
 }
 
+/* overview.scss */
+.tree {
+  background: antiquewhite;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  display: flex;
+}
+
+.no-border {
+  border: none;
+}
+
+td {
+  text-align: center;
+  border-top: 1px solid black;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
 @media (max-width: 1200px) {
   .person {
     padding: 4px;
     width: 150px;
     min-height: 40px;
     font-size: 14px;
+  }
+
+  .topBar {
+    max-width: 90vw;
   }
 }
 
@@ -265,18 +291,24 @@ section {
     font-size: 14px;
     margin: 4px;
   }
+
+  .topBar {
+    margin-top: 60px;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 @media (max-width: 580px) {
+  .mobileNone {
+    display: none;
+  }
+
   .personList {
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
-  }
-
-  .searchContainer {
-    margin-top: 60px;
   }
 }
 
@@ -300,25 +332,4 @@ section {
     max-height: auto;
     width: 80vw;
   }
-}
-
-.tree {
-  background: antiquewhite;
-  padding: 16px;
-  border-radius: 10px;
-  font-size:12px;
-  display: flex;
-}
-
-
-.no-border {
-  border: none;
-}
-
-td {
-  text-align: center;
-  border-top: 1px solid black;
-  border-left: none;
-  border-right:none;
-  border-bottom:none;
 }

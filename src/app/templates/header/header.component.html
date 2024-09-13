@@ -1,12 +1,10 @@
 <div>
-    <img id="mobileLogo" src="assets/images/logo_641020.svg" alt="logo" (click)="showNav()"/>
+    <img id="mobileLogo" src="assets/images/menu.png" alt="logo" (click)="showNav()"/>
 </div> 
 
 <header>
-  <div>
-      <img class="logo" src="assets/images/logo_FFFFFF.svg" alt="logo" (click)="hideNav()"/>
-  </div>
   <nav class="headerlinks">
+    <div class="X" (click)="hideNav()">X</div>
     <a routerLink="/welcome" routerLinkActive="active">Startseite</a>
     <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>
     <a routerLink="/discussions" routerLinkActive="active">Diskussionen</a>

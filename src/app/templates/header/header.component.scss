@@ -6,10 +6,6 @@ header {
     background-color: rgb(100,16,32);
     height: 100%;
     transition: opacity 0.3s ease, transform 0.3s ease;
-
-    img {
-        width: 50px;
-    }
   }
 
   .headerlinks {
@@ -38,23 +34,8 @@ header {
     }
   }
   
-  
-  .logo {
+  .X {
     display: none;
-  }
-
-  
-   .dNone {
-    display: none !important;
-   }
-  
-   .bold {
-    font-weight: bold;
-   }
-  
-  .active {
-    font-weight: bold;
-    color: rgba(19, 79, 92, 1);
   }
 
   #mobileLogo {
@@ -68,15 +49,19 @@ header {
   @media(max-width:1000px) {
     header {
       display: none;
-      padding: 80px 16px;
+      position: fixed;
+      padding: 40px 16px;
 
-      img {
-        cursor: pointer;
-      }
-
-      .logo {
+      .X {
+        color:white;
+        font-size: 24px;
+        font-weight: bold;
         display: flex;
-        height: 120px;
+        cursor: pointer;
+
+        &:hover {
+          text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.5);
+        }
       }
     }
 
@@ -88,6 +73,7 @@ header {
 
       &:hover {
         height: 40px;
+        box-shadow: 5px 5px 5px rgba(100, 16, 32);
       }
     }
   }
