@@ -60,20 +60,20 @@ export class AncestorsComponent implements OnInit {
   }
 
 
-    /**
-   * Sets the person ID based on the provided name and loads the corresponding family data.
-   *
-   * @param {string} refn - The unique refn of the person to find, independent of database.
-   */
-    setPersonIdByRefn(refn: string) {
-      const person = this.allPersonsList.find(p => p.refn === refn);
-      if (person) {
-        this.personId = person.id;
-        this.loadFamilyData();
-      } else {
-        console.error('Person mit dem angegebenen Namen nicht gefunden');
-      }
+  /**
+ * Sets the person ID based on the provided name and loads the corresponding family data.
+ *
+ * @param {string} refn - The unique refn of the person to find, independent of database.
+ */
+  setPersonIdByRefn(refn: string) {
+    const person = this.allPersonsList.find(p => p.refn === refn);
+    if (person) {
+      this.personId = person.id;
+      this.loadFamilyData();
+    } else {
+      console.error('Person mit dem angegebenen Namen nicht gefunden');
     }
+  }
 
   /**
    * Loads family data for the currently selected person.
@@ -120,13 +120,13 @@ export class AncestorsComponent implements OnInit {
   /*
   * sets the page back to initial setting
   */
-refreshPage() {
-  this.setPersonIdByName("Daniel I Kempe");
-}
+  refreshPage() {
+    this.setPersonIdByName("Daniel I Kempe");
+  }
 
-showOverview2() {
-  this.showImage('assets/images/Overview Stammbaum Kempe.jpg');
-}
+  showOverview2() {
+    this.showImage('assets/images/Overview Stammbaum Kempe.jpg');
+  }
 
   /**
    * Updates the family data based on the provided person ID.
@@ -217,16 +217,25 @@ showOverview2() {
     document.getElementById('imageModal')?.classList.add('dNone');
   }
 
+  /**
+   * show family tree overview.
+   */
+  showOverview() {
+    document.getElementById('popUpOverviewContainer')?.classList.remove('dNone');
+  }
 
-showOverview() {
-  document.getElementById('popUpOverviewContainer')?.classList.remove('dNone');
-}
-
+  /**
+   * shows the clicked person from the overview and closes overview.
+   * @param {string} refn - refn of the person to display.
+   */
   showPerson(refn: string) {
     this.setPersonIdByRefn(refn);
     this.hideOverview();
   }
 
+  /**
+   * Hcloses overview of family Kempe.
+   */
   hideOverview() {
     document.getElementById('popUpOverviewContainer')?.classList.add('dNone');
   }
