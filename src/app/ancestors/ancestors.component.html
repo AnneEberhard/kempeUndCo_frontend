@@ -8,7 +8,7 @@
           src="assets/images/refresh.png"
           alt="refresh"
         />
-        <div (click)="showOverview()" class="hint mobileNone">Übersicht</div>
+        <div (click)="showOverview()" *ngIf="userKempe" class="hint mobileNone">Übersicht</div>
       </div>
 
       <div class="searchContainer">

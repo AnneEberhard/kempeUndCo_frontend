@@ -28,6 +28,7 @@ export class AncestorsComponent implements OnInit {
   showNoResultsMessage: boolean = false;
   selectedPerson: Person | null = null;
   currentImage: string | null = null;
+  userKempe = false;
 
   constructor(private familyService: FamilyService, private router: Router) {
     this.personId = 3571;
@@ -37,16 +38,20 @@ export class AncestorsComponent implements OnInit {
    * Initializes the component by fetching all persons and setting the ID for a specific person by name.
    */
   ngOnInit() {
+    this.checkUser();
     this.familyService.getAllPersons().subscribe(data => {
       this.allPersonsList = data;
-      //this.setPersonIdByName("Daniel I Kempe");
-      this.setPersonIdByRefn('@I5@')
+      if (this.userKempe) {
+        this.setPersonIdByRefn('@I5@')
+      } else {
+        this.setPersonIdByRefn('@I1151@')
+      }
     });
   }
 
   /**
    * Sets the person ID based on the provided name and loads the corresponding family data.
-   *
+   * no longer in use
    * @param {string} name - The full name of the person to find.
    */
   setPersonIdByName(name: string) {
@@ -72,6 +77,14 @@ export class AncestorsComponent implements OnInit {
       this.loadFamilyData();
     } else {
       console.error('Person mit dem angegebenen Namen nicht gefunden');
+    }
+  }
+
+  checkUser() {
+    const family_1 = localStorage.getItem('family_1');
+    const family_2 = localStorage.getItem('family_2');
+    if (family_1 == 'kempe' || family_2 =='kempe') {
+      this.userKempe = true;
     }
   }
 
