@@ -255,8 +255,10 @@ export class DiscussionsComponent implements OnInit {
   */
   updateEntry(formData: FormData): void {
     this.discussionService.updateEntry(this.entry.id, formData).subscribe((response: any) => {
-      const index = this.selectedDiscussion.entries.findIndex((e: any) => e.id === this.editEntryData.id);
-      this.selectedDiscussion.entries[index] = this.entry;
+      const index = this.selectedDiscussion.entries.findIndex((e: any) => e.id === this.entry.id);
+      if (index !== -1) {
+        this.selectedDiscussion.entries[index] = response;
+      }
       this.entry = null;
       this.resetEntryForm();
       this.hidePopUp();

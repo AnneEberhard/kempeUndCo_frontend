@@ -5,11 +5,11 @@
 <header>
   <nav class="headerlinks">
     <div class="X" (click)="hideNav()">X</div>
-    <a routerLink="/welcome" routerLinkActive="active">Startseite</a>
-    <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>
-    <a routerLink="/discussions" routerLinkActive="active">Diskussionen</a>
-    <a routerLink="/infos" routerLinkActive="active">Infos</a>
-    <a routerLink="/recipes" routerLinkActive="active">Familienrezepte</a>
+    <a routerLink="/welcome" routerLinkActive="active" (click)="onLinkClick()">Startseite</a>
+    <a routerLink="/ancestors" routerLinkActive="active" (click)="onLinkClick()">Stammfolge</a>
+    <a routerLink="/discussions" routerLinkActive="active" (click)="onLinkClick()">Diskussionen</a>
+    <a routerLink="/infos" routerLinkActive="active" (click)="onLinkClick()">Infos</a>
+    <a routerLink="/recipes" routerLinkActive="active" (click)="onLinkClick()">Familienrezepte</a>
     <div id="divider"></div>
     <button (click)="logout()">Ausloggen</button> 
   </nav>
