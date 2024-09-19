@@ -141,4 +141,14 @@ export class AuthService {
     const refreshToken = localStorage.getItem('refreshToken');
     return this.http.post(`${environment.baseUrl}/login/refresh/`, { refresh: refreshToken });
   }
+
+  /**
+   * handles user register in backend
+   * @param {any} userData - user info needed for regstration in backend
+   */
+  changePasswort(userData: any): Observable<any> {
+    const url = environment.baseUrl + '/change-password/';
+    return this.http.post<any>(url, userData);
+  }
+
 }

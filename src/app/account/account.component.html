@@ -1,1 +1,115 @@
-<p>account works!</p>
+<section>
+    <h1>Konto von</h1>
+    <span>{{ userEmail }}</span>
+    <h3>Möchtest du dein Passwort ändern?</h3>
+  <form #passwortForm="ngForm" (ngSubmit)="onSubmit(passwortForm)">
+    <div class="registerInputBox">
+        <label class="passwort" for="password"
+          >Altes Passwort:
+          </label
+        >
+        <div class="passwordContainer">
+          <input
+            [type]="oldPasswordVisible ? 'text' : 'password'"
+            id="oldPassword"
+            name="oldPassword"
+            [(ngModel)]="formData.oldPassword"
+            required
+          />
+          <div
+            type="button"
+            (click)="togglePasswordVisibility('oldPassword')"
+            class="togglePassword"
+          >
+            <span *ngIf="oldPasswordVisible">👁️</span>
+            <span *ngIf="!oldPasswordVisible">🙈</span>
+          </div>
+        </div>
+      </div>
+    <div class="registerInputBox">
+      <label class="passwort" for="password"
+        >Neues Passwort:
+        <div class="labelInfoText" (click)="showRules()">
+          (Passwortregeln)
+        </div></label
+      >
+      <div class="passwordContainer">
+        <input
+          [type]="newPasswordVisible ? 'text' : 'password'"
+          id="newPassword"
+          name="newPassword"
+          [(ngModel)]="formData.newPassword"
+          required
+        />
+        <div
+          type="button"
+          (click)="togglePasswordVisibility('newPassword')"
+          class="togglePassword"
+        >
+          <span *ngIf="newPasswordVisible">👁️</span>
+          <span *ngIf="!newPasswordVisible">🙈</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert" *ngIf="showErrorPasswordAlert">
+      Das Passwort muss mindestens 8 Zeichen lang sein und mindestens je einen
+      Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes Sonderzeichen
+      (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
+      enthalten.
+    </div>
+    <div class="registerInputBox">
+      <label for="confirmPassword">Passwort Wiederholung:</label>
+      <div class="passwordContainer">
+        <input
+          [type]="confirmPasswordVisible ? 'text' : 'password'"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="formData.confirmPassword"
+          required
+        />
+        <div
+          type="button"
+          (click)="togglePasswordVisibility('confirm')"
+          class="togglePassword"
+        >
+          <span *ngIf="confirmPasswordVisible">👁️</span>
+          <span *ngIf="!confirmPasswordVisible">🙈</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert" *ngIf="showErrorPasswordMatchAlert">
+      Passwörter entsprechen einander nicht.
+    </div>
+    <div>
+        <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
+      </div>
+      <button
+        id="submitButton"
+        type="submit"
+        [disabled]="!passwortForm.valid || this.sent"
+      >
+        {{ this.buttonText }}
+      </button>
+  </form>
+  <div
+  id="popUpInfoContainer"
+  class="popUpInfoContainer dNone"
+  (click)="hideRules()"
+>
+  <div class="popUpInfo">
+    <h4>Passwort-Regeln:</h4>
+    <p>
+      Das Passwort muss mindestens 8 Zeichen lang sein und mindestens je
+      einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes
+      Sonderzeichen
+      (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
+      enthalten.
+    </p>
+  </div>
+</div>
+<div id="popUpContainer" class="popUpInfoContainer dNone">
+    <div class="popUpInfo">
+      <h1 id="infoBox" class="center"></h1>
+    </div>
+  </div>
+</section>

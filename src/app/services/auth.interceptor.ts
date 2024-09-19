@@ -35,12 +35,21 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           // Handle 401 error and attempt to refresh the token
           return handle401Error(req, next, authService);
         }
-        return throwError(() => new Error(error.message));
+         // Fehlerbehandlung für andere Fehler, z. B. 400 Bad Request
+         let errorMessage = error.error ? error.error : error.message;
+
+         // Gebe die komplette Fehlerantwort weiter
+         return throwError(() => error);
       })
     );
   }
   
-  return next(req);
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      // Fehlerbehandlung für Requests ohne Token
+      return throwError(() => error);
+    })
+  );
 };
 
 const handle401Error = (request: HttpRequest<any>, next: HttpHandlerFn, authService: AuthService): Observable<HttpEvent<any>> => {

@@ -1,0 +1,111 @@
+  #registerBox {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 500px;
+    padding: 16px 48px;
+    background-color: rgba(212, 175, 55, 0.2);
+    justify-content: center;
+    margin: 16px;
+    border-radius: 20px;
+    width: 70vw;
+  
+    h2 {
+      margin-bottom: 28px;
+    }
+  }
+  
+  .passwort {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  
+  .labelInfoText {
+    font-size: 10px;
+    cursor: pointer;
+    &:hover {
+      font-weight: bold;
+    }
+  }
+  
+  .registerInputBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    gap: 16px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    background-color: antiquewhite;
+    padding: 16px;
+    border-radius: 10px;
+  
+    input {
+      line-height: 1.5;
+      font-size: 1rem;
+      color: inherit;
+      padding: 1rem;
+      border: solid 1px #b2b8b8;
+      appearance: none;
+      background: transparent;
+      border-radius: 0.25rem;
+      min-width: 20vw;
+    }
+  
+    button {
+      background-color: rgb(100, 16, 32);
+      margin-top: 16px;
+      color: white;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      line-height: 1.5;
+      padding: 1rem;
+      min-height: 16px;
+      font-size: 1rem;
+      line-height: 1.5;
+      font-size: 1rem;
+      border: none;
+      width: 100%;
+  
+      &:hover {
+        background-color: rgb(139, 26, 16);
+      }
+  
+      &:disabled {
+        background-color: darkgray;
+        cursor: not-allowed;
+      }
+    }
+  }
+  
+  .alert {
+    font-size: 12px;
+    width: 100%;
+    text-align: left;
+    color: red;
+  }
+  
+  
+  .error-message {
+    color: red;
+  }
+  
+  
+  .passwordContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .togglePassword {
+    max-width: fit-content;
+    background-color: rgba(100, 16, 32, 0.5);
+    line-height: 1.5;
+    padding: 1rem;
+    border-radius: 0px 10px 10px 0;
+    cursor: pointer;
+  }

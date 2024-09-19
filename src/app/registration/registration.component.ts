@@ -87,7 +87,6 @@ export class RegistrationComponent {
     this.errorMessage = '';
     if (this.checkForm(form)) {
       const userData = this.assembleData(form);
-      console.log(userData);
       this.registerUser(userData)
     }
   }
