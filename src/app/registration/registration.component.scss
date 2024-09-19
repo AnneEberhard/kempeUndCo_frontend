@@ -178,3 +178,19 @@ meine Addition: label, damit es nicht springt und zentriert ist*/
 .error-message {
   color: red;
 }
+
+
+.passwordContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.togglePassword {
+  max-width: fit-content;
+  background-color: rgba(100, 16, 32, 0.5);
+  line-height: 1.5;
+  padding: 1rem;
+  border-radius: 0px 10px 10px 0;
+  cursor: pointer;
+}

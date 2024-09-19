@@ -20,8 +20,17 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  passwordVisible: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) { }
+
+ /**
+  * toggles between passwort visible and not
+  */
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
 
   /**
   * starts login, sets storage token in case of success and renders errors in case of failure

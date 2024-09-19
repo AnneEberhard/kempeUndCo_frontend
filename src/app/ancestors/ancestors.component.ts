@@ -134,7 +134,11 @@ export class AncestorsComponent implements OnInit {
   * sets the page back to initial setting
   */
   refreshPage() {
-    this.setPersonIdByName("Daniel I Kempe");
+    if (this.userKempe) {
+      this.setPersonIdByRefn('@I5@')
+    } else {
+      this.setPersonIdByRefn('@I1151@')
+    }
   }
 
   showOverview2() {

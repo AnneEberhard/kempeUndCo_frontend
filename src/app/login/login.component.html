@@ -21,17 +21,24 @@
         id="email"
         placeholder="Emailadresse"
       />
-      <input
-        required
-        type="password"
-        name="password"
-        [(ngModel)]="password"
-        id="password"
-        placeholder="Passwort"
-      />
+      <div class="passwordContainer">
+        <input
+          required
+          [type]="passwordVisible ? 'text' : 'password'"
+          name="password"
+          [(ngModel)]="password"
+          id="password"
+          placeholder="Passwort"
+        />
+        <div type="button" (click)="togglePasswordVisibility()" class="togglePassword">
+          <span *ngIf="passwordVisible">👁️</span>
+          <span *ngIf="!passwordVisible">🙈</span>
+        </div>
+      </div>
       <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
       <button type="submit" [disabled]="!form.valid">Einloggen</button>
     </form>
+    
    
 
     <a class="center" routerLink="/forgot">Passwort vergessen?</a>

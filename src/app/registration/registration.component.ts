@@ -24,6 +24,8 @@ export class RegistrationComponent {
   errorMessage: string = '';
   buttonText: string = 'Absenden';
   sent: boolean = false;
+  passwordVisible: boolean = false;
+  confirmPasswordVisible: boolean = false;
 
   formData = {
     email: '',
@@ -38,6 +40,18 @@ export class RegistrationComponent {
   };
 
   constructor(private authService: AuthService, private router: Router) { }
+
+ /**
+  * toggles between passwort visible and not
+  */
+ togglePasswordVisibility(mode: string) {
+  if (mode =='passwort') {
+    this.passwordVisible = !this.passwordVisible;
+  } else {
+    this.confirmPasswordVisible = !this.confirmPasswordVisible;
+  }
+}
+
 
   /**
    * handles look and info on selected family checkboxes
@@ -242,6 +256,7 @@ export class RegistrationComponent {
   * renders info of success in case the backend responded well
   */
   renderInfo() {
+    document.getElementById('popUpContainer')?.classList.remove('dNone');
     let div = document.getElementById('infoBox');
     if (div) {
       if (this.formData.guarantor) {
@@ -265,7 +280,7 @@ export class RegistrationComponent {
   * renders link to forgot passwort component in case user already exists
   */
   renderPasswordForgotLink() {
-    const div = document.getElementById('infoBox');
+    const div = document.getElementById('forgotLink');
     if (div) {
       const link = document.createElement('a');
       link.textContent = 'Passwort vergessen?';

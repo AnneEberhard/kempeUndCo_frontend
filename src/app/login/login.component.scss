@@ -1,73 +1,86 @@
 #loginBox {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-height: 500px;
-    padding: 48px;
-    background-color: rgba(212,175,55, 0.2);
-    justify-content: center;
-    margin: 16px;
-    border-radius: 20px;
-  
-    h2 {
-      margin-bottom: 28px;
-    }
-  
-    a {
-        cursor: pointer;
-        text-decoration: none;
-        color:rgb(100,16,32);
-      
-        &:hover {
-          font-weight: 600;
-        }
-      }
-  
-  }
-  
-  
-  form {
-      display: flex;
-      flex-direction: column;
-  
-      input {
-          line-height: 1.5;
-          font-size: 1rem;
-          margin-bottom: 16px;
-          color: inherit;
-          padding: 1rem;
-          border: solid 1px #B2B8B8;
-          appearance: none;
-          background: transparent;
-          border-radius: 0.25rem;
-           ::placeholder {
-              color: #B2B8B8;
-           }
-        }
-      
-        button {
-          background-color: rgb(100,16,32);
-          color: white !important;
-          border-radius: 10px;
-          cursor: pointer;
-          width: 100%;
-          line-height: 1.5;
-          padding: 1rem;
-          min-height: 16px;
-          min-width: 16px;
-          font-size: 1rem;
-          border: none;
-          color: inherit;
-  
-          &:hover {
-              background-color: rgb(139, 26, 16);
-          }
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 500px;
+  padding: 48px;
+  background-color: rgba(212, 175, 55, 0.2);
+  justify-content: center;
+  margin: 16px;
+  border-radius: 20px;
 
-          &:disabled {
-            background-color: darkgray;
-            cursor: not-allowed;
-          }
-        }
+  h2 {
+    margin-bottom: 28px;
+  }
+
+  a {
+    cursor: pointer;
+    text-decoration: none;
+    color: rgb(100, 16, 32);
+
+    &:hover {
+      font-weight: 600;
     }
-  
-  
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+
+  input {
+    line-height: 1.5;
+    flex: 1;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    color: inherit;
+    padding: 1rem;
+    border: solid 1px #b2b8b8;
+    appearance: none;
+    background: transparent;
+    border-radius: 0.25rem;
+    ::placeholder {
+      color: #b2b8b8;
+    }
+  }
+
+  button {
+    background-color: rgb(100, 16, 32);
+    color: white !important;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    line-height: 1.5;
+    padding: 1rem;
+    min-height: 16px;
+    min-width: 16px;
+    font-size: 1rem;
+    border: none;
+    color: inherit;
+
+    &:hover {
+      background-color: rgb(139, 26, 16);
+    }
+
+    &:disabled {
+      background-color: darkgray;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.passwordContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.togglePassword {
+  max-width: fit-content;
+  background-color: rgba(100, 16, 32, 0.5);
+  line-height: 1.5;
+  padding: 1rem;
+  border-radius: 0px 10px 10px 0;
+  margin-bottom: 16px;
+  cursor: pointer;
+}

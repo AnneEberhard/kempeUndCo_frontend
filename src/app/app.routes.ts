@@ -14,6 +14,7 @@ import { PublicLayoutComponent } from './templates/public-layout/public-layout.c
 import { ActivationSuccessComponent } from './activation-success/activation-success.component';
 import { ActivationFailureComponent } from './activation-failure/activation-failure.component';
 import { ResetComponent } from './reset/reset.component';
+import { AccountComponent } from './account/account.component';
 
 export const routes: Routes = [
     {
@@ -40,7 +41,8 @@ export const routes: Routes = [
             { path: 'discussions', component: DiscussionsComponent },
             { path: 'discussions/:id', component: DiscussionsComponent },
             { path: 'infos', component: InfosComponent },
-            { path: 'recipes', component: RecipesComponent }
+            { path: 'recipes', component: RecipesComponent },
+            { path: 'account', component: AccountComponent }
         ]
     }
 ];
