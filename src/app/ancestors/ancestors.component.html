@@ -268,35 +268,11 @@
     <div class="tree">
       <table class="no-border" cellpadding="5" cellspacing="0">
         <tr>
+          <td class="no-border">Klickt auf Namen für mehr Infos</td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I1@')">Hans Kempe</td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-        </tr>
-        <tr>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-        </tr>
-        <tr>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I5@')">Daniel (I) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I1@')">Hans Kempe</td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
@@ -318,10 +294,34 @@
         <tr>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td (click)="showPerson('@I12@')">Enno Friedrich (I) Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="click no-border" (click)="showPerson('@I5@')">Daniel (I) Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="click" (click)="showPerson('@I12@')">Enno Friedrich (I) Kempe</td>
           <td></td>
           <td></td>
-          <td (click)="showPerson('@I13@')">Johann Ludwig (I) Kempe</td>
+          <td class="click" (click)="showPerson('@I13@')">Johann Ludwig (I) Kempe</td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
@@ -342,7 +342,7 @@
         <tr>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I22@')">Daniel (II) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I22@')">Daniel (II) Kempe</td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
@@ -365,7 +365,7 @@
         </tr>
         <tr>
           <td class="no-border"></td>
-          <td (click)="showPerson('@I32@')">Enno Friedrich (II P) Kempe
+          <td class="click" (click)="showPerson('@I32@')">Enno Friedrich (II P) Kempe
             <br><i>Pewsumer Ast</i>
           </td>
           <td></td>
@@ -374,7 +374,7 @@
           <td></td>
           <td></td>
           <td></td>
-          <td (click)="showPerson('@I35@')">Daniel (III A) Kempe<br><i>Auricher Ast</i><br></td>
+          <td class="click" (click)="showPerson('@I35@')">Daniel (III A) Kempe<br><i>Auricher Ast</i><br></td>
           <td class="no-border"></td>
         </tr>
         <tr>
@@ -391,14 +391,14 @@
         </tr>
         <tr>
           <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I241@')">Daniel (III P Kempe)</td>
+          <td class="click no-border" (click)="showPerson('@I241@')">Daniel (III P Kempe)</td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I330@')">Daniel (IV A) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I330@')">Daniel (IV A) Kempe</td>
           <td class="no-border"></td>
         </tr>
         <tr>
@@ -414,16 +414,40 @@
           <td class="no-border"></td>
         </tr>
         <tr>
-          <td (click)="showPerson('@I862@')">Paul (I PG) Kempe<br><i>Groothusener Zweig</i></td>
-          <td (click)="showPerson('@I870@')">Friedrich Wilhelm Otto (PD) Kempe<br><i>Düsseldorfer Zweig</i></td>
-          <td (click)="showPerson('@I872@')">Eberhard Johann Leonard Kempe<br><i>Dresdener Zweig</i></td>
+          <td class="click" (click)="showPerson('@I862@')">Paul (I PG) Kempe<br><i>Groothusener Zweig</i></td>
+          <td class="click" (click)="showPerson('@I870@')">Friedrich Wilhelm Otto (PD) Kempe<br><i>Düsseldorfer Zweig</i></td>
+          <td class="click" (click)="showPerson('@I872@')">Eberhard Johann Leonard Kempe<br><i>Dresdener Zweig</i></td>
           <td></td>
-          <td (click)="showPerson('@I873@')">Enno Friedrich (III PB) Kempe<br><i>Bunder Zweig</i></td>
+          <td class="click"(click)="showPerson('@I873@')">Enno Friedrich (III PB) Kempe<br><i>Bunder Zweig</i></td>
           <td></td>
-          <td (click)="showPerson('@I874@')">Daniel (IV PW) Kempe<br><i>Weener Zweig</i></td>
+          <td class="click"(click)="showPerson('@I874@')">Daniel (IV PW) Kempe<br><i>Weener Zweig</i></td>
           <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I2080@')">Johann Ludwig (II A) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I2080@')">Johann Ludwig (II A) Kempe</td>
           <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="click no-border" (click)="showPerson('@I881@')">Klaas Heykes (I) Kempe</td>
+          <td class="no-border"></td>
+          <td class="click no-border" (click)="showPerson('@I944@')">Alfred Friedrich Ferdinand Kempe</td>
+          <td class="no-border"></td>
+          <td class="click no-border" (click)="showPerson('@I971@')">Fritz Georg Kempe</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="click" (click)="showPerson('@I2076@')">Daniel (V A) Kempe</td>
+          <td class="click" (click)="showPerson('@I2091@')">Johann Ludwig (III A) Kempe</td>
         </tr>
         <tr>
           <td class="no-border">|</td>
@@ -434,44 +458,20 @@
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-        </tr>
-        <tr>
-          <td class="no-border" (click)="showPerson('@I881@')">Klaas Heykes (I) Kempe</td>
-          <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I944@')">Alfred Friedrich Ferdinand Kempe</td>
-          <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I971@')">Fritz Georg Kempe</td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td (click)="showPerson('@I2076@')">Daniel (V A) Kempe</td>
-          <td (click)="showPerson('@I2091@')">Johann Ludwig (III A) Kempe</td>
-        </tr>
-        <tr>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border">|</td>
         </tr>
         <tr>
-          <td class="no-border" (click)="showPerson('@I887@')">Enno Friedrich Albert Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I887@')">Enno Friedrich Albert Kempe</td>
           <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I950@')">Friedrich Karl Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I950@')">Friedrich Karl Kempe</td>
           <td class="no-border"></td>
-          <td (click)="showPerson('@I1079@')">Enno Friedrich (IV PB Kempe)</td>
-          <td (click)="showPerson('@I1080@')">Fonger Bellinga Kempe</td>
+          <td class="click" (click)="showPerson('@I1079@')">Enno Friedrich (IV PB Kempe)</td>
+          <td class="click" (click)="showPerson('@I1080@')">Fonger Bellinga Kempe</td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="no-border" (click)="showPerson('@I2126@')">Henning Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I2126@')">Henning Kempe</td>
         </tr>
       </table>
       <span class="close" (click)="hideOverview()">X</span>

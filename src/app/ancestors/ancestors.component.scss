@@ -270,6 +270,11 @@ td {
   border-left: none;
   border-right: none;
   border-bottom: none;
+  cursor: default;
+}
+
+.click {
+  cursor: pointer !important;
 }
 
 @media (max-width: 1200px) {
