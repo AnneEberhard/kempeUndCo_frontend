@@ -71,6 +71,8 @@ export class AncestorsComponent implements OnInit {
  * @param {string} refn - The unique refn of the person to find, independent of database.
  */
   setPersonIdByRefn(refn: string) {
+    console.log(refn);
+    console.log(this.allPersonsList);
     const person = this.allPersonsList.find(p => p.refn === refn);
     if (person) {
       this.personId = person.id;
@@ -80,6 +82,9 @@ export class AncestorsComponent implements OnInit {
     }
   }
 
+  /**
+   * checks if user belongs to family kempe or huenten based on local storage.
+   */
   checkUser() {
     const family_1 = localStorage.getItem('family_1');
     const family_2 = localStorage.getItem('family_2');
@@ -139,10 +144,6 @@ export class AncestorsComponent implements OnInit {
     } else {
       this.setPersonIdByRefn('@I1151@')
     }
-  }
-
-  showOverview2() {
-    this.showImage('assets/images/Overview Stammbaum Kempe.jpg');
   }
 
   /**
@@ -251,7 +252,7 @@ export class AncestorsComponent implements OnInit {
   }
 
   /**
-   * Hcloses overview of family Kempe.
+   * Closes overview of family Kempe.
    */
   hideOverview() {
     document.getElementById('popUpOverviewContainer')?.classList.add('dNone');
