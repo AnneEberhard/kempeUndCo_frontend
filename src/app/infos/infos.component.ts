@@ -353,7 +353,7 @@ export class InfosComponent implements OnInit {
   saveEntry(): void {
     const formData = this.assembleFormData();
     if (!this.entry.family_1 && !this.entry.family_2) {
-      alert('Bitte wählen Sie mindestens eine Familie aus.');
+      alert('Bitte wähle mindestens eine Familie aus.');
       return;
     }
     if (this.entry.id) {
@@ -403,8 +403,9 @@ export class InfosComponent implements OnInit {
   addEntry(formData: FormData) {
     this.infoService.addInfo(formData).subscribe((response: any) => {
       this.infos.push(response);
-      this.entry = null;
     });
+    this.entry = null;
+    this.loadAllInfo();
     this.hidePopUp();
     this.resetEntryForm();
   }
