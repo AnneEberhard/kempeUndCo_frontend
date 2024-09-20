@@ -258,6 +258,8 @@ section {
   border-radius: 10px;
   font-size: 12px;
   display: flex;
+  overflow: auto;
+  max-height: 80vh;
 }
 
 .no-border {

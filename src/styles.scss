@@ -81,6 +81,7 @@ section {
   border-radius: 10px;
   width: 400px;
   padding: 48px;
+  overflow: auto;
 }
 
 .searchContainer {
@@ -174,7 +175,12 @@ textarea {
   margin-top: 8px;
 }
 
-
+@media (max-width:600px) {
+  .subheader {
+    flex-direction: column;
+    align-items: center;
+  }
+}
 /* scroll */
 ::-webkit-scrollbar {
   width: 12px; /* Breite des Scrollbalkens */

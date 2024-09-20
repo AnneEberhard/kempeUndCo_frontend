@@ -81,6 +81,7 @@ form {
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+  max-height: 80vh;
 
   .editInput {
     line-height: 1.5;
