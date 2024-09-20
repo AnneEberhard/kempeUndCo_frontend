@@ -244,6 +244,7 @@ export class DiscussionsComponent implements OnInit {
     formData.append('discussion', this.selectedDiscussion.id);
     this.discussionService.addEntry(formData).subscribe((response) => {
       this.selectedDiscussion.entries.push(response);
+      this.loadDiscussion(this.selectedDiscussion.person.id);
       this.hidePopUp();
       this.resetEntryForm();
     });
@@ -261,6 +262,7 @@ export class DiscussionsComponent implements OnInit {
         this.selectedDiscussion.entries[index] = response;
       }
       this.entry = null;
+      this.loadDiscussion(this.selectedDiscussion.person.id);
       this.resetEntryForm();
       this.hidePopUp();
     });

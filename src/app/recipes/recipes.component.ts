@@ -347,6 +347,7 @@ export class RecipesComponent implements OnInit {
         this.recipes[index] = response;
       }
       this.entry = null;
+      this.loadAllRecipes();
       this.resetEntryForm();
       this.hidePopUp();
     });
@@ -385,6 +386,7 @@ export class RecipesComponent implements OnInit {
       this.entry.title = '';
       this.entry.content = '';
     });
+    this.loadAllRecipes();
     this.hidePopUp();
     this.resetEntryForm();
   }
