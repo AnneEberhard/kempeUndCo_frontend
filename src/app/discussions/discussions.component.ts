@@ -202,6 +202,7 @@ export class DiscussionsComponent implements OnInit {
     } else if (mode === 'image') {
       this.showImageUrl = data;
     } else if (mode === 'delete') {
+      this.entry = null;
       this.entryToDelete = { ...data };
     }
     const popUpContainer = document.getElementById('popUpContainer');

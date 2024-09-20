@@ -19,6 +19,10 @@ a {
   }
 }
 
+.column {
+  flex-direction: column;
+}
+
 #mainContainer {
   display: flex;
   flex-direction: row;

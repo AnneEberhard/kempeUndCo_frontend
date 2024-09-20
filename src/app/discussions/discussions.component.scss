@@ -16,6 +16,13 @@ li {
   }
 }
 
+h4 {
+  margin: 8px;
+}
+
+h5 {
+  margin: 8px;
+}
 
 .entryContainer {
   background-color: antiquewhite;
@@ -23,7 +30,6 @@ li {
   padding: 8px;
   margin: 4px;
 
-  
   img {
     height: 50px;
     cursor: pointer;
@@ -78,12 +84,11 @@ form {
   }
 }
 
-
 .editEntry {
   background-color: white;
   padding: 20px;
   border-radius: 5px;
-  width: 60vw;
+  width: 70vw;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -102,9 +107,7 @@ form {
       color: #b2b8b8;
       font-family: "Roboto" !important;
     }
-
   }
-
 }
 
 .buttonContainer {
@@ -112,7 +115,6 @@ form {
   justify-content: space-between;
   margin-top: 10px;
 }
-
 
 #images {
   border-radius: 10px;

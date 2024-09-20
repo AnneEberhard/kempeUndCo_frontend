@@ -116,17 +116,18 @@
           <h5>
             {{ entry.id ? "Beitrag bearbeiten" : "Neuen Beitrag erstellen" }}
           </h5>
+          <h5>Titel:</h5>
           <input
             class="entryInput"
             type="text"
             placeholder="Betreff"
             [(ngModel)]="entry.title"
             name="title"
-            required
           />
         </div>
 
         <div>
+          <h5>Inhalt:</h5>
           <quill-editor
             [(ngModel)]="entry.content"
             name="content"
@@ -135,6 +136,7 @@
         </div>
 
         <div>
+          <h5>Bilder:</h5>
           <label for="images">Bilder hochladen (max. 4):</label>
           <div
             *ngFor="let index of [1, 2, 3, 4]"

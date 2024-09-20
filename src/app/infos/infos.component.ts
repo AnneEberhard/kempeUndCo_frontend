@@ -224,6 +224,7 @@ export class InfosComponent implements OnInit {
     } else if (mode === 'image') {
       this.showImageUrl = data;
     } else if (mode === 'delete') {
+      this.entry = null;
       this.entryToDelete = { ...data };
     } else if (mode === 'editComment') {
       this.commentToUpdate = { ...data };

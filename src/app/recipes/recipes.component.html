@@ -139,10 +139,11 @@
       *ngIf="entry"
     >
       <form (ngSubmit)="saveEntry()" enctype="multipart/form-data">
-        <div class="entryHeader">
-          <h5>
+        <div class="entryHeader column">
+          <h4>
             {{ entry.id ? "Rezept bearbeiten" : "Neues Rezept erstellen" }}
-          </h5>
+          </h4>
+          <h5>Titel (bitte ausfüllen):</h5>
           <input
             class="entryInput"
             type="text"
@@ -154,6 +155,7 @@
         </div>
 
         <div>
+          <h5>Inhalt (bitte ausfüllen):</h5>
           <quill-editor
             [(ngModel)]="entry.content"
             name="content"
@@ -162,6 +164,7 @@
         </div>
 
         <div>
+          <h5>Bilder:</h5>
           <label for="images">Bilder hochladen (max. 4):</label>
           <div
             *ngFor="let index of [1, 2, 3, 4]"
@@ -233,7 +236,7 @@
       *ngIf="commentToUpdate"
     >
       <form (ngSubmit)="saveComment()">
-        <div class="entryHeader">
+        <div class="entryHeader column">
           <h5>Kommentar bearbeiten</h5>
           <textarea
             [(ngModel)]="commentToUpdate.content"
