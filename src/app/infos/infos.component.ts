@@ -110,8 +110,8 @@ export class InfosComponent implements OnInit {
     if (!searchTerm) {
       this.filteredInfos = this.infos;
     } else {
-      this.filteredInfos = this.infos.filter((info: { author_email: string; title: string; content: string; family_1: string; family_2: string }) =>
-        info.author_email.toLowerCase().includes(searchTerm) ||
+      this.filteredInfos = this.infos.filter((info: { author_name: string; title: string; content: string; family_1: string; family_2: string }) =>
+        info.author_name.toLowerCase().includes(searchTerm) ||
         (info.title && info.title.toLowerCase().includes(searchTerm)) ||
         info.content.toLowerCase().includes(searchTerm) ||
         (info.family_1 && info.family_1.toLowerCase().includes(searchTerm)) ||

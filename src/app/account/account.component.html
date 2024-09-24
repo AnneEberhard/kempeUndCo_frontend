@@ -1,6 +1,36 @@
 <section>
     <h1>Konto von</h1>
     <span>{{ userEmail }}</span>
+    <h3>Möchtest du deinen Autorennamen ändern?</h3>
+    <form #nameForm="ngForm" (ngSubmit)="changeName()">
+      <div class="registerInputBox">
+        <div>Alter Name:</div>
+        <div>{{ authorName }}</div>
+      </div>
+      <div class="registerInputBox">
+        <label class="authorName" for="authorName"
+          >Neuer Name:
+          </label>
+        <div class="passwordContainer">
+          <input
+            id="authorName"
+            name="authorName"
+            [(ngModel)]="this.newAuthorName"
+            required
+          />
+        </div>
+      </div>
+      <div>
+          <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
+        </div>
+        <button
+          id="submitButton"
+          type="submit"
+          [disabled]="!nameForm.valid || this.sent"
+        >
+          {{ this.buttonText }}
+        </button>
+    </form>
     <h3>Möchtest du dein Passwort ändern?</h3>
   <form #passwortForm="ngForm" (ngSubmit)="onSubmit(passwortForm)">
     <div class="registerInputBox">

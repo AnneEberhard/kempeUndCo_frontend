@@ -65,7 +65,7 @@
         </div>
       </div>
       <div class="entryMeta">
-        <p>Author: {{ recipe.author_email }}</p>
+        <p>Author: {{ recipe.author_name }}</p>
         <p>
           <small>Erstellt am: {{ recipe.created_at | date : "short" }}</small
           ><br />
@@ -94,7 +94,7 @@
           <div>
             <p>{{ comment.content }}</p>
             <small
-              >Von: {{ comment.author_email }} am
+              >Von: {{ comment.author_name }} am
               {{ comment.created_at | date : "short" }}</small
             >
           </div>

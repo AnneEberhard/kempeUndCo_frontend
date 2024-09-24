@@ -38,11 +38,12 @@ export class AuthService {
    * @param {string} accessToken - The access token to set.
    * @param {string} refreshToken - The refresh token to set.
    */
-  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail:string, family_1: string, family_2: string): void {
+  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail:string, authorname:string, family_1: string, family_2: string): void {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('userId', userId);
     localStorage.setItem('userEmail', userEmail);
+    localStorage.setItem('authorName', authorname);
     localStorage.setItem('family_1', family_1);
     localStorage.setItem('family_2', family_2);
   }
@@ -86,6 +87,7 @@ export class AuthService {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('authorName');
     localStorage.removeItem('family_1');
     localStorage.removeItem('family_2');
   }
@@ -143,12 +145,21 @@ export class AuthService {
   }
 
   /**
-   * handles user register in backend
+   * handles password change in backend
    * @param {any} userData - user info needed for regstration in backend
    */
   changePasswort(userData: any): Observable<any> {
     const url = environment.baseUrl + '/change-password/';
     return this.http.post<any>(url, userData);
+  }
+
+  /**
+   * handles authorname change in backend
+   * @param {any} userData - user info needed for regstration in backend
+   */
+  changeName(userData: any):Observable<any> {
+    const url = environment.baseUrl + '/change-name/';
+    return this.http.put<any>(url, userData);
   }
 
 }

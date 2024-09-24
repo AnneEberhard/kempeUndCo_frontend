@@ -24,6 +24,8 @@ export class AccountComponent {
   oldPasswordVisible: boolean = false;
   confirmPasswordVisible: boolean = false;
   userEmail: string | null;
+  authorName: string | null;
+  newAuthorName: string = '';
 
   formData = {
     oldPassword: '',
@@ -31,37 +33,37 @@ export class AccountComponent {
     confirmPassword: '',
   };
 
-  constructor(private authService: AuthService, private router: Router) { 
-    this.userEmail = localStorage.getItem('userEmail')
+  constructor(private authService: AuthService, private router: Router) {
+    this.userEmail = localStorage.getItem('userEmail');
+    this.authorName = localStorage.getItem('authorName')
   }
 
 
   /**
   * toggles between passwort visible and not
   */
- togglePasswordVisibility(mode: string) {
-  if (mode =='oldPassword') {
-    this.oldPasswordVisible = !this.oldPasswordVisible;
-  } else if((mode =='confirm')) {
-    this.confirmPasswordVisible = !this.confirmPasswordVisible;
-  } else {
-    this.newPasswordVisible = !this.newPasswordVisible;
+  togglePasswordVisibility(mode: string) {
+    if (mode == 'oldPassword') {
+      this.oldPasswordVisible = !this.oldPasswordVisible;
+    } else if ((mode == 'confirm')) {
+      this.confirmPasswordVisible = !this.confirmPasswordVisible;
+    } else {
+      this.newPasswordVisible = !this.newPasswordVisible;
+    }
   }
-}
 
   /**
   * starts validation, and if true, initiates sending registration to backend
   * @param {NgForm} form - entered data
   * @returns boolean
   */
-onSubmit(form: NgForm) {
-  this.errorMessage = '';
-  if (this.checkForm(form)) {
-    const userData = this.assembleData(form);
-    console.log(userData);
-    this.changePasswort(userData)
+  onSubmit(form: NgForm) {
+    this.errorMessage = '';
+    if (this.checkForm(form)) {
+      const userData = this.assembleData(form);
+      this.changePasswort(userData)
+    }
   }
-}
 
   /**
  * starts varies functions to validate the form
@@ -132,19 +134,19 @@ onSubmit(form: NgForm) {
  * @returns boolean
  */
   renderAlert(alertType: string) {
-     if (alertType === 'password') {
+    if (alertType === 'password') {
       this.showErrorPasswordAlert = true;
     } else if (alertType === 'passwordMatch') {
       this.showErrorPasswordMatchAlert = true;
-    } 
+    }
   }
 
-   /**
-   * assembles the data for the registration from the form
-   * @param form registration form
-   * @returns userData as a json for sending
-   */
-   assembleData(form: NgForm) {
+  /**
+  * assembles the data for the registration from the form
+  * @param form registration form
+  * @returns userData as a json for sending
+  */
+  assembleData(form: NgForm) {
     const userData = {
       email: this.userEmail,
       old_password: this.formData.oldPassword,
@@ -155,22 +157,21 @@ onSubmit(form: NgForm) {
 
   /**
    * calls upon authService to send info to backend
-   * handles logic depending on backend answer
+   * handles frontend logic depending on backend answer
    * @param userData 
    */
   changePasswort(userData: any) {
     this.authService.changePasswort(userData).pipe(take(1))
       .subscribe({
         next: (response) => {
-          console.log(response);
-          this.renderInfo();
+          this.renderInfo('password');
           setTimeout(this.clearForm, 4000);
         },
         error: (error: HttpErrorResponse) => {
           console.error('Ein Fehler ist aufgetreten:', error);
           if (error.status === 400 && error.error) {
             if (error.error.old_password) {
-              this.errorMessage = error.error.old_password[0]; // Zeige spezifische Fehlermeldung an
+              this.errorMessage = error.error.old_password[0];
             } else {
               this.errorMessage = 'Ein unbekannter Fehler ist aufgetreten.';
             }
@@ -182,43 +183,74 @@ onSubmit(form: NgForm) {
   }
 
 
-/**
-  * renders info of success in case the backend responded well
-  */
-  renderInfo() {
+  /**
+    * renders info of success in case the backend responded well
+    */
+  renderInfo(mode: string | undefined) {
     document.getElementById('popUpContainer')?.classList.remove('dNone');
     let div = document.getElementById('infoBox');
-    if(div) {
-      div.innerHTML = 'Das Passwort wurde geändert.';
+    if (div) {
+      if (mode == 'password') {
+        div.innerHTML = 'Das Passwort wurde geändert.';
+      }
+      if (mode == 'name') {
+        div.innerHTML = 'Der Name wurde geändert.';
+      }
     }
     this.sent = true;
     this.buttonText = 'Gesendet';
   }
 
-   /**
-   * reloads the page to refresh content
-   */
-   clearForm() {
+  /**
+  * reloads the page to refresh content
+  */
+  clearForm() {
     window.location.reload();
   }
 
-    /**
-  * shows overlay with password rules
+  /**
+* shows overlay with password rules
+*/
+  showRules() {
+    const div = document.getElementById('popUpInfoContainer');
+    if (div) {
+      div.classList.remove('dNone');
+    }
+  }
+
+  /**
+  * hides overlay with password rules
   */
-    showRules() {
-      const div = document.getElementById('popUpInfoContainer');
-      if (div) {
-        div.classList.remove('dNone');
-      }
+  hideRules() {
+    const div = document.getElementById('popUpInfoContainer');
+    if (div) {
+      div.classList.add('dNone');
     }
-  
-    /**
-    * hides overlay with password rules
-    */
-    hideRules() {
-      const div = document.getElementById('popUpInfoContainer');
-      if (div) {
-        div.classList.add('dNone');
-      }
-    }
+  }
+
+  /**
+ * starts changing the authorname and handles logic of the frontend
+  */
+  changeName() {
+    const userData = {
+      email: this.userEmail,
+      author_name: this.newAuthorName,
+    };
+    this.authService.changeName(userData).pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          this.renderInfo('name');
+          localStorage.setItem('authorName', this.newAuthorName);
+          setTimeout(this.clearForm, 4000);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Ein Fehler ist aufgetreten:', error);
+          if (error.status === 400 && error.error) {
+            this.errorMessage = 'Ein unbekannter Fehler ist aufgetreten.';
+          } else {
+            this.errorMessage = 'Es ist ein Netzwerkfehler aufgetreten.';
+          }
+        }
+      });
+  }
 }

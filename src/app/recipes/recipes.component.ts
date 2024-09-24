@@ -99,8 +99,8 @@ export class RecipesComponent implements OnInit {
     if (!searchTerm) {
       this.filteredRecipes = this.recipes;
     } else {
-      this.filteredRecipes = this.recipes.filter((recipe: { author_email: string; title: string; content: string; }) =>
-        recipe.author_email.toLowerCase().includes(searchTerm) ||
+      this.filteredRecipes = this.recipes.filter((recipe: { author_name: string; title: string; content: string; }) =>
+        recipe.author_name.toLowerCase().includes(searchTerm) ||
         (recipe.title && recipe.title.toLowerCase().includes(searchTerm)) ||
         recipe.content.toLowerCase().includes(searchTerm)
       );

@@ -25,7 +25,7 @@
     </div>
     <!-- single entry containers -->
     <div *ngFor="let entry of filteredEntries" class="entryContainer">
-      <h5>{{ entry.author }}: {{ entry.title }}</h5>
+      <h5>{{ entry.author_name }}: {{ entry.title }}</h5>
       <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(entry.content)"></div>
       <div class="entryImagesContainer">
         <div *ngFor="let imageUrl of getImageArray(entry)">
