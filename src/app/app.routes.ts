@@ -38,6 +38,7 @@ export const routes: Routes = [
         children: [
             { path: 'welcome', component: WelcomeComponent },
             { path: 'ancestors', component: AncestorsComponent },
+            { path: 'ancestors/:id', component: AncestorsComponent },
             { path: 'discussions', component: DiscussionsComponent },
             { path: 'discussions/:id', component: DiscussionsComponent },
             { path: 'infos', component: InfosComponent },

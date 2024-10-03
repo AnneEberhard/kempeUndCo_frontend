@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { DiscussionService } from '../services/discussion.service';
@@ -22,6 +22,7 @@ export class DiscussionsComponent implements OnInit {
   selectedDiscussion: any = null;
   filteredDiscussions: any[] = [];
   personId: string | null = null;
+  personRefn: string = '@I1@';
   personName: string | null = null;
   personGebDate: string = 'unbekannt';
   userId: string | null = null;
@@ -69,6 +70,23 @@ export class DiscussionsComponent implements OnInit {
     this.userEmail = localStorage.getItem('userEmail');
   }
 
+
+  getEncodedRefn(): string {
+    console.log(this.personRefn);
+    return encodeURIComponent(this.personRefn);
+  }
+
+  /**
+   * routes back to the person in the ancestors page.
+   */
+  navigateToAncestors(): void {
+    if (this.personId) {
+      this.router.navigate(['/ancestors', this.personId]);
+    } else {
+      this.router.navigate(['/ancestors']);
+    }
+  }
+
   /**
    * Loads and sorts all discussions, and sets the filtered discussions.
    */
@@ -109,6 +127,7 @@ export class DiscussionsComponent implements OnInit {
   loadPerson(personId: number): void {
     this.familyService.getPerson(personId).subscribe(person => {
       this.personName = person.name;
+      this.personRefn = person.refn;
       if (person.birt_date) {
         this.personGebDate = person.birt_date;
       }

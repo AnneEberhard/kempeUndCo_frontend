@@ -18,9 +18,17 @@
         class="searchInput"
       />
       <div>
-        <button (click)="showPopUp('add', this.entry)">
-          Eigenen Beitrag erstellen
-        </button>
+        <div class="buttons">
+          <button
+            [routerLink]="['/ancestors']"
+            [queryParams]="{ refn: getEncodedRefn() }"
+          >
+            Zurück zur Stammfolge
+          </button>
+          <button (click)="showPopUp('add', this.entry)">
+            Eigenen Beitrag erstellen
+          </button>
+        </div>
       </div>
     </div>
     <!-- single entry containers -->
@@ -36,7 +44,7 @@
             alt="Info Image"
           />
         </div>
-        </div>
+      </div>
       <div class="entryMeta">
         <p>
           <small>Erstellt am: {{ entry.created_at | date : "short" }}</small
@@ -59,10 +67,9 @@
         </div>
       </div>
     </div>
-
   </div>
 
- <!-- for all discussions -->
+  <!-- for all discussions -->
   <ng-template #startPage>
     <h2>Diskussionen zur Stammfolge</h2>
     <p>
@@ -72,11 +79,13 @@
       <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt
       die entsprechende Person aus, und klickt auf den Button Diskussion in den
       Personeninfos. Nur so können wir sicherstellen, dass es keine doppelte
-      Diskussionen gibt und die Zuordnung funktioniert.<br /><br>
+      Diskussionen gibt und die Zuordnung funktioniert.<br /><br />
       Wenn ihr eine bereits existierende Diskussion auswählen wollt, findet ihr
-      diese in der Liste unten (nach Aktualität sortiert) oder könnt über den Namen suchen.<br><br>
-      Jeder Nutzer kann auf der jeweiligen Diskussionsseite immer nur seinen eigenen Einträge bearbeiten oder löschen.
-       Sollten euch Beiträge auffallen, die problematisch sind, informiert uns bitte.
+      diese in der Liste unten (nach Aktualität sortiert) oder könnt über den
+      Namen suchen.<br /><br />
+      Jeder Nutzer kann auf der jeweiligen Diskussionsseite immer nur seinen
+      eigenen Einträge bearbeiten oder löschen. Sollten euch Beiträge auffallen,
+      die problematisch sind, informiert uns bitte.
     </p>
     <div class="searchContainer">
       <input
@@ -93,19 +102,20 @@
         (click)="goToDiscussion(discussion.person.id)"
       >
         Diskussion zu Person: {{ discussion.person.id }} -
-        {{ discussion.person.name }} - Stand {{ discussion.updated_at  | date : "short"}}
+        {{ discussion.person.name }} - Stand
+        {{ discussion.updated_at | date : "short" }}
       </li>
     </ul>
   </ng-template>
 
-<!-- PopUp container for all popups on this site -->
+  <!-- PopUp container for all popups on this site -->
   <div
     id="popUpContainer"
     class="popUpInfoContainer dNone"
     (click)="hidePopUp()"
   >
-      <!-- PopUp box for adding or editing an entry -->
-      <div
+    <!-- PopUp box for adding or editing an entry -->
+    <div
       id="popUp"
       class="editEntry"
       (click)="$event.stopPropagation()"
@@ -160,7 +170,11 @@
           <div class="deleteImageContainer">
             <div *ngFor="let imageUrl of getImageArray(entry)">
               <div *ngIf="imageUrl" class="deleteImage">
-                <img [src]="getThumbnailUrl(imageUrl)" alt="Image" width="100" />
+                <img
+                  [src]="getThumbnailUrl(imageUrl)"
+                  alt="Image"
+                  width="100"
+                />
                 <button type="button" (click)="removeImageByUrl(imageUrl)">
                   Bild löschen
                 </button>

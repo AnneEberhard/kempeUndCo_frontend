@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { FamilyService } from '../services/family.service';
 import { Person } from "../interfaces/person";
@@ -17,7 +17,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class AncestorsComponent implements OnInit {
 
-
   person: Person | undefined;
   relation: Relations | undefined;
   allPersonsList: Person[] = [];
@@ -30,7 +29,7 @@ export class AncestorsComponent implements OnInit {
   currentImage: string | null = null;
   userKempe = false;
 
-  constructor(private familyService: FamilyService, private router: Router) {
+  constructor(private familyService: FamilyService, private router: Router, private route: ActivatedRoute) {
     this.personId = 3571;
   }
 
@@ -39,15 +38,26 @@ export class AncestorsComponent implements OnInit {
    */
   ngOnInit() {
     this.checkUser();
-    this.familyService.getAllPersons().subscribe(data => {
-      this.allPersonsList = data;
-      if (this.userKempe) {
-        this.setPersonIdByRefn('@I5@')
-      } else {
-        this.setPersonIdByRefn('@I1151@')
-      }
+
+    this.route.queryParamMap.subscribe(params => {
+      const encodedPersonRefnFromRoute = params.get('refn');
+      const personRefnFromRoute = encodedPersonRefnFromRoute ? decodeURIComponent(encodedPersonRefnFromRoute) : null;
+
+      this.familyService.getAllPersons().subscribe(data => {
+        this.allPersonsList = data;
+        console.log(personRefnFromRoute);
+        if (personRefnFromRoute) {
+          this.setPersonIdByRefn(personRefnFromRoute);
+        } else if (this.userKempe) {
+          this.setPersonIdByRefn('@I5@');
+        } else {
+          this.setPersonIdByRefn('@I1151@');
+        }
+      });
     });
   }
+
+
 
   /**
    * Sets the person ID based on the provided name and loads the corresponding family data.
@@ -88,7 +98,7 @@ export class AncestorsComponent implements OnInit {
   checkUser() {
     const family_1 = localStorage.getItem('family_1');
     const family_2 = localStorage.getItem('family_2');
-    if (family_1 == 'kempe' || family_2 =='kempe') {
+    if (family_1 == 'kempe' || family_2 == 'kempe') {
       this.userKempe = true;
     }
   }
