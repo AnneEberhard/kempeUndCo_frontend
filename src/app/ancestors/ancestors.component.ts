@@ -35,6 +35,7 @@ export class AncestorsComponent implements OnInit {
 
   /**
    * Initializes the component by fetching all persons and setting the ID for a specific person by name.
+   * checks for query params and sets that person in case query param is valid
    */
   ngOnInit() {
     this.checkUser();
@@ -45,7 +46,6 @@ export class AncestorsComponent implements OnInit {
 
       this.familyService.getAllPersons().subscribe(data => {
         this.allPersonsList = data;
-        console.log(personRefnFromRoute);
         if (personRefnFromRoute) {
           this.setPersonIdByRefn(personRefnFromRoute);
         } else if (this.userKempe) {
@@ -81,8 +81,6 @@ export class AncestorsComponent implements OnInit {
  * @param {string} refn - The unique refn of the person to find, independent of database.
  */
   setPersonIdByRefn(refn: string) {
-    console.log(refn);
-    console.log(this.allPersonsList);
     const person = this.allPersonsList.find(p => p.refn === refn);
     if (person) {
       this.personId = person.id;
@@ -232,7 +230,6 @@ export class AncestorsComponent implements OnInit {
    * @param {string} imageUrl - The URL of the image to display.
    */
   showImage(imageUrl: string): void {
-    console.log(imageUrl);
     this.currentImage = imageUrl;
     document.getElementById('imageModal')?.classList.remove('dNone');
   }

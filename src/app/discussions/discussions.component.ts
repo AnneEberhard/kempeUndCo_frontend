@@ -70,9 +70,10 @@ export class DiscussionsComponent implements OnInit {
     this.userEmail = localStorage.getItem('userEmail');
   }
 
-
+  /**
+  * encodes the refn so that the @ does cause problems.
+  */
   getEncodedRefn(): string {
-    console.log(this.personRefn);
     return encodeURIComponent(this.personRefn);
   }
 
