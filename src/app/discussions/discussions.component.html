@@ -19,15 +19,17 @@
       />
       <div>
         <div class="buttons">
+          <button (click)="showPopUp('add', this.entry)">
+            Eigenen Beitrag erstellen
+          </button>
           <button
+          class="backtoHomeButton"
             [routerLink]="['/ancestors']"
             [queryParams]="{ refn: getEncodedRefn() }"
           >
             Zurück zur Stammfolge
           </button>
-          <button (click)="showPopUp('add', this.entry)">
-            Eigenen Beitrag erstellen
-          </button>
+
         </div>
       </div>
     </div>
@@ -137,7 +139,7 @@
         </div>
 
         <div>
-          <h5>Inhalt:</h5>
+          <h5>Inhalt (bitte ausfüllen):</h5>
           <quill-editor
             [(ngModel)]="entry.content"
             name="content"
