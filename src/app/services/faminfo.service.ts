@@ -50,7 +50,7 @@ export class FaminfoService {
    * @param {any} infoData - The data of the information record to add.
    * @returns {Observable<any>} An observable containing the response from the server.
    */
-  addInfo(infoData: any) {
+  addInfo(infoData: any): Observable<any> {
     const token = localStorage.getItem('accessToken');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`

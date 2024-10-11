@@ -302,14 +302,9 @@ export class InfosComponent implements OnInit {
     const formData = new FormData();
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
-
-    if (this.entry.family_1) {
-      formData.append('family_1', this.entry.family_1);
-    }
-
-    if (this.entry.family_2) {
-      formData.append('family_2', this.entry.family_2);
-    }
+    formData.append('family_1', 'kempe');
+    formData.append('family_2', 'huenten');
+  
 
     this.addNewImages(formData);
     this.addNullFields(formData);

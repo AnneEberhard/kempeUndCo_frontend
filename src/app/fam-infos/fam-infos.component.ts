@@ -166,7 +166,7 @@ export class FamInfosComponent implements OnInit{
    */
   getThumbnailUrl(imageUrl: string): string {
     if (!imageUrl) return '';
-    const baseUrl = imageUrl.replace('/media/infos/', '/media/infos/thumbnails/');
+    const baseUrl = imageUrl.replace('/media/famInfos/', '/media/famInfos/thumbnails/');
     const extensions = ['.jpg', '.jpeg', '.png'];
     for (let ext of extensions) {
       const lowerBaseUrl = baseUrl.toLowerCase();

@@ -1,10 +1,11 @@
 <section>
   <!-- header part inlcuding search and list of all entries -->
-  <h2>Infos für alle</h2>
+  <h2>Alles zur Webseite</h2>
   <p>
-    Willkommen auf der Infoseite!<br />
-    Dies ist für allgemeine Infos, die ihr habt und teilen möchtet. Wenn es sich
-    nur auf eine bestimmte Person bezieht, geht bitte zur
+    Willkommen auf der Diskussionsseite für die Webseite!<br />
+    Dies ist für technische Infos, die sich auf die Webseite beziehen. Wenn ihr Infos zur Familie teilen wollt, geht bitte zu
+    <a routerLink="/faminfos" routerLinkActive="active">Familieninfos</a>.
+    Wenn es sich auf eine bestimmte Person bezieht, geht bitte zur
     <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt
     die entsprechende Person aus, und klickt auf den Button Diskussion in den
     Personeninfos oder sucht auf
@@ -132,44 +133,6 @@
           <h4>
             {{ entry.id ? "Beitrag bearbeiten" : "Neuen Beitrag erstellen" }}
           </h4>
-          <div
-            *ngIf="
-              family_1 &&
-              family_2 &&
-              family_1 !== 'null' &&
-              family_2 !== 'null' &&
-              family_1 !== '' &&
-              family_2 !== ''
-            "
-            class="chooseFamily"
-          >
-            <h6>Für Familie(n)</h6>
-            <label>
-              <input
-                type="checkbox"
-                [value]="entry.family_1"
-                (change)="onFamilySelectionChange($event, entry.family_1)"
-                [checked]="
-                  entry.family_1 === family_1
-                "
-                name="selectedFamilies1"
-              />
-              {{ family_1 | capitalize }}
-            </label>
-
-            <label>
-              <input
-                type="checkbox"
-                [value]="entry.family_2"
-                (change)="onFamilySelectionChange($event, entry.family_2)"
-                [checked]="
-                  entry.family_2 === family_2
-                "
-                name="selectedFamilies2"
-              />
-              {{ family_2 | capitalize }}
-            </label>
-          </div>
           <h5>Betreff (bitte ausfüllen):</h5>
           <input
             class="entryInput"

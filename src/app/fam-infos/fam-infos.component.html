@@ -1,15 +1,18 @@
 <section>
     <!-- header part inlcuding search and list of all entries -->
-    <h2>Infos für alle</h2>
+    <h2>Familien-Infos für alle</h2>
     <p>
       Willkommen auf der Infoseite!<br />
-      Dies ist für allgemeine Infos, die ihr habt und teilen möchtet. Wenn es sich
+      Dies ist für allgemeine Familien-Infos, die ihr habt und teilen möchtet. Wenn es sich
       nur auf eine bestimmte Person bezieht, geht bitte zur
       <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt
       die entsprechende Person aus, und klickt auf den Button Diskussion in den
       Personeninfos oder sucht auf
       <a routerLink="/discussions" routerLinkActive="active">Diskussionen</a> nach
       einer bereits existierende Diskussion.<br /><br />
+      Wenn ihr Punkte zur Webseite anmerken oder diskutieren wollt, geht bitte zur
+      <a routerLink="/infos" routerLinkActive="active">Diskussion zur Webseite</a>.<br>
+      <br>
       Jeder Nutzer kann immer nur seinen eigenen Beiträge bearbeiten oder löschen.
       Sollten euch Beiträge auffallen, die problematisch sind, informiert uns
       bitte.
@@ -148,7 +151,7 @@
                 <input
                   type="checkbox"
                   [value]="entry.family_1"
-                  (change)="onFamilySelectionChange($event, entry.family_1)"
+                  (change)="onFamilySelectionChange($event, 'family_1')"
                   [checked]="
                     entry.family_1 === family_1
                   "
@@ -161,7 +164,7 @@
                 <input
                   type="checkbox"
                   [value]="entry.family_2"
-                  (change)="onFamilySelectionChange($event, entry.family_2)"
+                  (change)="onFamilySelectionChange($event, 'family_2')"
                   [checked]="
                     entry.family_2 === family_2
                   "
