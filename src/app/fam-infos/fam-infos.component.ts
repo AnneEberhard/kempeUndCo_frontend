@@ -430,6 +430,7 @@ export class FamInfosComponent implements OnInit{
   * differs from recipe due to service
   */
   deleteEntry() {
+    console.log('this.entryToDelete', this.entryToDelete);
     this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
       this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
       this.loadAllInfo();
