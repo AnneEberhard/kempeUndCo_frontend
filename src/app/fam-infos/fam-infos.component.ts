@@ -3,22 +3,22 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { FormsModule } from '@angular/forms';
-import { InfoService } from '../services/info.service';
+import { FaminfoService } from '../services/faminfo.service';
 import { QuillModule } from 'ngx-quill';
 import { ScrollService } from '../services/scroll.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
 import { CapitalizePipe } from "../pipes/capitalize.pipe";
 
-
 @Component({
-  selector: 'app-infos',
+  selector: 'app-fam-infos',
   standalone: true,
   imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule, CapitalizePipe],
-  templateUrl: './infos.component.html',
-  styleUrl: './infos.component.scss'
+  templateUrl: './fam-infos.component.html',
+  styleUrl: './fam-infos.component.scss'
 })
-export class InfosComponent implements OnInit {
+export class FamInfosComponent implements OnInit{
+
   userId: string | null = null;
   userEmail: string | null = null;
   infos: any[] = [];
@@ -51,7 +51,7 @@ export class InfosComponent implements OnInit {
 
 
   constructor(
-    public infoService: InfoService,
+    public faminfoService: FaminfoService,
     private commentService: CommentService,
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer
@@ -73,7 +73,7 @@ export class InfosComponent implements OnInit {
    * Loads all information from the info service and sorts them by the updated date.
    */
   loadAllInfo() {
-    this.infoService.getAllInfos().subscribe(infos => {
+    this.faminfoService.getAllInfos().subscribe(infos => {
       this.infos = infos;
       this.infos.sort((a, b) => {
         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
@@ -90,7 +90,7 @@ export class InfosComponent implements OnInit {
    * @param {string} infoId - The ID of the info item to be loaded.
    */
   loadInfo(infoId: string): void {
-    this.infoService.getInfoById(infoId).subscribe(
+    this.faminfoService.getInfoById(infoId).subscribe(
       info => {
         this.selectedInfo = info;
         this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
@@ -369,7 +369,7 @@ export class InfosComponent implements OnInit {
    * @param {FormData} formData - The form data containing updated information for the entry.
    */
   updateEntry(formData: FormData): void {
-    this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
+    this.faminfoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
       const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
       if (index !== -1) {
         this.infos[index] = response;
@@ -401,7 +401,7 @@ export class InfosComponent implements OnInit {
    * @param {FormData} formData - The form data containing information for the new entry.
    */
   addEntry(formData: FormData) {
-    this.infoService.addInfo(formData).subscribe((response: any) => {
+    this.faminfoService.addInfo(formData).subscribe((response: any) => {
       this.infos.push(response);
     });
     this.entry = null;
@@ -430,7 +430,7 @@ export class InfosComponent implements OnInit {
   * differs from recipe due to service
   */
   deleteEntry() {
-    this.infoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
+    this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
       this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
       this.loadAllInfo();
       this.hidePopUp();
@@ -443,7 +443,7 @@ export class InfosComponent implements OnInit {
    */
   loadComments() {
     this.infos.forEach(info => {
-      this.commentService.getCommentsForInfo(info.id).subscribe(comments => {
+      this.commentService.getCommentsForFamInfo(info.id).subscribe(comments => {
         this.comments[info.id] = comments;
       });
     });
@@ -458,7 +458,7 @@ export class InfosComponent implements OnInit {
   addComment(infoId: number, commentContent: string) {
     const comment = {
       content: commentContent,
-      info: infoId
+      famInfo: infoId
     };
     this.commentService.addComment(comment).subscribe(newComment => {
       if (this.comments[infoId]) {
@@ -538,4 +538,3 @@ export class InfosComponent implements OnInit {
   }
 
 }
-

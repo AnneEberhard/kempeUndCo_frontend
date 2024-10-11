@@ -15,6 +15,7 @@ import { ActivationSuccessComponent } from './activation-success/activation-succ
 import { ActivationFailureComponent } from './activation-failure/activation-failure.component';
 import { ResetComponent } from './reset/reset.component';
 import { AccountComponent } from './account/account.component';
+import { FamInfosComponent } from './fam-infos/fam-infos.component';
 
 export const routes: Routes = [
     {
@@ -42,6 +43,7 @@ export const routes: Routes = [
             { path: 'discussions', component: DiscussionsComponent },
             { path: 'discussions/:id', component: DiscussionsComponent },
             { path: 'infos', component: InfosComponent },
+            { path: 'faminfos', component: FamInfosComponent },
             { path: 'recipes', component: RecipesComponent },
             { path: 'account', component: AccountComponent }
         ]

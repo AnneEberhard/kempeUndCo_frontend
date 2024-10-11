@@ -21,6 +21,16 @@ export class CommentService {
     return this.http.get<any>(`${this.apiUrl}?info=${infoId}`);
   }
 
+    /**
+ * Retrieves comments for a specific info entry.
+ *
+ * @param {number} infoId - The ID of the info entry for which comments are to be retrieved.
+ * @returns {Observable<any>} An observable containing the comments for the specified info entry.
+ */
+    getCommentsForFamInfo(infoId: number): Observable<any> {
+      return this.http.get<any>(`${this.apiUrl}?famInfo=${infoId}`);
+    }
+
   /**
   * Retrieves comments for a specific recipe.
   *
