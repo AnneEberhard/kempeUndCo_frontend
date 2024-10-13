@@ -28,6 +28,11 @@ a {
   flex-direction: row;
 }
 
+.grayed-out {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .no-scroll {
   overflow: hidden;
 }

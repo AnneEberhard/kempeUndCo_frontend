@@ -9,6 +9,7 @@ import { ScrollService } from '../services/scroll.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
 import { CapitalizePipe } from "../pipes/capitalize.pipe";
+import { AllpagesService } from '../services/allpages.service';
 
 
 @Component({
@@ -19,6 +20,8 @@ import { CapitalizePipe } from "../pipes/capitalize.pipe";
   styleUrl: './infos.component.scss'
 })
 export class InfosComponent implements OnInit {
+  public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
+  public imageFiles: File[] = [];
   userId: string | null = null;
   userEmail: string | null = null;
   infos: any[] = [];
@@ -31,13 +34,12 @@ export class InfosComponent implements OnInit {
     image_3: null,
     image_4: null
   };
-  imageFiles: File[] = [];
   filteredInfos: any[] = [];
   entry: any = null;
   entryToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
-  deletedImages: string[] = [];
+  deletedImages: Set<string> = new Set();
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
   comment: any = null;
@@ -54,7 +56,8 @@ export class InfosComponent implements OnInit {
     public infoService: InfoService,
     private commentService: CommentService,
     private scrollService: ScrollService,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public allpagesService: AllpagesService
   ) {
     this.family_1 = localStorage.getItem('family_1');
     this.family_2 = localStorage.getItem('family_2');
@@ -147,14 +150,23 @@ export class InfosComponent implements OnInit {
    * @param {any} info - The info object containing image URLs.
    * @returns {string[]} An array of image URLs.
    */
-  getImageArray(info: any): string[] {
-    const images: string[] = [];
+  getImageArray(info: any): { original: string; thumbnail: string }[] {
+    if (this.imageCache[info.id]) {
+      return this.imageCache[info.id];
+    }
 
-    if (info.image_1_url) images.push(info.image_1_url);
-    if (info.image_2_url) images.push(info.image_2_url);
-    if (info.image_3_url) images.push(info.image_3_url);
-    if (info.image_4_url) images.push(info.image_4_url);
+    const images: { original: string; thumbnail: string }[] = [];
 
+    for (let i = 1; i <= 4; i++) {
+      const originalUrl = info[`image_${i}_url`];
+      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
+
+      if (originalUrl) {
+        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
+      }
+    }
+    this.imageCache[info.id] = images;
+    console.log(images);
     return images;
   }
 
@@ -187,15 +199,20 @@ export class InfosComponent implements OnInit {
    */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
+    
     if (files.length > 0) {
-      this.imageFiles = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type === 'image/jpeg' || file.type === 'image/png') {
-          this.imageFiles.push(file);
+      const file = files[0];
+
+      if (file.type === 'image/jpeg' || file.type === 'image/png') {
+
+        if (this.imageFiles[index - 1]) {
+          this.imageFiles.splice(index - 1, 1, file);
         } else {
-          alert('Nur JPG und PNG Dateien sind erlaubt.');
+          this.imageFiles.push(file);
         }
+        
+      } else {
+        alert('Nur JPG und PNG Dateien sind erlaubt.');
       }
     }
   }
@@ -262,7 +279,12 @@ export class InfosComponent implements OnInit {
       this.entry.image_4_url = null;
       this.entry.image_4 = null;
     }
-    this.deletedImages.push(imageUrl);
+    this.deletedImages.add(imageUrl);
+  }
+
+  
+  isImageDeleted(imageUrl: string, entry: any): boolean {
+    return this.deletedImages.has(imageUrl);
   }
 
   /**
@@ -291,6 +313,7 @@ export class InfosComponent implements OnInit {
     if (popUpContainer) {
       popUpContainer.classList.add('dNone');
     }
+    this.resetEntryForm();
   }
 
   /**
@@ -304,10 +327,9 @@ export class InfosComponent implements OnInit {
     formData.append('content', this.entry.content);
     formData.append('family_1', 'kempe');
     formData.append('family_2', 'huenten');
-  
 
-    this.addNewImages(formData);
-    this.addNullFields(formData);
+    this.allpagesService.addNewImages(this.entry, this.imageFiles, formData);
+    this.allpagesService.addNullFields(this.entry, formData);
 
     return formData;
   }
@@ -317,28 +339,28 @@ export class InfosComponent implements OnInit {
    *
    * @param {FormData} formData - The form data to which images will be added.
    */
-  addNewImages(formData: FormData): void {
-    this.imageFiles.forEach((file) => {
-      const imageField = this.getNextAvailableImageField();
-      if (imageField) {
-        formData.append(imageField, file, file.name);
-      }
-    });
-  }
-
+ // addNewImages(formData: FormData): void {
+ // this.imageFiles.forEach((file) => {
+ //   const imageField = this.getNextAvailableImageField();
+ //   if (imageField) {
+ //     formData.append(imageField, file, file.name);
+ //   }
+ // });
+ // }
+//
   /**
    * Adds fields for any deleted images to the form data, marking them as empty.
    *
    * @param {FormData} formData - The form data to which empty fields will be added.
    */
-  addNullFields(formData: FormData): void {
-    for (let i = 1; i <= 4; i++) {
-      const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
-        formData.append(imageField, '');  // Leere Felder als `null` senden
-      }
-    }
-  }
+ //addNullFields(formData: FormData): void {
+ //  for (let i = 1; i <= 4; i++) {
+ //    const imageField = `image_${i}`;
+ //    if (!this.entry[imageField] && !formData.has(imageField)) {
+ //      formData.append(imageField, '');
+ //    }
+ //  }
+ //}
 
   /**
    * Saves the entry by either adding a new one or updating an existing one.
@@ -347,10 +369,10 @@ export class InfosComponent implements OnInit {
    */
   saveEntry(): void {
     const formData = this.assembleFormData();
-    if (!this.entry.family_1 && !this.entry.family_2) {
-      alert('Bitte wähle mindestens eine Familie aus.');
-      return;
-    }
+    
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
     if (this.entry.id) {
       this.updateEntry(formData);
     } else {
@@ -365,14 +387,10 @@ export class InfosComponent implements OnInit {
    */
   updateEntry(formData: FormData): void {
     this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
-      const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
-      if (index !== -1) {
-        this.infos[index] = response;
-      }
-      this.entry = null;
-      this.resetEntryForm();
-      this.hidePopUp();
+      this.loadAllInfo();
     });
+    this.entry = null;
+    this.hidePopUp();
   }
 
   /**
@@ -397,12 +415,12 @@ export class InfosComponent implements OnInit {
    */
   addEntry(formData: FormData) {
     this.infoService.addInfo(formData).subscribe((response: any) => {
-      this.infos.push(response);
+      this.loadAllInfo();
+      this.entry.title = '';
+      this.entry.content = '';
     });
     this.entry = null;
-    this.loadAllInfo();
     this.hidePopUp();
-    this.resetEntryForm();
   }
 
   /**
@@ -485,7 +503,6 @@ export class InfosComponent implements OnInit {
       if (index !== -1) {
         this.comments[infoId][index] = response;
         this.commentToUpdate = null;
-        this.resetEntryForm();
         this.hidePopUp();
       }
     })

@@ -9,6 +9,7 @@ import { ScrollService } from '../services/scroll.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
 import { CapitalizePipe } from "../pipes/capitalize.pipe";
+import { AllpagesService } from '../services/allpages.service';
 
 @Component({
   selector: 'app-fam-infos',
@@ -18,7 +19,9 @@ import { CapitalizePipe } from "../pipes/capitalize.pipe";
   styleUrl: './fam-infos.component.scss'
 })
 export class FamInfosComponent implements OnInit{
-
+  public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
+  public imageFiles: File[] = [];
+  deletedImages: Set<string> = new Set();
   userId: string | null = null;
   userEmail: string | null = null;
   infos: any[] = [];
@@ -31,13 +34,11 @@ export class FamInfosComponent implements OnInit{
     image_3: null,
     image_4: null
   };
-  imageFiles: File[] = [];
   filteredInfos: any[] = [];
   entry: any = null;
   entryToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
-  deletedImages: string[] = [];
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
   comment: any = null;
@@ -54,7 +55,8 @@ export class FamInfosComponent implements OnInit{
     public faminfoService: FaminfoService,
     private commentService: CommentService,
     private scrollService: ScrollService,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public allpagesService: AllpagesService
   ) {
     this.family_1 = localStorage.getItem('family_1');
     this.family_2 = localStorage.getItem('family_2');
@@ -141,43 +143,6 @@ export class FamInfosComponent implements OnInit{
     this.infos[index].isHidden = !this.infos[index].isHidden;
   }
 
-  /**
-   * Retrieves an array of image URLs from the given info object.
-   *
-   * @param {any} info - The info object containing image URLs.
-   * @returns {string[]} An array of image URLs.
-   */
-  getImageArray(info: any): string[] {
-    const images: string[] = [];
-
-    if (info.image_1_url) images.push(info.image_1_url);
-    if (info.image_2_url) images.push(info.image_2_url);
-    if (info.image_3_url) images.push(info.image_3_url);
-    if (info.image_4_url) images.push(info.image_4_url);
-
-    return images;
-  }
-
-  /**
-   * Generates the thumbnail URL for a given image URL.
-   *
-   * @param {string} imageUrl - The URL of the image.
-   * @returns {string} The URL of the thumbnail image.
-   */
-  getThumbnailUrl(imageUrl: string): string {
-    if (!imageUrl) return '';
-    const baseUrl = imageUrl.replace('/media/famInfos/', '/media/famInfos/thumbnails/');
-    const extensions = ['.jpg', '.jpeg', '.png'];
-    for (let ext of extensions) {
-      const lowerBaseUrl = baseUrl.toLowerCase();
-      const lowerExt = ext.toLowerCase();
-
-      if (lowerBaseUrl.endsWith(lowerExt)) {
-        return baseUrl.slice(0, -lowerExt.length) + `_thumbnail.jpg`;
-      }
-    }
-    return baseUrl;
-  }
 
   /**
    * Handles file input changes and updates the image files array.
@@ -187,15 +152,20 @@ export class FamInfosComponent implements OnInit{
    */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
+    
     if (files.length > 0) {
-      this.imageFiles = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type === 'image/jpeg' || file.type === 'image/png') {
-          this.imageFiles.push(file);
+      const file = files[0];
+
+      if (file.type === 'image/jpeg' || file.type === 'image/png') {
+
+        if (this.imageFiles[index - 1]) {
+          this.imageFiles.splice(index - 1, 1, file);
         } else {
-          alert('Nur JPG und PNG Dateien sind erlaubt.');
+          this.imageFiles.push(file);
         }
+        
+      } else {
+        alert('Nur JPG und PNG Dateien sind erlaubt.');
       }
     }
   }
@@ -243,6 +213,27 @@ export class FamInfosComponent implements OnInit{
     }
   }
 
+
+  getImageArray(info: any): { original: string; thumbnail: string }[] {
+    if (this.imageCache[info.id]) {
+      return this.imageCache[info.id];
+    }
+
+    const images: { original: string; thumbnail: string }[] = [];
+
+    for (let i = 1; i <= 4; i++) {
+      const originalUrl = info[`image_${i}_url`];
+      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
+
+      if (originalUrl) {
+        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
+      }
+    }
+    this.imageCache[info.id] = images;
+    return images;
+  }
+
+
   /**
    * Removes an image by its URL from the entry and marks it as deleted.
    *
@@ -262,7 +253,11 @@ export class FamInfosComponent implements OnInit{
       this.entry.image_4_url = null;
       this.entry.image_4 = null;
     }
-    this.deletedImages.push(imageUrl);
+    this.deletedImages.add(imageUrl);
+  }
+
+  isImageDeleted(imageUrl: string, entry: any): boolean {
+    return this.deletedImages.has(imageUrl); // Überprüfe, ob das Bild gelöscht ist
   }
 
   /**
@@ -291,6 +286,7 @@ export class FamInfosComponent implements OnInit{
     if (popUpContainer) {
       popUpContainer.classList.add('dNone');
     }
+    this.resetEntryForm();
   }
 
   /**
@@ -311,8 +307,8 @@ export class FamInfosComponent implements OnInit{
       formData.append('family_2', this.entry.family_2);
     }
 
-    this.addNewImages(formData);
-    this.addNullFields(formData);
+    this.allpagesService.addNewImages(this.entry, this.imageFiles, formData);
+    this.allpagesService.addNullFields(this.entry, formData);
 
     return formData;
   }
@@ -339,8 +335,8 @@ export class FamInfosComponent implements OnInit{
   addNullFields(formData: FormData): void {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
-        formData.append(imageField, '');  // Leere Felder als `null` senden
+      if (!this.entry[imageField] && !formData.has(imageField)) {
+        formData.append(imageField, '');
       }
     }
   }
@@ -352,10 +348,16 @@ export class FamInfosComponent implements OnInit{
    */
   saveEntry(): void {
     const formData = this.assembleFormData();
+    console.log(this.entry);
     if (!this.entry.family_1 && !this.entry.family_2) {
       alert('Bitte wähle mindestens eine Familie aus.');
       return;
     }
+
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
+
     if (this.entry.id) {
       this.updateEntry(formData);
     } else {
@@ -370,14 +372,10 @@ export class FamInfosComponent implements OnInit{
    */
   updateEntry(formData: FormData): void {
     this.faminfoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
-      const index = this.infos.findIndex((e: any) => e.id === this.entry.id);
-      if (index !== -1) {
-        this.infos[index] = response;
-      }
-      this.entry = null;
-      this.resetEntryForm();
-      this.hidePopUp();
+      this.loadAllInfo();
     });
+    this.entry = null;
+    this.hidePopUp();
   }
 
   /**
@@ -402,12 +400,12 @@ export class FamInfosComponent implements OnInit{
    */
   addEntry(formData: FormData) {
     this.faminfoService.addInfo(formData).subscribe((response: any) => {
-      this.infos.push(response);
+      this.loadAllInfo();
+      this.entry.title = '';
+      this.entry.content = '';
     });
     this.entry = null;
-    this.loadAllInfo();
     this.hidePopUp();
-    this.resetEntryForm();
   }
 
   /**
@@ -430,7 +428,6 @@ export class FamInfosComponent implements OnInit{
   * differs from recipe due to service
   */
   deleteEntry() {
-    console.log('this.entryToDelete', this.entryToDelete);
     this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
       this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
       this.loadAllInfo();
@@ -491,7 +488,6 @@ export class FamInfosComponent implements OnInit{
       if (index !== -1) {
         this.comments[infoId][index] = response;
         this.commentToUpdate = null;
-        this.resetEntryForm();
         this.hidePopUp();
       }
     })

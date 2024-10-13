@@ -49,15 +49,15 @@
       <div [hidden]="info.isHidden">
         <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
         <div class="entryImagesContainer">
-          <div *ngFor="let imageUrl of getImageArray(info)">
+          <div *ngFor="let image of getImageArray(info)">
             <img
-              (click)="showPopUp('image', imageUrl)"
+              (click)="showPopUp('image', image.original)"
               loading="lazy"
-              [src]="getThumbnailUrl(imageUrl)"
+              [src]="image.thumbnail"
               alt="Info Image"
             />
           </div>
-        </div>
+        </div>        
         <div class="entryMeta">
           <p>Author: {{ info.author_name }}</p>
           <p>
@@ -216,18 +216,17 @@
               </ul>
             </div>
             <div class="deleteImageContainer">
-              <div *ngFor="let imageUrl of getImageArray(entry)">
-                <div *ngIf="imageUrl" class="deleteImage">
+             <div *ngFor="let image of getImageArray(entry)" class="deleteImage">
                   <img
-                    [src]="getThumbnailUrl(imageUrl)"
+                    [src]="image.thumbnail"
                     alt="Image"
                     width="100"
+                    [ngClass]="{'grayed-out': isImageDeleted(image.original, entry)}" 
                   />
-                  <button type="button" (click)="removeImageByUrl(imageUrl)">
+                  <button type="button" (click)="removeImageByUrl(image.original)">
                     Bild löschen
                   </button>
-                </div>
-              </div>
+              </div> 
             </div>
           </div>
   

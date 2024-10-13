@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { FamilyService } from '../services/family.service';
 import { QuillModule } from 'ngx-quill';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AllpagesService } from '../services/allpages.service';
 
 
 @Component({
@@ -17,7 +18,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   styleUrl: './discussions.component.scss'
 })
 export class DiscussionsComponent implements OnInit {
-
+  public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
+  public imageFiles: File[] = [];
   discussions: any[] = [];
   selectedDiscussion: any = null;
   filteredDiscussions: any[] = [];
@@ -39,10 +41,9 @@ export class DiscussionsComponent implements OnInit {
   entry: any = null;
   editEntryData: any = null;
   entryToDelete: any = null;
-  imageFiles: File[] = [];
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
-  deletedImages: string[] = [];
+  deletedImages: Set<string> = new Set();
   thumbnailPath = 'discussions/thumbnails/';
 
   constructor(
@@ -50,7 +51,8 @@ export class DiscussionsComponent implements OnInit {
     private familyService: FamilyService,
     private route: ActivatedRoute,
     private router: Router,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public allpagesService: AllpagesService
   ) { }
 
   /**
@@ -241,6 +243,7 @@ export class DiscussionsComponent implements OnInit {
     if (popUpContainer) {
       popUpContainer.classList.add('dNone');
     }
+    this.resetEntryForm();
   }
 
   /**
@@ -263,11 +266,12 @@ export class DiscussionsComponent implements OnInit {
   addEntry(formData: FormData) {
     formData.append('discussion', this.selectedDiscussion.id);
     this.discussionService.addEntry(formData).subscribe((response) => {
-      this.selectedDiscussion.entries.push(response);
+      this.entry.title = '';
+      this.entry.content = '';
       this.loadDiscussion(this.selectedDiscussion.person.id);
-      this.hidePopUp();
-      this.resetEntryForm();
     });
+    this.entry = null;
+    this.hidePopUp();
   }
 
   /**
@@ -277,15 +281,10 @@ export class DiscussionsComponent implements OnInit {
   */
   updateEntry(formData: FormData): void {
     this.discussionService.updateEntry(this.entry.id, formData).subscribe((response: any) => {
-      const index = this.selectedDiscussion.entries.findIndex((e: any) => e.id === this.entry.id);
-      if (index !== -1) {
-        this.selectedDiscussion.entries[index] = response;
-      }
-      this.entry = null;
       this.loadDiscussion(this.selectedDiscussion.person.id);
-      this.resetEntryForm();
-      this.hidePopUp();
     });
+    this.entry = null;
+    this.hidePopUp();
   }
 
   /**
@@ -309,14 +308,23 @@ export class DiscussionsComponent implements OnInit {
    * @param {any} info - The information object containing image URLs.
    * @returns {string[]} An array of image URLs.
    */
-  getImageArray(info: any): string[] {
-    const images: string[] = [];
+  getImageArray(info: any): { original: string; thumbnail: string }[] {
+    if (this.imageCache[info.id]) {
+      return this.imageCache[info.id];
+    }
 
-    if (info.image_1_url) images.push(info.image_1_url);
-    if (info.image_2_url) images.push(info.image_2_url);
-    if (info.image_3_url) images.push(info.image_3_url);
-    if (info.image_4_url) images.push(info.image_4_url);
+    const images: { original: string; thumbnail: string }[] = [];
 
+    for (let i = 1; i <= 4; i++) {
+      const originalUrl = info[`image_${i}_url`];
+      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
+
+      if (originalUrl) {
+        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
+      }
+    }
+    this.imageCache[info.id] = images;
+    console.log(images);
     return images;
   }
 
@@ -349,15 +357,20 @@ export class DiscussionsComponent implements OnInit {
    */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
+
     if (files.length > 0) {
-      this.imageFiles = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type === 'image/jpeg' || file.type === 'image/png') {
-          this.imageFiles.push(file);
+      const file = files[0];
+
+      if (file.type === 'image/jpeg' || file.type === 'image/png') {
+
+        if (this.imageFiles[index - 1]) {
+          this.imageFiles.splice(index - 1, 1, file);
         } else {
-          alert('Nur JPG und PNG Dateien sind erlaubt.');
+          this.imageFiles.push(file);
         }
+
+      } else {
+        alert('Nur JPG und PNG Dateien sind erlaubt.');
       }
     }
   }
@@ -381,7 +394,16 @@ export class DiscussionsComponent implements OnInit {
       this.entry.image_4_url = null;
       this.entry.image_4 = null;
     }
-    this.deletedImages.push(imageUrl);
+    this.deletedImages.add(imageUrl);
+    this.updateImageCache(this.entry);
+  }
+
+  updateImageCache(info: any): void {
+    this.imageCache[info.id] = this.getImageArray(info);
+  }
+
+  isImageDeleted(imageUrl: string, entry: any): boolean {
+    return this.deletedImages.has(imageUrl);
   }
 
   /**
@@ -404,8 +426,8 @@ export class DiscussionsComponent implements OnInit {
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
 
-    this.addNewImages(formData);
-    this.addNullFields(formData);
+    this.allpagesService.addNewImages(this.entry, this.imageFiles, formData);
+    this.allpagesService.addNullFields(this.entry, formData);
 
     return formData;
   }
@@ -432,7 +454,7 @@ export class DiscussionsComponent implements OnInit {
   addNullFields(formData: FormData): void {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
+      if (!this.entry[imageField] && !formData.has(imageField)) {
         formData.append(imageField, '');
       }
     }

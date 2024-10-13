@@ -7,6 +7,8 @@ import { QuillModule } from 'ngx-quill';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ScrollService } from '../services/scroll.service';
 import { CommentService } from '../services/comment.service';
+import { AllpagesService } from '../services/allpages.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-recipes',
@@ -28,13 +30,14 @@ export class RecipesComponent implements OnInit {
     image_3: null,
     image_4: null
   };
-  imageFiles: File[] = [];
+  public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
+  public imageFiles: File[] = [];
   filteredRecipes: any[] = [];
   entry: any = null;
   entryToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
-  deletedImages: string[] = [];
+  deletedImages: Set<string> = new Set();
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
   comment: any = null;
@@ -46,7 +49,9 @@ export class RecipesComponent implements OnInit {
     public recipeService: RecipeService,
     private commentService: CommentService,
     private scrollService: ScrollService,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public allpagesService: AllpagesService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   /**
@@ -134,14 +139,22 @@ export class RecipesComponent implements OnInit {
   * @param {any} recipe - The recipe object containing image URLs.
   * @returns {string[]} An array of image URLs.
   */
-  getImageArray(recipe: any): string[] {
-    const images: string[] = [];
+  getImageArray(info: any): { original: string; thumbnail: string }[] {
+    if (this.imageCache[info.id]) {
+      return this.imageCache[info.id];
+    }
 
-    if (recipe.image_1) images.push(recipe.image_1);
-    if (recipe.image_2) images.push(recipe.image_2);
-    if (recipe.image_3) images.push(recipe.image_3);
-    if (recipe.image_4) images.push(recipe.image_4);
+    const images: { original: string; thumbnail: string }[] = [];
 
+    for (let i = 1; i <= 4; i++) {
+      const originalUrl = info[`image_${i}_url`];
+      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
+
+      if (originalUrl) {
+        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
+      }
+    }
+    this.imageCache[info.id] = images;
     return images;
   }
 
@@ -174,15 +187,20 @@ export class RecipesComponent implements OnInit {
    */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
+    
     if (files.length > 0) {
-      this.imageFiles = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type === 'image/jpeg' || file.type === 'image/png') {
-          this.imageFiles.push(file);
+      const file = files[0];
+
+      if (file.type === 'image/jpeg' || file.type === 'image/png') {
+
+        if (this.imageFiles[index - 1]) {
+          this.imageFiles.splice(index - 1, 1, file);
         } else {
-          alert('Nur JPG und PNG Dateien sind erlaubt.');
+          this.imageFiles.push(file);
         }
+        
+      } else {
+        alert('Nur JPG und PNG Dateien sind erlaubt.');
       }
     }
   }
@@ -234,17 +252,31 @@ export class RecipesComponent implements OnInit {
    * @param {string} imageUrl - The URL of the image to be removed.
    */
   removeImageByUrl(imageUrl: string): void {
-    for (let i = 1; i <= 4; i++) {
-      const imageUrlField = `image_${i}_url` as keyof typeof this.entry;
-      const imageField = `image_${i}` as keyof typeof this.entry;
-
-      if (this.entry[imageUrlField] === imageUrl) {
-        this.entry[imageUrlField] = null;
-        this.entry[imageField] = null;
-        this.deletedImages.push(imageUrl);
-        break;
-      }
+    if (this.entry.image_1_url === imageUrl) {
+      this.entry.image_1_url = null;
+      this.entry.image_1 = null;
+    } else if (this.entry.image_2_url === imageUrl) {
+      this.entry.image_2_url = null;
+      this.entry.image_2 = null;
+    } else if (this.entry.image_3_url === imageUrl) {
+      this.entry.image_3_url = null;
+      this.entry.image_3 = null;
+    } else if (this.entry.image_4_url === imageUrl) {
+      this.entry.image_4_url = null;
+      this.entry.image_4 = null;
     }
+    this.deletedImages.add(imageUrl);
+    this.updateImageCache(this.entry);
+    this.cdr.detectChanges();
+  }
+
+  updateImageCache(info: any): void {
+    this.imageCache[info.id] = this.getImageArray(info);
+  }
+
+
+  isImageDeleted(imageUrl: string, entry: any): boolean {
+    return this.deletedImages.has(imageUrl);
   }
 
   /**
@@ -273,6 +305,7 @@ export class RecipesComponent implements OnInit {
     if (popUpContainer) {
       popUpContainer.classList.add('dNone');
     }
+    this.resetEntryForm();
   }
 
   /**
@@ -300,7 +333,7 @@ export class RecipesComponent implements OnInit {
    */
   addNewImages(formData: FormData): void {
     this.imageFiles.forEach((file) => {
-      const imageField = this.getNextAvailableImageField();
+      const imageField = this.getNextAvailableImageField(formData);
       if (imageField) {
         formData.append(imageField, file, file.name);
       }
@@ -315,7 +348,7 @@ export class RecipesComponent implements OnInit {
   addNullFields(formData: FormData): void {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
+      if (!this.entry[imageField] && !formData.has(imageField)) {
         formData.append(imageField, '');
       }
     }
@@ -342,15 +375,10 @@ export class RecipesComponent implements OnInit {
    */
   updateEntry(formData: FormData): void {
     this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
-      const index = this.recipes.findIndex((e: any) => e.id === this.entry.id);
-      if (index !== -1) {
-        this.recipes[index] = response;
-      }
-      this.entry = null;
       this.loadAllRecipes();
-      this.resetEntryForm();
-      this.hidePopUp();
     });
+    this.entry = null;
+    this.hidePopUp();
   }
 
   /**
@@ -358,10 +386,10 @@ export class RecipesComponent implements OnInit {
    *
    * @returns {string | null} The name of the next available image field (e.g., 'image_1'), or `null` if all fields are occupied.
    */
-  getNextAvailableImageField(): string | null {
+  getNextAvailableImageField(formData: FormData): string | null {
     for (let i = 1; i <= 4; i++) {
       const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
+      if (!this.entry[imageField] && !formData.has(imageField)) {
         return imageField;
       }
     }
@@ -382,13 +410,11 @@ export class RecipesComponent implements OnInit {
     });
 
     this.recipeService.addRecipe(formData).subscribe((response: any) => {
-      this.recipes.push(response);
+      this.loadAllRecipes();
       this.entry.title = '';
       this.entry.content = '';
     });
-    this.loadAllRecipes();
     this.hidePopUp();
-    this.resetEntryForm();
   }
 
   /**
