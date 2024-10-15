@@ -348,15 +348,14 @@ export class FamInfosComponent implements OnInit{
    */
   saveEntry(): void {
     const formData = this.assembleFormData();
-    console.log(this.entry);
     if (!this.entry.family_1 && !this.entry.family_2) {
       alert('Bitte wähle mindestens eine Familie aus.');
       return;
     }
 
-    formData.forEach((value, key) => {
-      console.log(`${key}:`, value);
-    });
+  //  formData.forEach((value, key) => {
+  //    console.log(`${key}:`, value);
+  //  });
 
     if (this.entry.id) {
       this.updateEntry(formData);
@@ -373,6 +372,7 @@ export class FamInfosComponent implements OnInit{
   updateEntry(formData: FormData): void {
     this.faminfoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
       this.loadAllInfo();
+      window.location.reload();
     });
     this.entry = null;
     this.hidePopUp();

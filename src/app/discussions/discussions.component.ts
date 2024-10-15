@@ -282,6 +282,7 @@ export class DiscussionsComponent implements OnInit {
   updateEntry(formData: FormData): void {
     this.discussionService.updateEntry(this.entry.id, formData).subscribe((response: any) => {
       this.loadDiscussion(this.selectedDiscussion.person.id);
+      window.location.reload();
     });
     this.entry = null;
     this.hidePopUp();

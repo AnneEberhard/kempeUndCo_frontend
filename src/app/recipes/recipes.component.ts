@@ -376,6 +376,7 @@ export class RecipesComponent implements OnInit {
   updateEntry(formData: FormData): void {
     this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
       this.loadAllRecipes();
+      window.location.reload();
     });
     this.entry = null;
     this.hidePopUp();

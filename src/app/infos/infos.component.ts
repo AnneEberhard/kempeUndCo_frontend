@@ -388,6 +388,7 @@ export class InfosComponent implements OnInit {
   updateEntry(formData: FormData): void {
     this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
       this.loadAllInfo();
+      window.location.reload();
     });
     this.entry = null;
     this.hidePopUp();

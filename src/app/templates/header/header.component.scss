@@ -1,13 +1,14 @@
 header {
     display: flex;
     flex-direction: column;
-    padding: 100px 16px;
+    padding: 180px 16px;
     align-items: center;
     background-color: rgb(100,16,32);
     height:100%;
     box-sizing: border-box;
     transition: opacity 0.3s ease, transform 0.3s ease;
     width: 160px;
+    overflow: auto;
   }
 
   .headerlinks {

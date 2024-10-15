@@ -9,7 +9,7 @@
     <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt
     die entsprechende Person aus, und klickt auf den Button Diskussion in den
     Personeninfos oder sucht auf
-    <a routerLink="/discussions" routerLinkActive="active">Diskussionen</a> nach
+    <a routerLink="/discussions" routerLinkActive="active">Diskussionen zur Stammfolge</a> nach
     einer bereits existierende Diskussion.<br /><br />
     Jeder Nutzer kann immer nur seinen eigenen Beiträge bearbeiten oder löschen.
     Sollten euch Beiträge auffallen, die problematisch sind, informiert uns
@@ -191,7 +191,7 @@
         </div>
 
         <div class="buttonContainer">
-          <button (click)="hidePopUp()">Abbrechen</button>
+          <button type="button" (click)="hidePopUp()">Abbrechen</button>
           <button
             type="submit"
             [disabled]="!entry.content || imageFiles.length > 4"
