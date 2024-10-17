@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule, NgForm,FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { take } from 'rxjs';
@@ -10,11 +10,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ScrollToTopButtonComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, ScrollToTopButtonComponent],
   templateUrl: './account.component.html',
   styleUrl: './account.component.scss'
 })
-export class AccountComponent {
+export class AccountComponent implements OnInit{
   showErrorPasswordAlert: boolean = false;
   showErrorPasswordMatchAlert: boolean = false;
   errorMessage: string = '';
@@ -33,11 +33,53 @@ export class AccountComponent {
     confirmPassword: '',
   };
 
-  constructor(private authService: AuthService, private router: Router) {
+  alertForm!: FormGroup;
+
+  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
     this.userEmail = localStorage.getItem('userEmail');
     this.authorName = localStorage.getItem('authorName')
   }
 
+
+  ngOnInit(): void {
+    this.alertForm = this.fb.group({
+      alert_faminfo: [localStorage.getItem('alert_faminfo') === 'true'],
+      alert_info: [localStorage.getItem('alert_info') === 'true'],
+      alert_recipe: [localStorage.getItem('alert_recipe') === 'true'],
+      alert_discussion: [localStorage.getItem('alert_discussion') === 'true']
+    });
+  // this.alertForm.valueChanges.subscribe(val => {
+  //   console.log('Formularwerte geändert:', val);
+  // });
+  }
+
+
+  onSubmitPreferences(): void {
+    localStorage.setItem('alert_faminfo', this.alertForm.get('alert_faminfo')?.value);
+    localStorage.setItem('alert_info', this.alertForm.get('alert_info')?.value);
+    localStorage.setItem('alert_recipe', this.alertForm.get('alert_recipe')?.value);
+    localStorage.setItem('alert_discussion', this.alertForm.get('alert_discussion')?.value);
+
+    const preferences = this.alertForm.value;
+    this.authService.updateAlertPreferences(preferences).subscribe({
+      next: (response) => {
+        this.renderInfo('alerts');
+        setTimeout(this.clearForm, 4000);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Ein Fehler ist aufgetreten:', error);
+        if (error.status === 400 && error.error) {
+          if (error.error.old_password) {
+            this.errorMessage = error.error.old_password[0];
+          } else {
+            this.errorMessage = 'Ein unbekannter Fehler ist aufgetreten.';
+          }
+        } else {
+          this.errorMessage = 'Es ist ein Netzwerkfehler aufgetreten.';
+        }
+      }
+    });
+  }
 
   /**
   * toggles between passwort visible and not
@@ -57,7 +99,7 @@ export class AccountComponent {
   * @param {NgForm} form - entered data
   * @returns boolean
   */
-  onSubmit(form: NgForm) {
+  onSubmitPassword(form: NgForm) {
     this.errorMessage = '';
     if (this.checkForm(form)) {
       const userData = this.assembleData(form);
@@ -195,6 +237,9 @@ export class AccountComponent {
       }
       if (mode == 'name') {
         div.innerHTML = 'Der Name wurde geändert.';
+      }
+      if (mode == 'alerts') {
+        div.innerHTML = 'Die Benachrichtigungen wurden geändert.';
       }
     }
     this.sent = true;

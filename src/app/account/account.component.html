@@ -1,61 +1,91 @@
 <section>
-    <h1>Konto von</h1>
-    <span>{{ userEmail }}</span>
-    <h3>Möchtest du deinen Autorennamen ändern?</h3>
-    <form #nameForm="ngForm" (ngSubmit)="changeName()">
-      <div class="registerInputBox">
-        <div>Alter Name:</div>
-        <div>{{ authorName }}</div>
-      </div>
-      <div class="registerInputBox">
-        <label class="authorName" for="authorName"
-          >Neuer Name:
-          </label>
-        <div class="passwordContainer">
-          <input
-            id="authorName"
-            name="authorName"
-            [(ngModel)]="this.newAuthorName"
-            required
-          />
-        </div>
-      </div>
-      <div>
-          <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
-        </div>
-        <button
-          id="submitButton"
-          type="submit"
-          [disabled]="!nameForm.valid || this.sent"
-        >
-          {{ this.buttonText }}
-        </button>
-    </form>
-    <h3>Möchtest du dein Passwort ändern?</h3>
-  <form #passwortForm="ngForm" (ngSubmit)="onSubmit(passwortForm)">
+  <h1>Konto von</h1>
+  <span>{{ userEmail }}</span>
+  <h3>Möchtest du dich für Email-Benachrichtigungen an oder abmelden?</h3>
+  <form [formGroup]="alertForm" (ngSubmit)="onSubmitPreferences()">
+    <label>
+      <input
+        type="checkbox"
+        class="checkbox"
+        formControlName="alert_faminfo"
+      />
+      Benachrichtigungen bei neuer Familien-Info
+    </label>
+    <br />
+    <label>
+      <input type="checkbox" class="checkbox" formControlName="alert_info" />
+      Benachrichtigungen bei neuer Website-Info
+    </label>
+    <br />
+    <label>
+      <input type="checkbox" class="checkbox" formControlName="alert_recipe" />
+      Benachrichtigungen bei neuen Rezepten
+    </label>
+    <br />
+    <label>
+      <input
+        type="checkbox"
+        class="checkbox"
+        formControlName="alert_discussion"
+      />
+      Benachrichtigungen bei neuen Diskussionsbeiträgen zur Stammfolge
+    </label>
+    <br />
+    <button type="submit">Benachrichtigungen speichern</button>
+  </form>
+
+  <h3>Möchtest du deinen Autorennamen ändern?</h3>
+  <form #nameForm="ngForm" (ngSubmit)="changeName()">
     <div class="registerInputBox">
-        <label class="passwort" for="password"
-          >Altes Passwort:
-          </label
+      <div>Alter Name:</div>
+      <div>{{ authorName }}</div>
+    </div>
+    <div class="registerInputBox">
+      <label class="authorName" for="authorName">Neuer Name: </label>
+      <div class="passwordContainer">
+        <input
+          class="inputField"
+          id="authorName"
+          name="authorName"
+          [(ngModel)]="this.newAuthorName"
+          required
+        />
+      </div>
+    </div>
+    <div>
+      <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
+    </div>
+    <button
+      id="submitButton"
+      type="submit"
+      [disabled]="!nameForm.valid || this.sent"
+    >
+      {{ this.buttonText }}
+    </button>
+  </form>
+  <h3>Möchtest du dein Passwort ändern?</h3>
+  <form #passwortForm="ngForm" (ngSubmit)="onSubmitPassword(passwortForm)">
+    <div class="registerInputBox">
+      <label class="passwort" for="password">Altes Passwort: </label>
+      <div class="passwordContainer">
+        <input
+          class="inputField"
+          [type]="oldPasswordVisible ? 'text' : 'password'"
+          id="oldPassword"
+          name="oldPassword"
+          [(ngModel)]="formData.oldPassword"
+          required
+        />
+        <div
+          type="button"
+          (click)="togglePasswordVisibility('oldPassword')"
+          class="togglePassword"
         >
-        <div class="passwordContainer">
-          <input
-            [type]="oldPasswordVisible ? 'text' : 'password'"
-            id="oldPassword"
-            name="oldPassword"
-            [(ngModel)]="formData.oldPassword"
-            required
-          />
-          <div
-            type="button"
-            (click)="togglePasswordVisibility('oldPassword')"
-            class="togglePassword"
-          >
-            <span *ngIf="oldPasswordVisible">👁️</span>
-            <span *ngIf="!oldPasswordVisible">🙈</span>
-          </div>
+          <span *ngIf="oldPasswordVisible">👁️</span>
+          <span *ngIf="!oldPasswordVisible">🙈</span>
         </div>
       </div>
+    </div>
     <div class="registerInputBox">
       <label class="passwort" for="password"
         >Neues Passwort:
@@ -65,6 +95,7 @@
       >
       <div class="passwordContainer">
         <input
+          class="inputField"
           [type]="newPasswordVisible ? 'text' : 'password'"
           id="newPassword"
           name="newPassword"
@@ -91,6 +122,7 @@
       <label for="confirmPassword">Passwort Wiederholung:</label>
       <div class="passwordContainer">
         <input
+          class="inputField"
           [type]="confirmPasswordVisible ? 'text' : 'password'"
           id="confirmPassword"
           name="confirmPassword"
@@ -111,33 +143,33 @@
       Passwörter entsprechen einander nicht.
     </div>
     <div>
-        <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
-      </div>
-      <button
-        id="submitButton"
-        type="submit"
-        [disabled]="!passwortForm.valid || this.sent"
-      >
-        {{ this.buttonText }}
-      </button>
+      <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
+    </div>
+    <button
+      id="submitButton"
+      type="submit"
+      [disabled]="!passwortForm.valid || this.sent"
+    >
+      {{ this.buttonText }}
+    </button>
   </form>
   <div
-  id="popUpInfoContainer"
-  class="popUpInfoContainer dNone"
-  (click)="hideRules()"
->
-  <div class="popUpInfo">
-    <h4>Passwort-Regeln:</h4>
-    <p>
-      Das Passwort muss mindestens 8 Zeichen lang sein und mindestens je
-      einen Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes
-      Sonderzeichen
-      (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
-      enthalten.
-    </p>
+    id="popUpInfoContainer"
+    class="popUpInfoContainer dNone"
+    (click)="hideRules()"
+  >
+    <div class="popUpInfo">
+      <h4>Passwort-Regeln:</h4>
+      <p>
+        Das Passwort muss mindestens 8 Zeichen lang sein und mindestens je einen
+        Großbuchstaben, Kleinbuchstaben, eine Zahl und ein erlaubtes
+        Sonderzeichen
+        (<span>&#33;&#64;&#35;&#36;&#37;&#94;&#38;&#42;&#40;&#41;&#95;&#43;&#45;&#61;&#63;&#8364;</span>)
+        enthalten.
+      </p>
+    </div>
   </div>
-</div>
-<div id="popUpContainer" class="popUpInfoContainer dNone">
+  <div id="popUpContainer" class="popUpInfoContainer dNone">
     <div class="popUpInfo">
       <h1 id="infoBox" class="center"></h1>
     </div>

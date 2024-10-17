@@ -13,9 +13,9 @@ import { environment } from '../../environments/environment';
 })
 export class AuthService {
 
-  constructor(private http: HttpClient, private router: Router) {  }
+  constructor(private http: HttpClient, private router: Router) { }
 
-  public   isLoggedIn(): boolean {
+  public isLoggedIn(): boolean {
     return this.getAccessToken() !== null;
   }
 
@@ -38,7 +38,8 @@ export class AuthService {
    * @param {string} accessToken - The access token to set.
    * @param {string} refreshToken - The refresh token to set.
    */
-  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail:string, authorname:string, family_1: string, family_2: string): void {
+  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail: string, authorname: string, 
+    family_1: string, family_2: string, alert_faminfo: string, alert_info: string, alert_recipe: string, alert_discussion: string): void {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('userId', userId);
@@ -46,6 +47,10 @@ export class AuthService {
     localStorage.setItem('authorName', authorname);
     localStorage.setItem('family_1', family_1);
     localStorage.setItem('family_2', family_2);
+    localStorage.setItem('alert_faminfo', alert_faminfo);
+    localStorage.setItem('alert_info', alert_info);
+    localStorage.setItem('alert_recipe', alert_recipe);
+    localStorage.setItem('alert_discussion', alert_discussion);
   }
 
   /**
@@ -90,6 +95,10 @@ export class AuthService {
     localStorage.removeItem('authorName');
     localStorage.removeItem('family_1');
     localStorage.removeItem('family_2');
+    localStorage.removeItem('alert_faminfo');
+    localStorage.removeItem('alert_info');
+    localStorage.removeItem('alert_recipe');
+    localStorage.removeItem('alert_discussion');
   }
 
   /**
@@ -127,18 +136,18 @@ export class AuthService {
     return lastValueFrom(this.http.post(url, body));
   }
 
-/**
- * Stores the access token in `localStorage`.
- * @param {string} token - The access token to be stored.
- */
+  /**
+   * Stores the access token in `localStorage`.
+   * @param {string} token - The access token to be stored.
+   */
   setAccessToken(token: string): void {
     localStorage.setItem('accessToken', token);
   }
 
-/**
- * Sends a request to refresh the access token using the stored refresh token.
- * @returns {Observable<any>} An Observable containing the response from the refresh token request.
- */
+  /**
+   * Sends a request to refresh the access token using the stored refresh token.
+   * @returns {Observable<any>} An Observable containing the response from the refresh token request.
+   */
   refreshToken(): Observable<any> {
     const refreshToken = localStorage.getItem('refreshToken');
     return this.http.post(`${environment.baseUrl}/login/refresh/`, { refresh: refreshToken });
@@ -157,9 +166,15 @@ export class AuthService {
    * handles authorname change in backend
    * @param {any} userData - user info needed for regstration in backend
    */
-  changeName(userData: any):Observable<any> {
+  changeName(userData: any): Observable<any> {
     const url = environment.baseUrl + '/change-name/';
     return this.http.put<any>(url, userData);
+  }
+
+
+  updateAlertPreferences(preferences: any) {
+    const url = environment.baseUrl + '/change-alert-preferences/';
+    return this.http.put(url, preferences);
   }
 
 }
