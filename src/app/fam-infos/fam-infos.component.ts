@@ -401,8 +401,6 @@ export class FamInfosComponent implements OnInit{
   addEntry(formData: FormData) {
     this.faminfoService.addInfo(formData).subscribe((response: any) => {
       this.loadAllInfo();
-      this.entry.title = '';
-      this.entry.content = '';
     });
     this.entry = null;
     this.hidePopUp();
