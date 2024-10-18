@@ -166,7 +166,6 @@ export class InfosComponent implements OnInit {
       }
     }
     this.imageCache[info.id] = images;
-    console.log(images);
     return images;
   }
 
@@ -370,9 +369,9 @@ export class InfosComponent implements OnInit {
   saveEntry(): void {
     const formData = this.assembleFormData();
     
-    formData.forEach((value, key) => {
-      console.log(`${key}:`, value);
-    });
+  //  formData.forEach((value, key) => {
+  //    console.log(`${key}:`, value);
+  //  });
     if (this.entry.id) {
       this.updateEntry(formData);
     } else {

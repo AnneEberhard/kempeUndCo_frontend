@@ -325,7 +325,6 @@ export class DiscussionsComponent implements OnInit {
       }
     }
     this.imageCache[info.id] = images;
-    console.log(images);
     return images;
   }
 

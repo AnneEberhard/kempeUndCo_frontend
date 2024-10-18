@@ -129,7 +129,6 @@ export class AuthService {
    */
   public reset(key: string, password: string) {
     const url = environment.baseUrl + key;
-    console.log(url);
     const body = {
       "password": password
     };
