@@ -23,6 +23,7 @@
     "@angular/router": "^17.3.11",
     "@angular/ssr": "^17.3.9",
     "@sentry/angular": "^8.29.0",
+    "@sentry/angular-ivy": "^7.120.3",
     "@sentry/browser": "^8.29.0",
     "@sentry/cli": "^2.36.0",
     "@sentry/replay": "^7.116.0",

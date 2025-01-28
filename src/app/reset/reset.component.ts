@@ -104,7 +104,7 @@ export class ResetComponent implements OnInit {
    */
   validatePassword(password: string): boolean {
     // check length
-    if (password.length < 10) {
+    if (password.length < 8) {
       this.showErrorPasswordAlert = true;
       return false;
     }
