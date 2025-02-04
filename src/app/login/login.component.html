@@ -7,9 +7,12 @@
       verifizierte Familienmitglieder darauf zugreifen. Für die Registrierung
       braucht ihr die Empfehlung eines bereits registrierten, uns bekannten
       Nutzers oder müsst euch anderweitig ausweisen.
-      <br />Noch ein Hinweis: Diese Seite ist derzeit nur bedingt responsiv - das
-      heißt, ihr werdet manche Dinge nur auf einem Computerbildschirm vernünftig sehen können, nicht an
-      kleineren Geräten wie z.B. am Handy.
+      <br />
+      <br /><b>Noch ein Hinweis: Diese Seite läuft über ein sicheres, aber
+      kostengünstiges Backend. Der Nachteil ist, dass dies recht langsam ist.
+      Dadurch kann es zu Fehlern kommen - manchmal muss man es leider etwas
+      öfter probieren oder die Seite neu laden. Außerdem scheinen Apple-Geräte öfter Schwierigkeiten zu
+      haben. An dem Problem wird gearbeitet!</b>
     </p>
     <p>Hier geht es zur <a routerLink="/register">Registrierung!</a></p>
     <h3>Schon registriert? Hier ist der Login:</h3>
@@ -30,7 +33,11 @@
           id="password"
           placeholder="Passwort"
         />
-        <div type="button" (click)="togglePasswordVisibility()" class="togglePassword">
+        <div
+          type="button"
+          (click)="togglePasswordVisibility()"
+          class="togglePassword"
+        >
           <span *ngIf="passwordVisible">👁️</span>
           <span *ngIf="!passwordVisible">🙈</span>
         </div>
@@ -38,8 +45,6 @@
       <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
       <button type="submit" [disabled]="!form.valid">Einloggen</button>
     </form>
-    
-   
 
     <a class="center" routerLink="/forgot">Passwort vergessen?</a>
   </div>

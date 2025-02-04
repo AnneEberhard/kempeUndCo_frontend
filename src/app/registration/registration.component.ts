@@ -6,6 +6,8 @@ import { AuthService } from '../services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { take } from 'rxjs';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
+import * as Sentry from "@sentry/angular";
+
 
 @Component({
   selector: 'app-registration',
@@ -105,22 +107,27 @@ export class RegistrationComponent {
         },
         error: (error) => {
           if (error instanceof HttpErrorResponse) {
+            const errorMessage = typeof error.error === 'string' ? error.error : '';
+        
             if (error.status === 400 && error.error && error.error.email && error.error.email[0] === "user with this email already exists.") {
               this.errorMessage = 'Ein Nutzer mit dieser Email ist bereits bei uns registriert.';
               this.renderPasswordForgotLink();
-            } else if (error.error.includes('Der angegebene Bürge existiert nicht.')) {
+            } else if (errorMessage.includes('Der angegebene Bürge existiert nicht.')) {
               this.errorMessage = 'Der angegebene Bürge existiert nicht in unserer Datenbank.';
-            } else if (error.error.includes('Der Bürge ist für die ausgewählten Familien nicht berechtigt.')) {
+            } else if (errorMessage.includes('Der Bürge ist für die ausgewählten Familien nicht berechtigt.')) {
               this.errorMessage = 'Der Bürge ist für die ausgewählte Familien nicht berechtigt. Bitte nur Familien auswählen, für die der Bürge autorisiert ist.';
-            }else {
+            } else {
               console.error('An error occurred:', error);
               this.errorMessage = 'Ein Fehler ist vorgefallen!';
+              Sentry.captureException(error);  // Fehler explizit an Sentry senden
             }
           } else {
             console.error('An error occurred:', error);
-            alert('Ein Fehler ist vorgefallen!');
+            alert('Ein Fehler ist vorgefallen! Bitte überprüfe deine Eingaben.');
+            Sentry.captureException(error);  // Fehler explizit an Sentry senden
           }
         }
+        
       });
   }
 
