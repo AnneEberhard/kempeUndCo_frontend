@@ -1,4 +1,5 @@
 Falls Sentry Probleme macht, in der main.ts den entsprechenden init auskommentieren
+Hochladen auf allInkl: dist/browser
 
 # KempeUndCoFrontend
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
 
   email: string = '';
   password: string = '';
@@ -23,6 +23,18 @@ export class LoginComponent {
   passwordVisible: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) { }
+
+    /**
+   * Initializes the component and makes sure the logged in user lands on welcome page
+   */
+    ngOnInit(): void {
+      if (this.authService.isLoggedIn() === true) {
+        console.log('logged in');
+        window.location.href = '/welcome'
+      } else {
+        console.log('not logged in');
+      }
+    }
 
  /**
   * toggles between passwort visible and not
