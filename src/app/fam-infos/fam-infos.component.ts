@@ -10,6 +10,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
 import { CapitalizePipe } from "../pipes/capitalize.pipe";
 import { AllpagesService } from '../services/allpages.service';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-fam-infos',
@@ -18,7 +19,7 @@ import { AllpagesService } from '../services/allpages.service';
   templateUrl: './fam-infos.component.html',
   styleUrl: './fam-infos.component.scss'
 })
-export class FamInfosComponent implements OnInit{
+export class FamInfosComponent implements OnInit {
   public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
   public imageFiles: File[] = [];
   deletedImages: Set<string> = new Set();
@@ -56,7 +57,8 @@ export class FamInfosComponent implements OnInit{
     private commentService: CommentService,
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer,
-    public allpagesService: AllpagesService
+    public allpagesService: AllpagesService,
+    private loadingService: LoadingService
   ) {
     this.family_1 = localStorage.getItem('family_1');
     this.family_2 = localStorage.getItem('family_2');
@@ -74,17 +76,46 @@ export class FamInfosComponent implements OnInit{
   /**
    * Loads all information from the info service and sorts them by the updated date.
    */
-  loadAllInfo() {
-    this.faminfoService.getAllInfos().subscribe(infos => {
-      this.infos = infos;
-      this.infos.sort((a, b) => {
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      });
-      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
-      this.filteredInfos = this.infos;
-      this.loadComments();
+  loadAllInfo(): void {
+    this.loadingService.show(); // Lade-Overlay aktivieren
+
+    this.faminfoService.getAllInfos().subscribe({
+      next: (infos) => {
+        this.infos = infos;
+        this.infos.sort((a, b) => {
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        });
+        this.infos = infos.map((recipe: any) => ({ ...recipe, isHidden: false }));
+        this.filteredInfos = this.infos;
+        this.loadComments();
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden:', error);
+
+        if (error.status === 404) {
+          alert('Keine Infos gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es erneut.');
+        } else {
+          alert('Fehler beim Laden.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide(); // Lade-Overlay ausblenden
+      }
     });
   }
+  //  loadAllInfo() {
+  //    this.faminfoService.getAllInfos().subscribe(infos => {
+  //      this.infos = infos;
+  //      this.infos.sort((a, b) => {
+  //        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+  //      });
+  //      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
+  //      this.filteredInfos = this.infos;
+  //      this.loadComments();
+  //    });
+  //  }
 
   /**
    * Loads a specific info item by its ID and sanitizes its content for safe display.
@@ -92,13 +123,36 @@ export class FamInfosComponent implements OnInit{
    * @param {string} infoId - The ID of the info item to be loaded.
    */
   loadInfo(infoId: string): void {
-    this.faminfoService.getInfoById(infoId).subscribe(
-      info => {
+    this.loadingService.show();
+    this.faminfoService.getInfoById(infoId).subscribe({
+      next: (info) => {
         this.selectedInfo = info;
         this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden:', error);
+
+        if (error.status === 404) {
+          alert('Keine Info gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es erneut.');
+        } else {
+          alert('Fehler beim Laden.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
       }
-    );
+    });
   }
+  //  loadInfo(infoId: string): void {
+  //    this.faminfoService.getInfoById(infoId).subscribe(
+  //      info => {
+  //        this.selectedInfo = info;
+  //        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+  //      }
+  //    );
+  //  }
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -152,7 +206,7 @@ export class FamInfosComponent implements OnInit{
    */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
-    
+
     if (files.length > 0) {
       const file = files[0];
 
@@ -163,7 +217,7 @@ export class FamInfosComponent implements OnInit{
         } else {
           this.imageFiles.push(file);
         }
-        
+
       } else {
         alert('Nur JPG und PNG Dateien sind erlaubt.');
       }
@@ -298,11 +352,14 @@ export class FamInfosComponent implements OnInit{
     const formData = new FormData();
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
-
+    if (this.family_1 == 'null' && this.family_2 !=null) {
+      this.entry.family_1 = this.family_2;
+    } else if (this.family_2 == 'null' && this.family_1 !=null) {
+      this.entry.family_1 = this.family_1;
+    }
     if (this.entry.family_1) {
       formData.append('family_1', this.entry.family_1);
     }
-
     if (this.entry.family_2) {
       formData.append('family_2', this.entry.family_2);
     }
@@ -351,11 +408,12 @@ export class FamInfosComponent implements OnInit{
     if (!this.entry.family_1 && !this.entry.family_2) {
       alert('Bitte wähle mindestens eine Familie aus.');
       return;
+
     }
 
-  //  formData.forEach((value, key) => {
-  //    console.log(`${key}:`, value);
-  //  });
+    //  formData.forEach((value, key) => {
+    //    console.log(`${key}:`, value);
+    //  });
 
     if (this.entry.id) {
       this.updateEntry(formData);
@@ -370,12 +428,31 @@ export class FamInfosComponent implements OnInit{
    * @param {FormData} formData - The form data containing updated information for the entry.
    */
   updateEntry(formData: FormData): void {
-    this.faminfoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
-      this.loadAllInfo();
-      window.location.reload();
+    this.loadingService.show();
+    this.faminfoService.updateInfo(this.entry.id, formData).subscribe({
+      next: (response: any) => {
+        this.loadAllInfo();
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Fehler beim Aktualisieren:', error);
+
+        if (error.status === 400) {
+          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 403) {
+          alert('Du hast keine Berechtigung für diese Aktion.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Unbekannter Fehler. Bitte kontaktiere den Support.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+        this.entry = null;
+        this.hidePopUp();
+      }
     });
-    this.entry = null;
-    this.hidePopUp();
   }
 
   /**
@@ -399,11 +476,34 @@ export class FamInfosComponent implements OnInit{
    * @param {FormData} formData - The form data containing information for the new entry.
    */
   addEntry(formData: FormData) {
-    this.faminfoService.addInfo(formData).subscribe((response: any) => {
-      this.loadAllInfo();
-    });
-    this.entry = null;
-    this.hidePopUp();
+    this.loadingService.show();  // Lade-Overlay anzeigen
+    this.faminfoService.addInfo(formData).subscribe({
+      next: (response: any) => {
+        this.loadAllInfo();
+        this.entry.title = '';
+        this.entry.content = '';
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Fehler beim Aktualisieren:', error);
+
+        // Benutzerfreundliche Fehlermeldung setzen
+        if (error.status === 400) {
+          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 403) {
+          alert('Du hast keine Berechtigung für diese Aktion.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Unbekannter Fehler. Bitte kontaktiere den Support.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();  // Lade-Overlay ausblenden
+        this.entry = null;
+        this.hidePopUp();
+      }
+    });;
   }
 
   /**
@@ -425,13 +525,38 @@ export class FamInfosComponent implements OnInit{
   * Deletes an entry based on the entry to delete.
   * differs from recipe due to service
   */
-  deleteEntry() {
-    this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
-      this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
-      this.loadAllInfo();
-      this.hidePopUp();
+  deleteEntry(): void {
+    this.loadingService.show();
+
+    this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe({
+      next: () => {
+        this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
+        this.loadAllInfo();
+        this.hidePopUp();
+      },
+      error: (error) => {
+        console.error('Fehler beim Löschen des Eintrags:', error);
+
+        if (error.status === 404) {
+          alert('Eintrag nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Löschen des Eintrags.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+  //  deleteEntry() {
+  //    this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
+  //      this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
+  //      this.loadAllInfo();
+  //      this.hidePopUp();
+  //    });
+  //  }
 
   /**
    * Loads comments for each info entry and stores them in the `comments` object.

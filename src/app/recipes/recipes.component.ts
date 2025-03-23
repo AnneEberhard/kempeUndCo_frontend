@@ -9,6 +9,7 @@ import { ScrollService } from '../services/scroll.service';
 import { CommentService } from '../services/comment.service';
 import { AllpagesService } from '../services/allpages.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-recipes',
@@ -51,7 +52,8 @@ export class RecipesComponent implements OnInit {
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer,
     public allpagesService: AllpagesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef, 
+    private loadingService: LoadingService
   ) { }
 
   /**
@@ -66,17 +68,47 @@ export class RecipesComponent implements OnInit {
   /**
    * Loads all information from the recipe service and sorts them by the updated date.
    */
-  loadAllRecipes() {
-    this.recipeService.getAllRecipes().subscribe(recipes => {
-      this.recipes = recipes;
-      this.recipes.sort((a, b) => {
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      });
-      this.recipes = recipes.map((recipe: any) => ({ ...recipe, isHidden: false }));
-      this.filteredRecipes = this.recipes;
-      this.loadComments();
+  loadAllRecipes(): void {
+    this.loadingService.show();
+  
+    this.recipeService.getAllRecipes().subscribe({
+      next: (recipes) => {
+        this.recipes = recipes;
+        this.recipes.sort((a, b) => {
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        });
+        this.recipes = recipes.map((recipe: any) => ({ ...recipe, isHidden: false }));
+        this.filteredRecipes = this.recipes;
+        this.loadComments();
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden der Rezepte:', error);
+  
+        if (error.status === 404) {
+          alert('Keine Rezepte gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Laden der Rezepte.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+  
+//  loadAllRecipes() {
+//    this.recipeService.getAllRecipes().subscribe(recipes => {
+//      this.recipes = recipes;
+//      this.recipes.sort((a, b) => {
+//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+//      });
+//      this.recipes = recipes.map((recipe: any) => ({ ...recipe, isHidden: false }));
+//      this.filteredRecipes = this.recipes;
+//      this.loadComments();
+//    });
+//  }
 
   /**
    * Loads a specific recipe item by its ID and sanitizes its content for safe display.
@@ -84,13 +116,36 @@ export class RecipesComponent implements OnInit {
    * @param {string} recipeId - The ID of the recipe item to be loaded.
    */
   loadRecipe(recipeId: string): void {
-    this.recipeService.getRecipeById(recipeId).subscribe(
-      recipe => {
+    this.loadingService.show();
+    this.recipeService.getRecipeById(recipeId).subscribe({
+      next: (recipe) => {
         this.selectedRecipe = recipe;
         this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(recipe.content);
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden:', error);
+
+        if (error.status === 404) {
+          alert('Kein Rezept gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es erneut.');
+        } else {
+          alert('Fehler beim Laden.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
       }
-    );
+    });
   }
+//  loadRecipe(recipeId: string): void {
+//    this.recipeService.getRecipeById(recipeId).subscribe(
+//      recipe => {
+//        this.selectedRecipe = recipe;
+//        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(recipe.content);
+//      }
+//    );
+//  }
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -364,7 +419,7 @@ export class RecipesComponent implements OnInit {
     if (this.entry.id) {
       this.updateEntry(formData);
     } else {
-      this.addEntry();
+      this.addEntry(formData);
     }
   }
 
@@ -374,13 +429,40 @@ export class RecipesComponent implements OnInit {
    * @param {FormData} formData - The form data containing updated information for the entry.
    */
   updateEntry(formData: FormData): void {
-    this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
-      this.loadAllRecipes();
-      window.location.reload();
+    this.loadingService.show();
+    this.recipeService.updateRecipe(this.entry.id, formData).subscribe({
+      next: (response: any) => {
+        this.loadAllRecipes();
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Fehler beim Aktualisieren:', error);
+
+        if (error.status === 400) {
+          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 403) {
+          alert('Du hast keine Berechtigung für diese Aktion.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Unbekannter Fehler. Bitte kontaktiere den Support.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+        this.entry = null;
+        this.hidePopUp();
+      }
     });
-    this.entry = null;
-    this.hidePopUp();
   }
+//  updateEntry(formData: FormData): void {
+//    this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
+//      this.loadAllRecipes();
+//      window.location.reload();
+//    });
+//    this.entry = null;
+//    this.hidePopUp();
+//  }
 
   /**
    * Gets the next available image field for a new image.
@@ -401,21 +483,33 @@ export class RecipesComponent implements OnInit {
    * Adds a new entry using the provided form data.
    * differs from info due to param
    */
-  addEntry() {
-    const formData = new FormData();
-    formData.append('title', this.entry.title);
-    formData.append('content', this.entry.content);
-
-    this.imageFiles.forEach((file, index) => {
-      formData.append(`image_${index + 1}`, file, file.name);
+  addEntry(formData: FormData) {
+    this.loadingService.show();
+    this.recipeService.addRecipe(formData).subscribe({
+      next: (response: any) => {
+        this.loadAllRecipes();
+        this.entry.title = '';
+        this.entry.content = '';
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Fehler beim Aktualisieren:', error);
+        if (error.status === 400) {
+          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 403) {
+          alert('Du hast keine Berechtigung für diese Aktion.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Unbekannter Fehler. Bitte kontaktiere den Support.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+        this.entry = null;
+        this.hidePopUp();
+      }
     });
-
-    this.recipeService.addRecipe(formData).subscribe((response: any) => {
-      this.loadAllRecipes();
-      this.entry.title = '';
-      this.entry.content = '';
-    });
-    this.hidePopUp();
   }
 
   /**
@@ -437,13 +531,38 @@ export class RecipesComponent implements OnInit {
   * Deletes an entry based on the entry to delete.
   * differs from info due to service
   */
-  deleteEntry() {
-    this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe(() => {
-      this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
-      this.loadAllRecipes();
-      this.hidePopUp();
+  deleteEntry(): void {
+    this.loadingService.show();
+  
+    this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe({
+      next: () => {
+        this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
+        this.loadAllRecipes();
+        this.hidePopUp();
+      },
+      error: (error) => {
+        console.error('Fehler beim Löschen des Eintrags:', error);
+  
+        if (error.status === 404) {
+          alert('Eintrag nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Löschen des Eintrags.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+//  deleteEntry() {
+//    this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe(() => {
+//      this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
+//      this.loadAllRecipes();
+//      this.hidePopUp();
+//    });
+//  }
 
   /**
    * Loads comments for each recipe entry and stores them in the `comments` object.

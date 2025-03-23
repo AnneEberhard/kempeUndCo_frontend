@@ -6,11 +6,12 @@ import { CommonModule } from '@angular/common';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, ScrollToTopButtonComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './account.component.html',
   styleUrl: './account.component.scss'
 })
@@ -35,7 +36,11 @@ export class AccountComponent implements OnInit{
 
   alertForm!: FormGroup;
 
-  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
+  constructor(
+    private authService: AuthService, 
+    private router: Router, 
+    private fb: FormBuilder, 
+    private loadingService: LoadingService) {
     this.userEmail = localStorage.getItem('userEmail');
     this.authorName = localStorage.getItem('authorName')
   }
@@ -55,6 +60,7 @@ export class AccountComponent implements OnInit{
 
 
   onSubmitPreferences(): void {
+    this.loadingService.show(); 
     localStorage.setItem('alert_faminfo', this.alertForm.get('alert_faminfo')?.value);
     localStorage.setItem('alert_info', this.alertForm.get('alert_info')?.value);
     localStorage.setItem('alert_recipe', this.alertForm.get('alert_recipe')?.value);
@@ -77,6 +83,9 @@ export class AccountComponent implements OnInit{
         } else {
           this.errorMessage = 'Es ist ein Netzwerkfehler aufgetreten.';
         }
+      },
+      complete: () => {
+        this.loadingService.hide();
       }
     });
   }
@@ -203,6 +212,7 @@ export class AccountComponent implements OnInit{
    * @param userData 
    */
   changePasswort(userData: any) {
+    this.loadingService.show(); 
     this.authService.changePasswort(userData).pipe(take(1))
       .subscribe({
         next: (response) => {
@@ -220,6 +230,9 @@ export class AccountComponent implements OnInit{
           } else {
             this.errorMessage = 'Es ist ein Netzwerkfehler aufgetreten.';
           }
+        },
+        complete: () => {
+          this.loadingService.hide();
         }
       });
   }
@@ -277,6 +290,7 @@ export class AccountComponent implements OnInit{
  * starts changing the authorname and handles logic of the frontend
   */
   changeName() {
+    this.loadingService.show(); 
     const userData = {
       email: this.userEmail,
       author_name: this.newAuthorName,
@@ -295,6 +309,9 @@ export class AccountComponent implements OnInit{
           } else {
             this.errorMessage = 'Es ist ein Netzwerkfehler aufgetreten.';
           }
+        },
+        complete: () => {
+          this.loadingService.hide();
         }
       });
   }

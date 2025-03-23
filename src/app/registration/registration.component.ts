@@ -7,6 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { take } from 'rxjs';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import * as Sentry from "@sentry/angular";
+import { LoadingService } from '../services/loading.service';
 
 
 @Component({
@@ -41,7 +42,10 @@ export class RegistrationComponent {
     selectedFamilies: [] as string[]
   };
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService, 
+    private router: Router, 
+    private loadingService: LoadingService) { }
 
  /**
   * toggles between passwort visible and not
@@ -99,6 +103,7 @@ export class RegistrationComponent {
    * @param userData 
    */
   registerUser(userData: any) {
+    this.loadingService.show(); 
     this.authService.registerUser(userData).pipe(take(1))
       .subscribe({
         next: (response) => {
@@ -126,6 +131,9 @@ export class RegistrationComponent {
             alert('Ein Fehler ist vorgefallen! Bitte überprüfe deine Eingaben.');
             Sentry.captureException(error);  // Fehler explizit an Sentry senden
           }
+        },
+        complete: () => {
+          this.loadingService.hide();
         }
         
       });

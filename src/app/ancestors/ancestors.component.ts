@@ -7,6 +7,7 @@ import { Person } from "../interfaces/person";
 import { Relations } from "../interfaces/relations";
 import { Family } from '../interfaces/family';
 import { FormsModule } from '@angular/forms';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-ancestors',
@@ -29,7 +30,11 @@ export class AncestorsComponent implements OnInit {
   currentImage: string | null = null;
   userKempe = false;
 
-  constructor(private familyService: FamilyService, private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private familyService: FamilyService, 
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private loadingService: LoadingService) {
     this.personId = 3571;
   }
 
@@ -43,15 +48,30 @@ export class AncestorsComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       const encodedPersonRefnFromRoute = params.get('refn');
       const personRefnFromRoute = encodedPersonRefnFromRoute ? decodeURIComponent(encodedPersonRefnFromRoute) : null;
-
-      this.familyService.getAllPersons().subscribe(data => {
-        this.allPersonsList = data;
-        if (personRefnFromRoute) {
-          this.setPersonIdByRefn(personRefnFromRoute);
-        } else if (this.userKempe) {
-          this.setPersonIdByRefn('@I5@');
-        } else {
-          this.setPersonIdByRefn('@I1151@');
+      this.loadingService.show();
+      this.familyService.getAllPersons().subscribe({
+        next: (data) => {
+          this.allPersonsList = data;
+          if (personRefnFromRoute) {
+            this.setPersonIdByRefn(personRefnFromRoute);
+          } else if (this.userKempe) {
+            this.setPersonIdByRefn('@I5@');
+          } else {
+            this.setPersonIdByRefn('@I1151@');
+          }
+        },
+        error: (error) => {
+          console.error('Fehler beim Laden der Personenliste:', error);
+          if (error.status === 404) {
+            alert('Keine Personen gefunden.');
+          } else if (error.status === 500) {
+            alert('Serverfehler. Bitte versuche es später erneut.');
+          } else {
+            alert('Fehler beim Laden der Daten.');
+          }
+        },
+        complete: () => {
+          this.loadingService.hide(); 
         }
       });
     });
@@ -105,10 +125,34 @@ export class AncestorsComponent implements OnInit {
    * Loads family data for the currently selected person.
    */
   loadFamilyData() {
-    this.familyService.getFamily(this.personId).subscribe(family => {
-      this.family = family;
+    this.loadingService.show();
+  
+    this.familyService.getFamily(this.personId).subscribe({
+      next: (family) => {
+        this.family = family;
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden der Familiendaten:', error);
+  
+        if (error.status === 404) {
+          alert('Familiendaten nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Laden der Familiendaten.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+
+// loadFamilyData() {
+//   this.familyService.getFamily(this.personId).subscribe(family => {
+//     this.family = family;
+//   });
+// }
 
   /**
    * Searches for persons based on the search term and updates the search results.
@@ -128,11 +172,37 @@ export class AncestorsComponent implements OnInit {
    */
   selectPerson(person: Person): void {
     this.personId = person.id;
-    this.familyService.getFamily(this.personId).subscribe(family => {
-      this.family = family;
-      this.clearSearch();
+    this.loadingService.show();
+  
+    this.familyService.getFamily(this.personId).subscribe({
+      next: (family) => {
+        this.family = family;
+        this.clearSearch();
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden:', error);
+  
+        if (error.status === 404) {
+          alert('Daten nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es noch einmal.');
+        } else {
+          alert('Fehler beim Laden.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+
+//  selectPerson(person: Person): void {
+//    this.personId = person.id;
+//    this.familyService.getFamily(this.personId).subscribe(family => {
+//      this.family = family;
+//      this.clearSearch();
+//    });
+//  }
 
   /**
    * Clears the search term and search results.
@@ -160,13 +230,41 @@ export class AncestorsComponent implements OnInit {
    * @param {number} id - The ID of the person whose family data is to be fetched.
    */
   getNewData(id: number) {
-    if (id != 0) {
+    if (id !== 0) {
       this.personId = id;
-      this.familyService.getFamily(this.personId).subscribe(family => {
-        this.family = family;
+      this.loadingService.show();
+  
+      this.familyService.getFamily(this.personId).subscribe({
+        next: (family) => {
+          this.family = family;
+        },
+        error: (error) => {
+          console.error('Fehler beim Laden:', error);
+  
+          if (error.status === 404) {
+            alert('Familiendaten nicht gefunden.');
+          } else if (error.status === 500) {
+            alert('Serverfehler. Bitte versuche es erneut.');
+          } else {
+            alert('Fehler beim Laden.');
+          }
+        },
+        complete: () => {
+          this.loadingService.hide();
+        }
       });
     }
   }
+  
+//  getNewData(id: number) {
+//    if (id != 0) {
+//      this.personId = id;
+//      this.familyService.getFamily(this.personId).subscribe(family => {
+//        this.family = family;
+//      });
+//    }
+//  }
+
 
   /**
   * shows overlay with hints

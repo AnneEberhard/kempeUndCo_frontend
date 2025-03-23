@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,7 @@ export class LoginComponent implements OnInit{
   errorMessage: string = '';
   passwordVisible: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private loadingService: LoadingService) { }
 
     /**
    * Initializes the component and makes sure the logged in user lands on welcome page
@@ -48,6 +49,7 @@ export class LoginComponent implements OnInit{
   * starts login, sets storage token in case of success and renders errors in case of failure
   */
   login() {
+    this.loadingService.show(); 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         this.authService.setTokens(response.access, response.refresh, response.user.id, response.user.email, 
@@ -61,6 +63,9 @@ export class LoginComponent implements OnInit{
         } else {
           this.errorMessage = 'Fehler beim Einloggen. Bitte überprüfe Login-Informationen.';
         }
+      },
+      complete: () => {
+        this.loadingService.hide();
       }
     });
   }

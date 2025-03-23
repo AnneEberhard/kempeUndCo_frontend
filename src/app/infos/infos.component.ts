@@ -10,12 +10,13 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
 import { CapitalizePipe } from "../pipes/capitalize.pipe";
 import { AllpagesService } from '../services/allpages.service';
+import { LoadingService } from '../services/loading.service';
 
 
 @Component({
   selector: 'app-infos',
   standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule, CapitalizePipe],
+  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule,],
   templateUrl: './infos.component.html',
   styleUrl: './infos.component.scss'
 })
@@ -57,7 +58,8 @@ export class InfosComponent implements OnInit {
     private commentService: CommentService,
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer,
-    public allpagesService: AllpagesService
+    public allpagesService: AllpagesService, 
+    private loadingService: LoadingService
   ) {
     this.family_1 = localStorage.getItem('family_1');
     this.family_2 = localStorage.getItem('family_2');
@@ -75,17 +77,48 @@ export class InfosComponent implements OnInit {
   /**
    * Loads all information from the info service and sorts them by the updated date.
    */
-  loadAllInfo() {
-    this.infoService.getAllInfos().subscribe(infos => {
-      this.infos = infos;
-      this.infos.sort((a, b) => {
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      });
-      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
-      this.filteredInfos = this.infos;
-      this.loadComments();
+
+  loadAllInfo(): void {
+    this.loadingService.show(); // Lade-Overlay aktivieren
+  
+    this.infoService.getAllInfos().subscribe({
+      next: (infos) => {
+        this.infos = infos;
+        this.infos.sort((a, b) => {
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        });
+        this.infos = infos.map((recipe: any) => ({ ...recipe, isHidden: false }));
+        this.filteredInfos = this.infos;
+        this.loadComments();
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden:', error);
+  
+        if (error.status === 404) {
+          alert('Keine Infos gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es erneut.');
+        } else {
+          alert('Fehler beim Laden.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide(); // Lade-Overlay ausblenden
+      }
     });
   }
+  
+//  loadAllInfo() {
+//    this.infoService.getAllInfos().subscribe(infos => {
+//      this.infos = infos;
+//      this.infos.sort((a, b) => {
+//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+//      });
+//      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
+//      this.filteredInfos = this.infos;
+//      this.loadComments();
+//    });
+//  }
 
   /**
    * Loads a specific info item by its ID and sanitizes its content for safe display.
@@ -93,13 +126,36 @@ export class InfosComponent implements OnInit {
    * @param {string} infoId - The ID of the info item to be loaded.
    */
   loadInfo(infoId: string): void {
-    this.infoService.getInfoById(infoId).subscribe(
-      info => {
+    this.loadingService.show();
+    this.infoService.getInfoById(infoId).subscribe({
+      next: (info) => {
         this.selectedInfo = info;
         this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden:', error);
+
+        if (error.status === 404) {
+          alert('Keine Info gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es erneut.');
+        } else {
+          alert('Fehler beim Laden.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
       }
-    );
+    });
   }
+//  loadInfo(infoId: string): void {
+//    this.infoService.getInfoById(infoId).subscribe(
+//      info => {
+//        this.selectedInfo = info;
+//        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+//      }
+//    );
+//  }
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -385,13 +441,33 @@ export class InfosComponent implements OnInit {
    * @param {FormData} formData - The form data containing updated information for the entry.
    */
   updateEntry(formData: FormData): void {
-    this.infoService.updateInfo(this.entry.id, formData).subscribe((response: any) => {
-      this.loadAllInfo();
-      window.location.reload();
+    this.loadingService.show();
+    this.infoService.updateInfo(this.entry.id, formData).subscribe({
+      next: (response: any) => {
+        this.loadAllInfo();
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Fehler beim Aktualisieren:', error);
+
+        if (error.status === 400) {
+          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 403) {
+          alert('Du hast keine Berechtigung für diese Aktion.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Unbekannter Fehler. Bitte kontaktiere den Support.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+        this.entry = null;
+        this.hidePopUp();
+      }
     });
-    this.entry = null;
-    this.hidePopUp();
   }
+  
 
   /**
    * Gets the next available image field for a new image.
@@ -414,13 +490,34 @@ export class InfosComponent implements OnInit {
    * @param {FormData} formData - The form data containing information for the new entry.
    */
   addEntry(formData: FormData) {
-    this.infoService.addInfo(formData).subscribe((response: any) => {
-      this.loadAllInfo();
-      this.entry.title = '';
-      this.entry.content = '';
+    this.loadingService.show();  // Lade-Overlay anzeigen
+    this.infoService.addInfo(formData).subscribe({
+      next: (response: any) => {
+        this.loadAllInfo();
+        this.entry.title = '';
+        this.entry.content = '';
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Fehler beim Aktualisieren:', error);
+  
+        // Benutzerfreundliche Fehlermeldung setzen
+        if (error.status === 400) {
+          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 403) {
+          alert('Du hast keine Berechtigung für diese Aktion.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Unbekannter Fehler. Bitte kontaktiere den Support.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();  // Lade-Overlay ausblenden
+        this.entry = null;
+        this.hidePopUp();
+      }
     });
-    this.entry = null;
-    this.hidePopUp();
   }
 
   /**
@@ -442,13 +539,38 @@ export class InfosComponent implements OnInit {
   * Deletes an entry based on the entry to delete.
   * differs from recipe due to service
   */
-  deleteEntry() {
-    this.infoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
-      this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
-      this.loadAllInfo();
-      this.hidePopUp();
+  deleteEntry(): void {
+    this.loadingService.show();
+  
+    this.infoService.deleteInfo(this.entryToDelete.id).subscribe({
+      next: () => {
+        this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
+        this.loadAllInfo();
+        this.hidePopUp();
+      },
+      error: (error) => {
+        console.error('Fehler beim Löschen des Eintrags:', error);
+  
+        if (error.status === 404) {
+          alert('Eintrag nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Löschen des Eintrags.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+//  deleteEntry() {
+//    this.infoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
+//      this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
+//      this.loadAllInfo();
+//      this.hidePopUp();
+//    });
+//  }
 
   /**
    * Loads comments for each info entry and stores them in the `comments` object.

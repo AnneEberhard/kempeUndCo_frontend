@@ -8,6 +8,7 @@ import { FamilyService } from '../services/family.service';
 import { QuillModule } from 'ngx-quill';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AllpagesService } from '../services/allpages.service';
+import { LoadingService } from '../services/loading.service';
 
 
 @Component({
@@ -52,7 +53,8 @@ export class DiscussionsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public sanitizer: DomSanitizer,
-    public allpagesService: AllpagesService
+    public allpagesService: AllpagesService, 
+    private loadingService: LoadingService
   ) { }
 
   /**
@@ -94,17 +96,48 @@ export class DiscussionsComponent implements OnInit {
    * Loads and sorts all discussions, and sets the filtered discussions.
    */
   loadAllDiscussions(): void {
-    this.discussionService.getAllDiscussions().subscribe(discussions => {
-      this.discussions = discussions;
-      this.discussions.sort((a, b) => {
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      });
-      this.filteredDiscussions = this.discussions;
-    });
-    this.filteredDiscussions.sort((a, b) => {
-      return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
+    this.loadingService.show();
+  
+    this.discussionService.getAllDiscussions().subscribe({
+      next: (discussions) => {
+        this.discussions = discussions;
+        this.discussions.sort((a, b) => {
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        });
+        this.filteredDiscussions = [...this.discussions];
+        this.filteredDiscussions.sort((a, b) => {
+          return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
+        });
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden der Diskussionen:', error);
+  
+        if (error.status === 404) {
+          alert('Keine Diskussionen gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Laden der Diskussionen.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+  
+//  loadAllDiscussions(): void {
+//    this.discussionService.getAllDiscussions().subscribe(discussions => {
+//      this.discussions = discussions;
+//      this.discussions.sort((a, b) => {
+//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+//      });
+//      this.filteredDiscussions = this.discussions;
+//    });
+//    this.filteredDiscussions.sort((a, b) => {
+//      return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
+//    });
+//  }
 
   /**
    * Loads a specific discussion based on person ID and sorts the discussion entries.
@@ -112,15 +145,46 @@ export class DiscussionsComponent implements OnInit {
    * @param {string} personId - The ID of the person whose discussion is to be loaded.
    */
   loadDiscussion(personId: string): void {
-    this.discussionService.getDiscussionByPersonId(personId).subscribe(discussion => {
-      this.selectedDiscussion = discussion;
-      const selectedDiscussionEntries = discussion.entries;
-      selectedDiscussionEntries.sort((a: { updated_at: string | number | Date; }, b: { updated_at: string | number | Date; }) => {
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      });
-      this.filteredEntries = selectedDiscussionEntries;
+    this.loadingService.show();
+  
+    this.discussionService.getDiscussionByPersonId(personId).subscribe({
+      next: (discussion) => {
+        this.selectedDiscussion = discussion;
+        const selectedDiscussionEntries = discussion.entries;
+  
+        selectedDiscussionEntries.sort((a: { updated_at: string | number | Date; }, b: { updated_at: string | number | Date; }) => {
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        });
+  
+        this.filteredEntries = selectedDiscussionEntries;
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden der Diskussion:', error);
+  
+        if (error.status === 404) {
+          alert('Keine Diskussion zu dieser Person gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Laden der Diskussion.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+  
+//  loadDiscussion(personId: string): void {
+//    this.discussionService.getDiscussionByPersonId(personId).subscribe(discussion => {
+//      this.selectedDiscussion = discussion;
+//      const selectedDiscussionEntries = discussion.entries;
+//      selectedDiscussionEntries.sort((a: { updated_at: string | number | Date; }, b: { updated_at: string | number | Date; }) => {
+//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+//      });
+//      this.filteredEntries = selectedDiscussionEntries;
+//    });
+//  }
 
   /**
    * Loads a person's details based on the person ID.
@@ -128,14 +192,42 @@ export class DiscussionsComponent implements OnInit {
    * @param {number} personId - The ID of the person to load.
    */
   loadPerson(personId: number): void {
-    this.familyService.getPerson(personId).subscribe(person => {
-      this.personName = person.name;
-      this.personRefn = person.refn;
-      if (person.birt_date) {
-        this.personGebDate = person.birt_date;
+    this.loadingService.show(); // Lade-Overlay aktivieren
+  
+    this.familyService.getPerson(personId).subscribe({
+      next: (person) => {
+        this.personName = person.name;
+        this.personRefn = person.refn;
+        if (person.birt_date) {
+          this.personGebDate = person.birt_date;
+        }
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden der Personendaten:', error);
+  
+        if (error.status === 404) {
+          alert('Person nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Laden der Personendaten.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide(); // Lade-Overlay ausblenden
       }
     });
   }
+  
+//  loadPerson(personId: number): void {
+//    this.familyService.getPerson(personId).subscribe(person => {
+//      this.personName = person.name;
+//      this.personRefn = person.refn;
+//      if (person.birt_date) {
+//        this.personGebDate = person.birt_date;
+//      }
+//    });
+//  }
 
   /**
    * Filters the discussions list based on the search term.
@@ -195,13 +287,41 @@ export class DiscussionsComponent implements OnInit {
   /**
    * Deletes the currently selected entry and updates the discussion.
    */
-  deleteEntry() {
-    this.discussionService.deleteEntry(this.entryToDelete.id).subscribe(() => {
-      this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== this.entryToDelete.id);
-      this.loadDiscussion(this.selectedDiscussion.person.id);
-      this.hidePopUp();
+  deleteEntry(): void {
+    this.loadingService.show();
+  
+    this.discussionService.deleteEntry(this.entryToDelete.id).subscribe({
+      next: () => {
+        this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter(
+          (e: any) => e.id !== this.entryToDelete.id
+        );
+        this.loadDiscussion(this.selectedDiscussion.person.id);
+        this.hidePopUp();
+      },
+      error: (error) => {
+        console.error('Fehler beim Löschen des Eintrags:', error);
+  
+        if (error.status === 404) {
+          alert('Eintrag nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Löschen des Eintrags.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
     });
   }
+  
+//  deleteEntry() {
+//    this.discussionService.deleteEntry(this.entryToDelete.id).subscribe(() => {
+//      this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== this.entryToDelete.id);
+//      this.loadDiscussion(this.selectedDiscussion.person.id);
+//      this.hidePopUp();
+//    });
+//  }
 
   /**
    * Shows a popup for different modes (add, edit, image, delete) with the specified data.
@@ -263,16 +383,45 @@ export class DiscussionsComponent implements OnInit {
    *
    * @param {FormData} formData - The form data to be sent with the request.
    */
-  addEntry(formData: FormData) {
+  addEntry(formData: FormData): void {
+    this.loadingService.show();
     formData.append('discussion', this.selectedDiscussion.id);
-    this.discussionService.addEntry(formData).subscribe((response) => {
-      this.entry.title = '';
-      this.entry.content = '';
-      this.loadDiscussion(this.selectedDiscussion.person.id);
+  
+    this.discussionService.addEntry(formData).subscribe({
+      next: (response) => {
+        this.entry.title = '';
+        this.entry.content = '';
+        this.loadDiscussion(this.selectedDiscussion.person.id);
+      },
+      error: (error) => {
+        console.error('Fehler beim Hinzufügen des Eintrags:', error);
+  
+        if (error.status === 400) {
+          alert('Ungültige Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Hinzufügen des Eintrags.');
+        }
+      },
+      complete: () => {
+        this.entry = null;
+        this.hidePopUp();
+        this.loadingService.hide();
+      }
     });
-    this.entry = null;
-    this.hidePopUp();
   }
+  
+//  addEntry(formData: FormData) {
+//    formData.append('discussion', this.selectedDiscussion.id);
+//    this.discussionService.addEntry(formData).subscribe((response) => {
+//      this.entry.title = '';
+//      this.entry.content = '';
+//      this.loadDiscussion(this.selectedDiscussion.person.id);
+//    });
+//    this.entry = null;
+//    this.hidePopUp();
+//  }
 
   /**
   * Updates an existing entry in the selected discussion.
@@ -280,13 +429,41 @@ export class DiscussionsComponent implements OnInit {
   * @param {FormData} formData - The form data to be sent with the request.
   */
   updateEntry(formData: FormData): void {
-    this.discussionService.updateEntry(this.entry.id, formData).subscribe((response: any) => {
-      this.loadDiscussion(this.selectedDiscussion.person.id);
-      window.location.reload();
+    this.loadingService.show();
+    this.discussionService.updateEntry(this.entry.id, formData).subscribe({
+      next: (response: any) => {
+        this.loadDiscussion(this.selectedDiscussion.person.id);
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Fehler beim Aktualisieren des Eintrags:', error);
+  
+        if (error.status === 400) {
+          alert('Ungültige Eingabe. Bitte überprüfe deine Daten.');
+        } else if (error.status === 404) {
+          alert('Eintrag nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Aktualisieren des Eintrags.');
+        }
+      },
+      complete: () => {
+        this.entry = null;
+        this.hidePopUp();
+        this.loadingService.hide();
+      }
     });
-    this.entry = null;
-    this.hidePopUp();
   }
+  
+//  updateEntry(formData: FormData): void {
+//    this.discussionService.updateEntry(this.entry.id, formData).subscribe((response: any) => {
+//      this.loadDiscussion(this.selectedDiscussion.person.id);
+//      window.location.reload();
+//    });
+//    this.entry = null;
+//    this.hidePopUp();
+//  }
 
   /**
    * Resets the entry form and clears any uploaded images.
