@@ -96,6 +96,7 @@ export class DiscussionsComponent implements OnInit {
    * Loads and sorts all discussions, and sets the filtered discussions.
    */
   loadAllDiscussions(): void {
+    console.log('load');
     this.loadingService.show();
   
     this.discussionService.getAllDiscussions().subscribe({
@@ -105,9 +106,6 @@ export class DiscussionsComponent implements OnInit {
           return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
         });
         this.filteredDiscussions = [...this.discussions];
-        this.filteredDiscussions.sort((a, b) => {
-          return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
-        });
       },
       error: (error) => {
         console.error('Fehler beim Laden der Diskussionen:', error);

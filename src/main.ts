@@ -9,14 +9,14 @@ import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import * as Sentry from "@sentry/angular";
 
 
-//Sentry.init({
-//  dsn: "https://88e9c349e9356205c0baac4c4e17f81b@o4507470803042304.ingest.de.sentry.io/4507917749452880",
-//  integrations: [
-//    // Sentry.browserTracingIntegration(), // Entferne oder kommentiere aus, falls Tracing nicht benötigt wird
-//    Sentry.replayIntegration(),
-//  ],
-//  tracesSampleRate: 0, // Deaktiviert Tracing
-//});
+Sentry.init({
+  dsn: "https://88e9c349e9356205c0baac4c4e17f81b@o4507470803042304.ingest.de.sentry.io/4507917749452880",
+  integrations: [
+    // Sentry.browserTracingIntegration(), // Entferne oder kommentiere aus, falls Tracing nicht benötigt wird
+    Sentry.replayIntegration(),
+  ],
+  tracesSampleRate: 0, // Deaktiviert Tracing
+});
 
 enableProdMode();
 
