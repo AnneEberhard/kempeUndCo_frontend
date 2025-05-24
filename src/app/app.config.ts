@@ -10,6 +10,7 @@ import * as Sentry from "@sentry/angular";
 import { headerInterceptor } from './services/header.interceptor';
 // added here: provideHttpClient(withInterceptors([authInterceptor, headerInterceptor])), causes CORS Error
 
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),

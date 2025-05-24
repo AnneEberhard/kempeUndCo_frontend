@@ -3,7 +3,6 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
-
 import { enableProdMode } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import * as Sentry from "@sentry/angular";
@@ -16,6 +15,8 @@ Sentry.init({
     Sentry.replayIntegration(),
   ],
   tracesSampleRate: 0, // Deaktiviert Tracing
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
 });
 
 enableProdMode();
