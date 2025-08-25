@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { FaminfoService } from '../services/faminfo.service';
 import { QuillModule } from 'ngx-quill';
 import { ScrollService } from '../services/scroll.service';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
 import { CapitalizePipe } from "../pipes/capitalize.pipe";
 import { AllpagesService } from '../services/allpages.service';
@@ -40,7 +40,6 @@ export class FamInfosComponent implements OnInit {
   entryToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
-  safeUrl: SafeResourceUrl | null = null;
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
   comment: any = null;
@@ -193,7 +192,7 @@ export class FamInfosComponent implements OnInit {
     if (files.length > 0) {
       const file = files[0];
 
-      if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'application/pdf') {
+      if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg') {
 
         if (this.imageFiles[index - 1]) {
           this.imageFiles.splice(index - 1, 1, file);
@@ -202,7 +201,7 @@ export class FamInfosComponent implements OnInit {
         }
 
       } else {
-        alert('Nur JPG, PNG und PDF Dateien sind erlaubt.');
+        alert('Nur JPG, PNG und JPEG Dateien sind erlaubt.');
       }
     }
   }
@@ -230,7 +229,7 @@ export class FamInfosComponent implements OnInit {
       this.entry = { ...data };
     } else if (mode === 'image') {
       this.entry = null;
-      this.setShowUrl(data);
+      this.showImageUrl = data;
     } else if (mode === 'delete') {
       this.entry = null;
       this.entryToDelete = { ...data };
@@ -251,24 +250,6 @@ export class FamInfosComponent implements OnInit {
     }
   }
 
-  setShowUrl(url: string) {
-    this.showImageUrl = url;
-
-    if (this.isPdf(url)) {
-      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    } else {
-      this.safeUrl = url;
-    }
-  }
-
-
-  isImage(url: string): boolean {
-    return /\.(jpg|jpeg|png|gif|png)$/i.test(url);
-  }
-
-  isPdf(url: string): boolean {
-    return /\.pdf$/i.test(url);
-  }
 
   getImageArray(info: any): { original: string; thumbnail: string }[] {
     if (this.imageCache[info.id]) {
@@ -354,9 +335,9 @@ export class FamInfosComponent implements OnInit {
     const formData = new FormData();
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
-    if (this.family_1 == 'null' && this.family_2 != null) {
+    if (this.family_1 == 'null' && this.family_2 !=null) {
       this.entry.family_1 = this.family_2;
-    } else if (this.family_2 == 'null' && this.family_1 != null) {
+    } else if (this.family_2 == 'null' && this.family_1 !=null) {
       this.entry.family_1 = this.family_1;
     }
     if (this.entry.family_1) {
