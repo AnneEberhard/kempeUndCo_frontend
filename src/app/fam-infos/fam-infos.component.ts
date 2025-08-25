@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { FaminfoService } from '../services/faminfo.service';
 import { QuillModule } from 'ngx-quill';
 import { ScrollService } from '../services/scroll.service';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { CommentService } from '../services/comment.service';
 import { CapitalizePipe } from "../pipes/capitalize.pipe";
 import { AllpagesService } from '../services/allpages.service';
@@ -40,6 +40,7 @@ export class FamInfosComponent implements OnInit {
   entryToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
+  safeUrl: SafeResourceUrl | null = null;
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
   comment: any = null;
@@ -91,7 +92,7 @@ export class FamInfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden:', error);
-
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Keine Infos gefunden.');
         } else if (error.status === 500) {
@@ -105,17 +106,6 @@ export class FamInfosComponent implements OnInit {
       }
     });
   }
-  //  loadAllInfo() {
-  //    this.faminfoService.getAllInfos().subscribe(infos => {
-  //      this.infos = infos;
-  //      this.infos.sort((a, b) => {
-  //        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-  //      });
-  //      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
-  //      this.filteredInfos = this.infos;
-  //      this.loadComments();
-  //    });
-  //  }
 
   /**
    * Loads a specific info item by its ID and sanitizes its content for safe display.
@@ -131,7 +121,7 @@ export class FamInfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden:', error);
-
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Keine Info gefunden.');
         } else if (error.status === 500) {
@@ -145,14 +135,7 @@ export class FamInfosComponent implements OnInit {
       }
     });
   }
-  //  loadInfo(infoId: string): void {
-  //    this.faminfoService.getInfoById(infoId).subscribe(
-  //      info => {
-  //        this.selectedInfo = info;
-  //        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
-  //      }
-  //    );
-  //  }
+
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -210,7 +193,7 @@ export class FamInfosComponent implements OnInit {
     if (files.length > 0) {
       const file = files[0];
 
-      if (file.type === 'image/jpeg' || file.type === 'image/png') {
+      if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'application/pdf') {
 
         if (this.imageFiles[index - 1]) {
           this.imageFiles.splice(index - 1, 1, file);
@@ -219,7 +202,7 @@ export class FamInfosComponent implements OnInit {
         }
 
       } else {
-        alert('Nur JPG und PNG Dateien sind erlaubt.');
+        alert('Nur JPG, PNG und PDF Dateien sind erlaubt.');
       }
     }
   }
@@ -246,7 +229,8 @@ export class FamInfosComponent implements OnInit {
     } else if (mode === 'edit') {
       this.entry = { ...data };
     } else if (mode === 'image') {
-      this.showImageUrl = data;
+      this.entry = null;
+      this.setShowUrl(data);
     } else if (mode === 'delete') {
       this.entry = null;
       this.entryToDelete = { ...data };
@@ -267,6 +251,24 @@ export class FamInfosComponent implements OnInit {
     }
   }
 
+  setShowUrl(url: string) {
+    this.showImageUrl = url;
+
+    if (this.isPdf(url)) {
+      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    } else {
+      this.safeUrl = url;
+    }
+  }
+
+
+  isImage(url: string): boolean {
+    return /\.(jpg|jpeg|png|gif|png)$/i.test(url);
+  }
+
+  isPdf(url: string): boolean {
+    return /\.pdf$/i.test(url);
+  }
 
   getImageArray(info: any): { original: string; thumbnail: string }[] {
     if (this.imageCache[info.id]) {
@@ -352,9 +354,9 @@ export class FamInfosComponent implements OnInit {
     const formData = new FormData();
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
-    if (this.family_1 == 'null' && this.family_2 !=null) {
+    if (this.family_1 == 'null' && this.family_2 != null) {
       this.entry.family_1 = this.family_2;
-    } else if (this.family_2 == 'null' && this.family_1 !=null) {
+    } else if (this.family_2 == 'null' && this.family_1 != null) {
       this.entry.family_1 = this.family_1;
     }
     if (this.entry.family_1) {
@@ -436,7 +438,7 @@ export class FamInfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
-
+        this.loadingService.hide();
         if (error.status === 400) {
           alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
@@ -486,7 +488,7 @@ export class FamInfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
-
+        this.loadingService.hide();
         // Benutzerfreundliche Fehlermeldung setzen
         if (error.status === 400) {
           alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
@@ -527,7 +529,7 @@ export class FamInfosComponent implements OnInit {
   */
   deleteEntry(): void {
     this.loadingService.show();
-
+    this.loadingService.hide();
     this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe({
       next: () => {
         this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);

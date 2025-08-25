@@ -155,7 +155,7 @@
 
         <div>
           <h5>Bilder:</h5>
-          <label for="images">Bilder hochladen (max. 4):</label>
+          <label for="images">Bilder oder PDF hochladen (max. 4):</label>
           <div
             *ngFor="let index of [1, 2, 3, 4]"
             class="image-upload-container"
@@ -165,7 +165,7 @@
                 type="file"
                 [id]="'image' + index"
                 (change)="onFileChange($event, index)"
-                accept=".jpg,.png"
+                accept=".png,.jpg,.jpeg,.pdf" 
               />
             </div>
           </div>

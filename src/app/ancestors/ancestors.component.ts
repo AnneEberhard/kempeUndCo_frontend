@@ -62,6 +62,7 @@ export class AncestorsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Fehler beim Laden der Personenliste:', error);
+          this.loadingService.hide();
           if (error.status === 404) {
             alert('Keine Personen gefunden.');
           } else if (error.status === 500) {
@@ -133,7 +134,7 @@ export class AncestorsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden der Familiendaten:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Familiendaten nicht gefunden.');
         } else if (error.status === 500) {
@@ -181,7 +182,7 @@ export class AncestorsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Daten nicht gefunden.');
         } else if (error.status === 500) {
@@ -240,7 +241,7 @@ export class AncestorsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Fehler beim Laden:', error);
-  
+          this.loadingService.hide();
           if (error.status === 404) {
             alert('Familiendaten nicht gefunden.');
           } else if (error.status === 500) {

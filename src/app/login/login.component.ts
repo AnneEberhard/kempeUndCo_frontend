@@ -58,6 +58,7 @@ export class LoginComponent implements OnInit{
         this.router.navigate(['/welcome']);
       },
       error: (error) => {
+        this.loadingService.hide();
         if (error.status === 400 && error.error.non_field_errors[0] === 'Inactive account') {
           this.errorMessage = 'Dein Account ist leider noch nicht aktiviert.';
         } else {

@@ -93,7 +93,7 @@ export class InfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Keine Infos gefunden.');
         } else if (error.status === 500) {
@@ -134,7 +134,7 @@ export class InfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden:', error);
-
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Keine Info gefunden.');
         } else if (error.status === 500) {
@@ -449,7 +449,7 @@ export class InfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
-
+        this.loadingService.hide();
         if (error.status === 400) {
           alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
@@ -500,7 +500,7 @@ export class InfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
-  
+        this.loadingService.hide();
         // Benutzerfreundliche Fehlermeldung setzen
         if (error.status === 400) {
           alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
@@ -550,7 +550,7 @@ export class InfosComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Löschen des Eintrags:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Eintrag nicht gefunden.');
         } else if (error.status === 500) {

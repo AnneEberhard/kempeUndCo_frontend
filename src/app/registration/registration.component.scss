@@ -178,7 +178,6 @@ meine Addition: label, damit es nicht springt und zentriert ist*/
   color: red;
 }
 
-
 .passwordContainer {
   display: flex;
   align-items: center;
@@ -192,4 +191,22 @@ meine Addition: label, damit es nicht springt und zentriert ist*/
   padding: 1rem;
   border-radius: 0px 10px 10px 0;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  #registerBox {
+    margin: 0;
+  }
+
+  .regDivider {
+    margin-top: 16px;
+    background-color: black;
+    width: 100%;
+    overflow: hidden;
+    height: 1px;
+  }
+
+  .registerInputBox {
+    flex-direction: column;
+  }
 }

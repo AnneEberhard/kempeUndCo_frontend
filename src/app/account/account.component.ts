@@ -74,6 +74,7 @@ export class AccountComponent implements OnInit{
       },
       error: (error: HttpErrorResponse) => {
         console.error('Ein Fehler ist aufgetreten:', error);
+        this.loadingService.hide();
         if (error.status === 400 && error.error) {
           if (error.error.old_password) {
             this.errorMessage = error.error.old_password[0];
@@ -221,6 +222,7 @@ export class AccountComponent implements OnInit{
         },
         error: (error: HttpErrorResponse) => {
           console.error('Ein Fehler ist aufgetreten:', error);
+          this.loadingService.hide();
           if (error.status === 400 && error.error) {
             if (error.error.old_password) {
               this.errorMessage = error.error.old_password[0];
@@ -303,6 +305,7 @@ export class AccountComponent implements OnInit{
           setTimeout(this.clearForm, 4000);
         },
         error: (error: HttpErrorResponse) => {
+          this.loadingService.hide();
           console.error('Ein Fehler ist aufgetreten:', error);
           if (error.status === 400 && error.error) {
             this.errorMessage = 'Ein unbekannter Fehler ist aufgetreten.';

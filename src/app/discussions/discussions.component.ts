@@ -109,7 +109,7 @@ export class DiscussionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden der Diskussionen:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Keine Diskussionen gefunden.');
         } else if (error.status === 500) {
@@ -158,7 +158,7 @@ export class DiscussionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden der Diskussion:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Keine Diskussion zu dieser Person gefunden.');
         } else if (error.status === 500) {
@@ -202,7 +202,7 @@ export class DiscussionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden der Personendaten:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Person nicht gefunden.');
         } else if (error.status === 500) {
@@ -298,7 +298,7 @@ export class DiscussionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Löschen des Eintrags:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Eintrag nicht gefunden.');
         } else if (error.status === 500) {
@@ -393,7 +393,7 @@ export class DiscussionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Hinzufügen des Eintrags:', error);
-  
+        this.loadingService.hide();
         if (error.status === 400) {
           alert('Ungültige Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 500) {
@@ -435,7 +435,7 @@ export class DiscussionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren des Eintrags:', error);
-  
+        this.loadingService.hide();
         if (error.status === 400) {
           alert('Ungültige Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 404) {

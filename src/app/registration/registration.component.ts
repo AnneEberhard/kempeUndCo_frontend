@@ -111,6 +111,7 @@ export class RegistrationComponent {
           setTimeout(this.clearForm, 4000);
         },
         error: (error) => {
+          this.loadingService.hide();
           if (error instanceof HttpErrorResponse) {
             const errorMessage = typeof error.error === 'string' ? error.error : '';
         
@@ -254,17 +255,28 @@ export class RegistrationComponent {
    * @returns userData as a json for sending
    */
   assembleData(form: NgForm) {
-    const userData = {
-      email: this.formData.email,
-      password: this.formData.password,
-      first_name: this.formData.first_name,
-      last_name: this.formData.last_name,
-      guarantor: this.formData.guarantor,
-      guarantor_email: this.formData.guarantorEmail,
-      selected_families: this.formData.selectedFamilies
-    };
-    return userData;
-  }
+  return {
+    email: this.formData.email,
+    password: this.formData.password,
+    first_name: this.formData.first_name,
+    last_name: this.formData.last_name,
+    guarantor: this.formData.guarantor,
+    guarantor_email: this.formData.guarantorEmail,
+    selected_families: this.formData.selectedFamilies
+  };
+}
+//  assembleData(form: NgForm) {
+//    const userData = {
+//      email: this.formData.email,
+//      password: this.formData.password,
+//      first_name: this.formData.first_name,
+//      last_name: this.formData.last_name,
+//      guarantor: this.formData.guarantor,
+//      guarantor_email: this.formData.guarantorEmail,
+//      selected_families: this.formData.selectedFamilies
+//    };
+//    return userData;
+//  }
 
   /**
   * renders info of success in case the backend responded well

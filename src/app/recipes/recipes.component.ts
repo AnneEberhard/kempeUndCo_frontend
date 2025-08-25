@@ -83,7 +83,7 @@ export class RecipesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden der Rezepte:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Keine Rezepte gefunden.');
         } else if (error.status === 500) {
@@ -124,7 +124,7 @@ export class RecipesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Laden:', error);
-
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Kein Rezept gefunden.');
         } else if (error.status === 500) {
@@ -437,7 +437,7 @@ export class RecipesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
-
+        this.loadingService.hide();
         if (error.status === 400) {
           alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
@@ -494,6 +494,7 @@ export class RecipesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
+        this.loadingService.hide();
         if (error.status === 400) {
           alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
@@ -542,7 +543,7 @@ export class RecipesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Fehler beim Löschen des Eintrags:', error);
-  
+        this.loadingService.hide();
         if (error.status === 404) {
           alert('Eintrag nicht gefunden.');
         } else if (error.status === 500) {
