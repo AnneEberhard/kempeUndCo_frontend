@@ -10,11 +10,9 @@ export class LoadingService {
 
   show() {
     this.loadingSubject.next(true);
-    console.log('loading')
   }
 
   hide() {
     this.loadingSubject.next(false);
-    console.log('loading done')
   }
 }

@@ -11,6 +11,31 @@ export class AllpagesService {
   constructor() { }
 
 
+    prepareImages(info: { [x: string]: any; }) {
+    const images: { original: string; thumbnail: string }[] = [];
+    for (let i = 1; i <= 4; i++) {
+      const originalUrl = info[`image_${i}_url`];
+      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
+      if (originalUrl) {
+        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
+      }
+    }
+    return images;
+  }
+
+  preparePdfs(info: { [x: string]: any; }) {
+    const pdfs: { url: string; name: string }[] = [];
+    for (let i = 1; i <= 4; i++) {
+      const pdfUrl = info[`pdf_${i}_url`];
+      const pdfName = info[`pdf_${i}_name`];
+      if (pdfUrl) {
+        pdfs.push({ url: pdfUrl, name: pdfName });
+      }
+    }
+    return pdfs;
+
+  }
+
   /**
    * Adds new images to the form data.
    *
@@ -26,6 +51,25 @@ export class AllpagesService {
   }
 
   /**
+ * Adds new images to the form data.
+ *
+ * @param {FormData} formData - The form data to which images will be added.
+ */
+addNewPdfs(entry: { [key: string]: any }, pdfFiles: any[], formData: FormData): void {
+  pdfFiles.forEach((pdf) => {
+    const pdfField = this.getNextAvailablePdfField(entry, formData); // z. B. "pdf_1"
+    if (pdfField) {
+      // PDF selbst
+      formData.append(pdfField, pdf.file, pdf.file.name);
+
+      // Falls CustomName vergeben → eigenen Key anhängen
+      const customName = pdf.customName?.trim() || pdf.file.name; // fallback: Originalname
+      formData.append(pdfField + '_name', customName);
+    }
+  });
+}
+
+  /**
    * Adds null fields for any deleted images to the form data.
    *
    * @param {FormData} formData - The form data to which null fields will be added.
@@ -35,6 +79,15 @@ export class AllpagesService {
       const imageField = `image_${i}`;
       if (!entry[imageField] && !formData.has(imageField)) {
         formData.append(imageField, '');
+      }
+    }
+  }
+
+  addNullPdfFields(entry: { [key: string]: any }, formData: FormData): void {
+    for (let i = 1; i <= 4; i++) {
+      const pdfField = `pdf_${i}`;
+      if (!entry[pdfField] && !formData.has(pdfField)) {
+        formData.append(pdfField, '');
       }
     }
   }
@@ -50,6 +103,16 @@ export class AllpagesService {
 
       if (!entry[imageField] && !formData.has(imageField)) {
         return imageField;
+      }
+    }
+    return null;
+  }
+
+  getNextAvailablePdfField(entry: { [key: string]: any }, formData: FormData): string | null {
+    for (let i = 1; i <= 4; i++) {
+      const field = `pdf_${i}`;
+      if (!entry[field] && !formData.has(field)) {
+        return field;
       }
     }
     return null;
@@ -75,5 +138,10 @@ export class AllpagesService {
     }
     return images;
   }
+
+
+  trackByPdfUrl(index: number, pdf: any): string {
+  return pdf.url;
+}
 
 }

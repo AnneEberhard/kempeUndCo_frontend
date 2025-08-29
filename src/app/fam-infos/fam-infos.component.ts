@@ -20,9 +20,12 @@ import { LoadingService } from '../services/loading.service';
   styleUrl: './fam-infos.component.scss'
 })
 export class FamInfosComponent implements OnInit {
-  public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
+  //public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
   public imageFiles: File[] = [];
+  public pdfCache: { [id: string]: { url: string; name: string }[] } = {};
+  public pdfFiles: { file: File; name: string; customName?: string }[] = [];
   deletedImages: Set<string> = new Set();
+  deletedPdfs: Set<string> = new Set();
   userId: string | null = null;
   userEmail: string | null = null;
   infos: any[] = [];
@@ -33,7 +36,11 @@ export class FamInfosComponent implements OnInit {
     image_1: null,
     image_2: null,
     image_3: null,
-    image_4: null
+    image_4: null,
+    pdf_1: null,
+    pdf_2: null,
+    pdf_3: null,
+    pdf_4: null,
   };
   filteredInfos: any[] = [];
   entry: any = null;
@@ -58,7 +65,7 @@ export class FamInfosComponent implements OnInit {
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer,
     public allpagesService: AllpagesService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
   ) {
     this.family_1 = localStorage.getItem('family_1');
     this.family_2 = localStorage.getItem('family_2');
@@ -73,19 +80,27 @@ export class FamInfosComponent implements OnInit {
     this.userEmail = localStorage.getItem('userEmail');
   }
 
-  /**
-   * Loads all information from the info service and sorts them by the updated date.
-   */
   loadAllInfo(): void {
     this.loadingService.show(); // Lade-Overlay aktivieren
-
+    let images;
+    let pdfs;
     this.faminfoService.getAllInfos().subscribe({
       next: (infos) => {
-        this.infos = infos;
+        this.infos = infos.map((info: any) => {
+          images = this.allpagesService.prepareImages(info)
+          pdfs = this.allpagesService.preparePdfs(info);
+          return {
+            ...info,
+            isHidden: false,
+            images,
+            pdfs
+          };
+        });
+
         this.infos.sort((a, b) => {
           return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
         });
-        this.infos = infos.map((recipe: any) => ({ ...recipe, isHidden: false }));
+
         this.filteredInfos = this.infos;
         this.loadComments();
       },
@@ -106,35 +121,70 @@ export class FamInfosComponent implements OnInit {
     });
   }
 
+
+  /**
+   * Loads all information from the info service and sorts them by the updated date.
+   */
+  //  loadAllInfo(): void {
+  //    this.loadingService.show(); // Lade-Overlay aktivieren
+  //
+  //    this.faminfoService.getAllInfos().subscribe({
+  //      next: (infos) => {
+  //        this.infos = infos;
+  //        console.log(infos);
+  //        this.infos.sort((a, b) => {
+  //          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+  //        });
+  //        this.infos = infos.map((recipe: any) => ({ ...recipe, isHidden: false }));
+  //        this.filteredInfos = this.infos;
+  //        this.loadComments();
+  //      },
+  //      error: (error) => {
+  //        console.error('Fehler beim Laden:', error);
+  //        this.loadingService.hide();
+  //        if (error.status === 404) {
+  //          alert('Keine Infos gefunden.');
+  //        } else if (error.status === 500) {
+  //          alert('Serverfehler. Bitte versuche es erneut.');
+  //        } else {
+  //          alert('Fehler beim Laden.');
+  //        }
+  //      },
+  //      complete: () => {
+  //        this.loadingService.hide(); // Lade-Overlay ausblenden
+  //      }
+  //    });
+  //  }
+
   /**
    * Loads a specific info item by its ID and sanitizes its content for safe display.
    *
    * @param {string} infoId - The ID of the info item to be loaded.
    */
-  loadInfo(infoId: string): void {
-    this.loadingService.show();
-    this.faminfoService.getInfoById(infoId).subscribe({
-      next: (info) => {
-        this.selectedInfo = info;
-        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
-      },
-      error: (error) => {
-        console.error('Fehler beim Laden:', error);
-        this.loadingService.hide();
-        if (error.status === 404) {
-          alert('Keine Info gefunden.');
-        } else if (error.status === 500) {
-          alert('Serverfehler. Bitte versuche es erneut.');
-        } else {
-          alert('Fehler beim Laden.');
-        }
-      },
-      complete: () => {
-        this.loadingService.hide();
-      }
-    });
-  }
-
+  // loadInfo(infoId: string): void {
+  //   this.loadingService.show();
+  //   this.faminfoService.getInfoById(infoId).subscribe({
+  //     next: (info) => {
+  //       this.selectedInfo = info;
+  //       this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+  //     },
+  //     error: (error) => {
+  //       console.error('Fehler beim Laden:', error);
+  //       this.loadingService.hide();
+  //       if (error.status === 404) {
+  //         alert('Keine Info gefunden.');
+  //       } else if (error.status === 500) {
+  //         alert('Serverfehler. Bitte versuche es erneut.');
+  //       } else {
+  //         alert('Fehler beim Laden.');
+  //       }
+  //     },
+  //     complete: () => {
+  //       this.loadingService.hide();
+  //     }
+  //   });
+  // }
+  //
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -186,7 +236,7 @@ export class FamInfosComponent implements OnInit {
    * @param {any} event - The change event from the file input.
    * @param {number} index - The index of the image slot being updated.
    */
-  onFileChange(event: any, index: number) {
+  onImageFileChange(event: any, index: number) {
     const files = event.target.files;
 
     if (files.length > 0) {
@@ -206,6 +256,36 @@ export class FamInfosComponent implements OnInit {
     }
   }
 
+
+  onPdfFileChange(event: any, index: number) {
+    const files = event.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type === 'application/pdf') {
+        const pdfObj = {
+          file,
+          name: file.name,     // Original-Dateiname
+          customName: ''       // leer, Nutzer vergibt eigenen Namen
+        };
+
+        if (this.pdfFiles[index - 1]) {
+          this.pdfFiles.splice(index - 1, 1, pdfObj);
+        } else {
+          this.pdfFiles.push(pdfObj);
+        }
+
+      } else {
+        alert('Nur Pdf Dateien sind erlaubt.');
+      }
+    }
+  }
+
+  removeNewPdf(index: number): void {
+    this.pdfFiles.splice(index, 1);
+  }
+
   /**
    * Displays a pop-up based on the specified mode and data.
    * The mode determines what type of pop-up to show (e.g., add, edit, delete).
@@ -223,7 +303,11 @@ export class FamInfosComponent implements OnInit {
         image_3: null,
         image_4: null,
         family_1: '',
-        family_2: ''
+        family_2: '',
+        pdf_1: null,
+        pdf_2: null,
+        pdf_3: null,
+        pdf_4: null,
       };
     } else if (mode === 'edit') {
       this.entry = { ...data };
@@ -251,24 +335,45 @@ export class FamInfosComponent implements OnInit {
   }
 
 
-  getImageArray(info: any): { original: string; thumbnail: string }[] {
-    if (this.imageCache[info.id]) {
-      return this.imageCache[info.id];
-    }
+  //  getImageArray(info: any): { original: string; thumbnail: string }[] {
+  //
+  //    if (this.imageCache[info.id]) {
+  //      return this.imageCache[info.id];
+  //    }
+  //
+  //    const images: { original: string; thumbnail: string }[] = [];
+  //
+  //    for (let i = 1; i <= 4; i++) {
+  //      const originalUrl = info[`image_${i}_url`];
+  //      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
+  //
+  //      if (originalUrl) {
+  //        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
+  //      }
+  //    }
+  //    this.imageCache[info.id] = images;
+  //    return images;
+  //  }
+  //
+  //  getPdfArray(info: any): { url: string; name: string }[] {
+  //    if (this.pdfCache[info.id]) {
+  //      return this.pdfCache[info.id];
+  //    }
+  //
+  //    const pdfs: { url: string; name: string }[] = [];
+  //
+  //    for (let i = 1; i <= 4; i++) {
+  //      const pdfUrl = info[`pdf_${i}_url`];
+  //      const pdfName = info[`pdf_${i}_name`];
+  //
+  //      if (pdfUrl) {
+  //        pdfs.push({ url: pdfUrl, name: pdfName  });
+  //      }
+  //    }
+  //    console.log(pdfs)
+  //    return pdfs;
+  //  }
 
-    const images: { original: string; thumbnail: string }[] = [];
-
-    for (let i = 1; i <= 4; i++) {
-      const originalUrl = info[`image_${i}_url`];
-      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
-
-      if (originalUrl) {
-        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
-      }
-    }
-    this.imageCache[info.id] = images;
-    return images;
-  }
 
 
   /**
@@ -293,8 +398,33 @@ export class FamInfosComponent implements OnInit {
     this.deletedImages.add(imageUrl);
   }
 
+  removePdfByUrl(pdfUrl: string): void {
+    if (this.entry.pdf_1_url === pdfUrl) {
+      this.entry.pdf_1_url = null;
+      this.entry.pdf_1 = null;
+    } else if (this.entry.pdf_2_url === pdfUrl) {
+      this.entry.pdf_2_url = null;
+      this.entry.pdf_2 = null;
+    } else if (this.entry.pdf_3_url === pdfUrl) {
+      this.entry.pdf_3_url = null;
+      this.entry.pdf_3 = null;
+    } else if (this.entry.pdf_4_url === pdfUrl) {
+      this.entry.pdf_4_url = null;
+      this.entry.pdf_4 = null;
+    }
+    this.deletedPdfs.add(pdfUrl);
+  }
+
   isImageDeleted(imageUrl: string, entry: any): boolean {
     return this.deletedImages.has(imageUrl); // Überprüfe, ob das Bild gelöscht ist
+  }
+
+  isPdfDeleted(url: string): boolean {
+    return this.deletedPdfs.has(url);
+  }
+
+  triggerPdfUpload(index: number): void {
+    document.getElementById('pdf_' + index)?.click();
   }
 
   /**
@@ -305,6 +435,10 @@ export class FamInfosComponent implements OnInit {
    */
   isImageSlotAvailable(index: number): boolean {
     return !this.entry[`image_${index}`];
+  }
+
+  isPdfSlotAvailable(index: number): boolean {
+    return !this.entry[`pdf_${index}`];
   }
 
   /**
@@ -335,9 +469,9 @@ export class FamInfosComponent implements OnInit {
     const formData = new FormData();
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
-    if (this.family_1 == 'null' && this.family_2 !=null) {
+    if (this.family_1 == 'null' && this.family_2 != null) {
       this.entry.family_1 = this.family_2;
-    } else if (this.family_2 == 'null' && this.family_1 !=null) {
+    } else if (this.family_2 == 'null' && this.family_1 != null) {
       this.entry.family_1 = this.family_1;
     }
     if (this.entry.family_1) {
@@ -346,40 +480,43 @@ export class FamInfosComponent implements OnInit {
     if (this.entry.family_2) {
       formData.append('family_2', this.entry.family_2);
     }
-
     this.allpagesService.addNewImages(this.entry, this.imageFiles, formData);
+    this.allpagesService.addNewPdfs(this.entry, this.pdfFiles, formData);
+
     this.allpagesService.addNullFields(this.entry, formData);
+    this.allpagesService.addNullPdfFields(this.entry, formData);
 
     return formData;
   }
+
 
   /**
    * Adds new images to the form data.
    *
    * @param {FormData} formData - The form data to which images will be added.
    */
-  addNewImages(formData: FormData): void {
-    this.imageFiles.forEach((file) => {
-      const imageField = this.getNextAvailableImageField();
-      if (imageField) {
-        formData.append(imageField, file, file.name);
-      }
-    });
-  }
+  //  addNewImages(formData: FormData): void {
+  //    this.imageFiles.forEach((file) => {
+  //      const imageField = this.getNextAvailableImageField();
+  //      if (imageField) {
+  //        formData.append(imageField, file, file.name);
+  //      }
+  //    });
+  //  }
 
-  /**
-   * Adds fields for any deleted images to the form data, marking them as empty.
-   *
-   * @param {FormData} formData - The form data to which empty fields will be added.
-   */
-  addNullFields(formData: FormData): void {
-    for (let i = 1; i <= 4; i++) {
-      const imageField = `image_${i}`;
-      if (!this.entry[imageField] && !formData.has(imageField)) {
-        formData.append(imageField, '');
-      }
-    }
-  }
+  //  /**
+  //   * Adds fields for any deleted images to the form data, marking them as empty.
+  //   *
+  //   * @param {FormData} formData - The form data to which empty fields will be added.
+  //   */
+  //  addNullFields(formData: FormData): void {
+  //    for (let i = 1; i <= 4; i++) {
+  //      const imageField = `image_${i}`;
+  //      if (!this.entry[imageField] && !formData.has(imageField)) {
+  //        formData.append(imageField, '');
+  //      }
+  //    }
+  //  }
 
   /**
    * Saves the entry by either adding a new one or updating an existing one.
@@ -443,15 +580,15 @@ export class FamInfosComponent implements OnInit {
    * differs from recipe due to service
    * @returns {string | null} The name of the next available image field (e.g., 'image_1'), or `null` if all fields are occupied.
    */
-  getNextAvailableImageField(): string | null {
-    for (let i = 1; i <= 4; i++) {
-      const imageField = `image_${i}`;
-      if (!this.entry[imageField]) {
-        return imageField;
-      }
-    }
-    return null;
-  }
+  //  getNextAvailableImageField(): string | null {
+  //    for (let i = 1; i <= 4; i++) {
+  //      const imageField = `image_${i}`;
+  //      if (!this.entry[imageField]) {
+  //        return imageField;
+  //      }
+  //    }
+  //    return null;
+  //  }
 
   /**
    * Adds a new entry using the provided form data.
@@ -500,8 +637,13 @@ export class FamInfosComponent implements OnInit {
       image_2: null,
       image_3: null,
       image_4: null,
+      pdf_1: null,
+      pdf_2: null,
+      pdf_3: null,
+      pdf_4: null,
     };
     this.imageFiles = [];
+    this.pdfFiles = [];
   }
 
   /**
@@ -533,13 +675,6 @@ export class FamInfosComponent implements OnInit {
       }
     });
   }
-  //  deleteEntry() {
-  //    this.faminfoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
-  //      this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
-  //      this.loadAllInfo();
-  //      this.hidePopUp();
-  //    });
-  //  }
 
   /**
    * Loads comments for each info entry and stores them in the `comments` object.
