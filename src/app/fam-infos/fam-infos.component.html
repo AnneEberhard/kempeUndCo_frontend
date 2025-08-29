@@ -76,27 +76,28 @@
           <a [href]="pdf.url" target="_blank" rel="noopener">{{ pdf.name }}</a>
         </div>
       </div>
-    </div>
-    <div class="entryMeta">
-      <p>Author: {{ info.author_name }}</p>
-      <p>
-        <small>Erstellt am: {{ info.created_at | date : "short" }}</small
-        ><br />
-        <small
-          >Zuletzt bearbeitet: {{ info.updated_at | date : "short" }}</small
-        >
-      </p>
-      <div class="editOrDeleteContainer">
-        <img
-          src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-          *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('edit', info)"
-        />
-        <img
-          src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-          *ngIf="info.author_email === userEmail"
-          (click)="showPopUp('delete', info)"
-        />
+
+      <div class="entryMeta">
+        <p>Author: {{ info.author_name }}</p>
+        <p>
+          <small>Erstellt am: {{ info.created_at | date : "short" }}</small
+          ><br />
+          <small
+            >Zuletzt bearbeitet: {{ info.updated_at | date : "short" }}</small
+          >
+        </p>
+        <div class="editOrDeleteContainer">
+          <img
+            src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+            *ngIf="info.author_email === userEmail"
+            (click)="showPopUp('edit', info)"
+          />
+          <img
+            src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+            *ngIf="info.author_email === userEmail"
+            (click)="showPopUp('delete', info)"
+          />
+        </div>
       </div>
     </div>
     <!-- comment section of single entry containers -->

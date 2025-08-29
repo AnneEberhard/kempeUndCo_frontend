@@ -29,16 +29,22 @@ export class RecipesComponent implements OnInit {
     image_1: null,
     image_2: null,
     image_3: null,
-    image_4: null
+    image_4: null,
+    pdf_1: null,
+    pdf_2: null,
+    pdf_3: null,
+    pdf_4: null,
   };
   public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
   public imageFiles: File[] = [];
+  public pdfFiles: { file: File; name: string; customName?: string }[] = [];
   filteredRecipes: any[] = [];
   entry: any = null;
   entryToDelete: any = null;
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
   deletedImages: Set<string> = new Set();
+  deletedPdfs: Set<string> = new Set();
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
   comment: any = null;
@@ -52,7 +58,7 @@ export class RecipesComponent implements OnInit {
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer,
     public allpagesService: AllpagesService,
-    private cdr: ChangeDetectorRef, 
+    private cdr: ChangeDetectorRef,
     private loadingService: LoadingService
   ) { }
 
@@ -70,14 +76,23 @@ export class RecipesComponent implements OnInit {
    */
   loadAllRecipes(): void {
     this.loadingService.show();
-  
+    let images;
+    let pdfs;
     this.recipeService.getAllRecipes().subscribe({
       next: (recipes) => {
-        this.recipes = recipes;
+        this.recipes = recipes.map((recipe: any) => {
+          images = this.allpagesService.prepareImages(recipe)
+          pdfs = this.allpagesService.preparePdfs(recipe);
+          return {
+            ...recipe,
+            isHidden: false,
+            images,
+            pdfs
+          };
+        });
         this.recipes.sort((a, b) => {
           return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
         });
-        this.recipes = recipes.map((recipe: any) => ({ ...recipe, isHidden: false }));
         this.filteredRecipes = this.recipes;
         this.loadComments();
       },
@@ -97,18 +112,18 @@ export class RecipesComponent implements OnInit {
       }
     });
   }
-  
-//  loadAllRecipes() {
-//    this.recipeService.getAllRecipes().subscribe(recipes => {
-//      this.recipes = recipes;
-//      this.recipes.sort((a, b) => {
-//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-//      });
-//      this.recipes = recipes.map((recipe: any) => ({ ...recipe, isHidden: false }));
-//      this.filteredRecipes = this.recipes;
-//      this.loadComments();
-//    });
-//  }
+
+  //  loadAllRecipes() {
+  //    this.recipeService.getAllRecipes().subscribe(recipes => {
+  //      this.recipes = recipes;
+  //      this.recipes.sort((a, b) => {
+  //        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+  //      });
+  //      this.recipes = recipes.map((recipe: any) => ({ ...recipe, isHidden: false }));
+  //      this.filteredRecipes = this.recipes;
+  //      this.loadComments();
+  //    });
+  //  }
 
   /**
    * Loads a specific recipe item by its ID and sanitizes its content for safe display.
@@ -138,14 +153,14 @@ export class RecipesComponent implements OnInit {
       }
     });
   }
-//  loadRecipe(recipeId: string): void {
-//    this.recipeService.getRecipeById(recipeId).subscribe(
-//      recipe => {
-//        this.selectedRecipe = recipe;
-//        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(recipe.content);
-//      }
-//    );
-//  }
+  //  loadRecipe(recipeId: string): void {
+  //    this.recipeService.getRecipeById(recipeId).subscribe(
+  //      recipe => {
+  //        this.selectedRecipe = recipe;
+  //        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(recipe.content);
+  //      }
+  //    );
+  //  }
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -242,7 +257,7 @@ export class RecipesComponent implements OnInit {
    */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
-    
+
     if (files.length > 0) {
       const file = files[0];
 
@@ -253,7 +268,7 @@ export class RecipesComponent implements OnInit {
         } else {
           this.imageFiles.push(file);
         }
-        
+
       } else {
         alert('Nur JPG und PNG Dateien sind erlaubt.');
       }
@@ -439,7 +454,7 @@ export class RecipesComponent implements OnInit {
         console.error('Fehler beim Aktualisieren:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {
@@ -455,14 +470,14 @@ export class RecipesComponent implements OnInit {
       }
     });
   }
-//  updateEntry(formData: FormData): void {
-//    this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
-//      this.loadAllRecipes();
-//      window.location.reload();
-//    });
-//    this.entry = null;
-//    this.hidePopUp();
-//  }
+  //  updateEntry(formData: FormData): void {
+  //    this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
+  //      this.loadAllRecipes();
+  //      window.location.reload();
+  //    });
+  //    this.entry = null;
+  //    this.hidePopUp();
+  //  }
 
   /**
    * Gets the next available image field for a new image.
@@ -496,7 +511,7 @@ export class RecipesComponent implements OnInit {
         console.error('Fehler beim Aktualisieren:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {
@@ -534,7 +549,7 @@ export class RecipesComponent implements OnInit {
   */
   deleteEntry(): void {
     this.loadingService.show();
-  
+
     this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe({
       next: () => {
         this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
@@ -557,13 +572,13 @@ export class RecipesComponent implements OnInit {
       }
     });
   }
-//  deleteEntry() {
-//    this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe(() => {
-//      this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
-//      this.loadAllRecipes();
-//      this.hidePopUp();
-//    });
-//  }
+  //  deleteEntry() {
+  //    this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe(() => {
+  //      this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
+  //      this.loadAllRecipes();
+  //      this.hidePopUp();
+  //    });
+  //  }
 
   /**
    * Loads comments for each recipe entry and stores them in the `comments` object.

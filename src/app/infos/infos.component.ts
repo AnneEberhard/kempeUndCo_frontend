@@ -22,6 +22,7 @@ import { LoadingService } from '../services/loading.service';
 })
 export class InfosComponent implements OnInit {
   public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
+  public pdfFiles: { file: File; name: string; customName?: string }[] = [];
   public imageFiles: File[] = [];
   userId: string | null = null;
   userEmail: string | null = null;
@@ -33,7 +34,11 @@ export class InfosComponent implements OnInit {
     image_1: null,
     image_2: null,
     image_3: null,
-    image_4: null
+    image_4: null,
+    pdf_1: null,
+    pdf_2: null,
+    pdf_3: null,
+    pdf_4: null,
   };
   filteredInfos: any[] = [];
   entry: any = null;
@@ -41,6 +46,7 @@ export class InfosComponent implements OnInit {
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
   deletedImages: Set<string> = new Set();
+  deletedPdfs: Set<string> = new Set();
   clearedFields: string[] = [];
   comments: { [key: number]: any[] } = {};
   comment: any = null;
@@ -58,7 +64,7 @@ export class InfosComponent implements OnInit {
     private commentService: CommentService,
     private scrollService: ScrollService,
     public sanitizer: DomSanitizer,
-    public allpagesService: AllpagesService, 
+    public allpagesService: AllpagesService,
     private loadingService: LoadingService
   ) {
     this.family_1 = localStorage.getItem('family_1');
@@ -80,14 +86,23 @@ export class InfosComponent implements OnInit {
 
   loadAllInfo(): void {
     this.loadingService.show(); // Lade-Overlay aktivieren
-  
+    let images;
+    let pdfs;
     this.infoService.getAllInfos().subscribe({
       next: (infos) => {
-        this.infos = infos;
+        this.infos = infos.map((info: any) => {
+          images = this.allpagesService.prepareImages(info)
+          pdfs = this.allpagesService.preparePdfs(info);
+          return {
+            ...info,
+            isHidden: false,
+            images,
+            pdfs
+          };
+        });
         this.infos.sort((a, b) => {
           return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
         });
-        this.infos = infos.map((recipe: any) => ({ ...recipe, isHidden: false }));
         this.filteredInfos = this.infos;
         this.loadComments();
       },
@@ -107,18 +122,18 @@ export class InfosComponent implements OnInit {
       }
     });
   }
-  
-//  loadAllInfo() {
-//    this.infoService.getAllInfos().subscribe(infos => {
-//      this.infos = infos;
-//      this.infos.sort((a, b) => {
-//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-//      });
-//      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
-//      this.filteredInfos = this.infos;
-//      this.loadComments();
-//    });
-//  }
+
+  //  loadAllInfo() {
+  //    this.infoService.getAllInfos().subscribe(infos => {
+  //      this.infos = infos;
+  //      this.infos.sort((a, b) => {
+  //        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+  //      });
+  //      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
+  //      this.filteredInfos = this.infos;
+  //      this.loadComments();
+  //    });
+  //  }
 
   /**
    * Loads a specific info item by its ID and sanitizes its content for safe display.
@@ -148,14 +163,14 @@ export class InfosComponent implements OnInit {
       }
     });
   }
-//  loadInfo(infoId: string): void {
-//    this.infoService.getInfoById(infoId).subscribe(
-//      info => {
-//        this.selectedInfo = info;
-//        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
-//      }
-//    );
-//  }
+  //  loadInfo(infoId: string): void {
+  //    this.infoService.getInfoById(infoId).subscribe(
+  //      info => {
+  //        this.selectedInfo = info;
+  //        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+  //      }
+  //    );
+  //  }
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -254,7 +269,7 @@ export class InfosComponent implements OnInit {
    */
   onFileChange(event: any, index: number) {
     const files = event.target.files;
-    
+
     if (files.length > 0) {
       const file = files[0];
 
@@ -265,7 +280,7 @@ export class InfosComponent implements OnInit {
         } else {
           this.imageFiles.push(file);
         }
-        
+
       } else {
         alert('Nur JPG und PNG Dateien sind erlaubt.');
       }
@@ -337,7 +352,7 @@ export class InfosComponent implements OnInit {
     this.deletedImages.add(imageUrl);
   }
 
-  
+
   isImageDeleted(imageUrl: string, entry: any): boolean {
     return this.deletedImages.has(imageUrl);
   }
@@ -394,28 +409,28 @@ export class InfosComponent implements OnInit {
    *
    * @param {FormData} formData - The form data to which images will be added.
    */
- // addNewImages(formData: FormData): void {
- // this.imageFiles.forEach((file) => {
- //   const imageField = this.getNextAvailableImageField();
- //   if (imageField) {
- //     formData.append(imageField, file, file.name);
- //   }
- // });
- // }
-//
+  // addNewImages(formData: FormData): void {
+  // this.imageFiles.forEach((file) => {
+  //   const imageField = this.getNextAvailableImageField();
+  //   if (imageField) {
+  //     formData.append(imageField, file, file.name);
+  //   }
+  // });
+  // }
+  //
   /**
    * Adds fields for any deleted images to the form data, marking them as empty.
    *
    * @param {FormData} formData - The form data to which empty fields will be added.
    */
- //addNullFields(formData: FormData): void {
- //  for (let i = 1; i <= 4; i++) {
- //    const imageField = `image_${i}`;
- //    if (!this.entry[imageField] && !formData.has(imageField)) {
- //      formData.append(imageField, '');
- //    }
- //  }
- //}
+  //addNullFields(formData: FormData): void {
+  //  for (let i = 1; i <= 4; i++) {
+  //    const imageField = `image_${i}`;
+  //    if (!this.entry[imageField] && !formData.has(imageField)) {
+  //      formData.append(imageField, '');
+  //    }
+  //  }
+  //}
 
   /**
    * Saves the entry by either adding a new one or updating an existing one.
@@ -424,10 +439,10 @@ export class InfosComponent implements OnInit {
    */
   saveEntry(): void {
     const formData = this.assembleFormData();
-    
-  //  formData.forEach((value, key) => {
-  //    console.log(`${key}:`, value);
-  //  });
+
+    //  formData.forEach((value, key) => {
+    //    console.log(`${key}:`, value);
+    //  });
     if (this.entry.id) {
       this.updateEntry(formData);
     } else {
@@ -451,7 +466,7 @@ export class InfosComponent implements OnInit {
         console.error('Fehler beim Aktualisieren:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {
@@ -467,7 +482,7 @@ export class InfosComponent implements OnInit {
       }
     });
   }
-  
+
 
   /**
    * Gets the next available image field for a new image.
@@ -503,7 +518,7 @@ export class InfosComponent implements OnInit {
         this.loadingService.hide();
         // Benutzerfreundliche Fehlermeldung setzen
         if (error.status === 400) {
-          alert ('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {
@@ -541,7 +556,7 @@ export class InfosComponent implements OnInit {
   */
   deleteEntry(): void {
     this.loadingService.show();
-  
+
     this.infoService.deleteInfo(this.entryToDelete.id).subscribe({
       next: () => {
         this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
@@ -564,13 +579,13 @@ export class InfosComponent implements OnInit {
       }
     });
   }
-//  deleteEntry() {
-//    this.infoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
-//      this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
-//      this.loadAllInfo();
-//      this.hidePopUp();
-//    });
-//  }
+  //  deleteEntry() {
+  //    this.infoService.deleteInfo(this.entryToDelete.id).subscribe(() => {
+  //      this.infos = this.infos.filter((e: any) => e.id !== this.entryToDelete.id);
+  //      this.loadAllInfo();
+  //      this.hidePopUp();
+  //    });
+  //  }
 
   /**
    * Loads comments for each info entry and stores them in the `comments` object.

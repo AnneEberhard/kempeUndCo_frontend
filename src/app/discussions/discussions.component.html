@@ -38,7 +38,7 @@
       <h5>{{ entry.author_name }}: {{ entry.title }}</h5>
       <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(entry.content)"></div>
       <div class="entryImagesContainer">
-        <div *ngFor="let image of getImageArray(entry)">
+        <div *ngFor="let image of entry.images">
           <img
             (click)="showPopUp('image', image.original)"
             loading="lazy"

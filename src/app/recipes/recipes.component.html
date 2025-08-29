@@ -56,13 +56,18 @@
         [innerHTML]="sanitizer.bypassSecurityTrustHtml(recipe.content)"
       ></div>
       <div class="entryImagesContainer">
-        <div *ngFor="let image of getImageArray(recipe)">
+        <div *ngFor="let image of recipe.images">
           <img
             (click)="showPopUp('image', image.original)"
             loading="lazy"
             [src]="image.thumbnail"
             alt="Info Image"
           />
+        </div>
+      </div>
+      <div>
+        <div *ngFor="let pdf of recipe.pdfs">
+          <a [href]="pdf.url" target="_blank" rel="noopener">{{ pdf.name }}</a>
         </div>
       </div>
       <div class="entryMeta">
@@ -187,17 +192,19 @@
             </ul>
           </div>
           <div class="deleteImageContainer">
-            <div *ngFor="let image of getImageArray(entry)" class="deleteImage">
+            <div *ngFor="let image of entry.images" class="deleteImage">
               <img
                 [src]="image.thumbnail"
                 alt="Image"
                 width="100"
-                [ngClass]="{'grayed-out': isImageDeleted(image.original, entry)}" 
+                [ngClass]="{
+                  'grayed-out': isImageDeleted(image.original, entry)
+                }"
               />
               <button type="button" (click)="removeImageByUrl(image.original)">
                 Bild löschen
               </button>
-          </div>
+            </div>
           </div>
         </div>
 

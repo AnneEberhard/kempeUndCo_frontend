@@ -3,14 +3,17 @@
   <h2>Alles zur Webseite</h2>
   <p>
     Willkommen auf der Diskussionsseite für die Webseite!<br />
-    Dies ist für technische Infos, die sich auf die Webseite beziehen. Wenn ihr Infos zur Familie teilen wollt, geht bitte zu
-    <a routerLink="/faminfos" routerLinkActive="active">Familieninfos</a>.
-    Wenn es sich auf eine bestimmte Person bezieht, geht bitte zur
+    Dies ist für technische Infos, die sich auf die Webseite beziehen. Wenn ihr
+    Infos zur Familie teilen wollt, geht bitte zu
+    <a routerLink="/faminfos" routerLinkActive="active">Familieninfos</a>. Wenn
+    es sich auf eine bestimmte Person bezieht, geht bitte zur
     <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wählt
     die entsprechende Person aus, und klickt auf den Button Diskussion in den
     Personeninfos oder sucht auf
-    <a routerLink="/discussions" routerLinkActive="active">Diskussionen zur Stammfolge</a> nach
-    einer bereits existierende Diskussion.<br /><br />
+    <a routerLink="/discussions" routerLinkActive="active"
+      >Diskussionen zur Stammfolge</a
+    >
+    nach einer bereits existierende Diskussion.<br /><br />
     Jeder Nutzer kann immer nur seinen eigenen Beiträge bearbeiten oder löschen.
     Sollten euch Beiträge auffallen, die problematisch sind, informiert uns
     bitte.
@@ -40,20 +43,35 @@
   <div *ngFor="let info of infos; let i = index" class="entryContainer">
     <div class="entryHeader">
       <h2 [id]="info.id">{{ info.title }}</h2>
-      <img *ngIf="!info.isHidden" src="assets/images/arrow_up.png" alt="Show" (click)="toggleVisibility(i)">
-      <img *ngIf="info.isHidden" src="assets/images/arrow_down.png" alt="Hide" (click)="toggleVisibility(i)">
+      <img
+        *ngIf="!info.isHidden"
+        src="assets/images/arrow_up.png"
+        alt="Show"
+        (click)="toggleVisibility(i)"
+      />
+      <img
+        *ngIf="info.isHidden"
+        src="assets/images/arrow_down.png"
+        alt="Hide"
+        (click)="toggleVisibility(i)"
+      />
     </div>
 
     <div [hidden]="info.isHidden">
       <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
       <div class="entryImagesContainer">
-        <div *ngFor="let image of getImageArray(info)">
+        <div *ngFor="let image of info.images">
           <img
             (click)="showPopUp('image', image.original)"
             loading="lazy"
             [src]="image.thumbnail"
             alt="Info Image"
           />
+        </div>
+      </div>
+      <div>
+        <div *ngFor="let pdf of info.pdfs">
+          <a [href]="pdf.url" target="_blank" rel="noopener">{{ pdf.name }}</a>
         </div>
       </div>
       <div class="entryMeta">
@@ -165,7 +183,7 @@
                 type="file"
                 [id]="'image' + index"
                 (change)="onFileChange($event, index)"
-                accept=".png,.jpg,.jpeg" 
+                accept=".png,.jpg,.jpeg"
               />
             </div>
           </div>
@@ -176,17 +194,19 @@
             </ul>
           </div>
           <div class="deleteImageContainer">
-            <div *ngFor="let image of getImageArray(entry)" class="deleteImage">
+            <div *ngFor="let image of entry.images" class="deleteImage">
               <img
                 [src]="image.thumbnail"
                 alt="Image"
                 width="100"
-                [ngClass]="{'grayed-out': isImageDeleted(image.original, entry)}" 
+                [ngClass]="{
+                  'grayed-out': isImageDeleted(image.original, entry)
+                }"
               />
               <button type="button" (click)="removeImageByUrl(image.original)">
                 Bild löschen
               </button>
-          </div>
+            </div>
           </div>
         </div>
 
