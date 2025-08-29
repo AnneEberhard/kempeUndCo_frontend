@@ -207,9 +207,26 @@
             placeholder="Dein Beitrag"
           ></quill-editor>
         </div>
+        <div class="divider"></div>
 
         <div>
           <h4>Bilder:</h4>
+          <h5>Vorhandene Bilder</h5>
+          <div class="deleteImageContainer">
+            <div *ngFor="let image of entry.images" class="deleteImage">
+              <img
+                [src]="image.thumbnail"
+                alt="Image"
+                width="100"
+                [ngClass]="{
+                  'grayed-out': isImageDeleted(image.original, entry)
+                }"
+              />
+              <button type="button" (click)="removeImageByUrl(image.original)">
+                Bild löschen
+              </button>
+            </div>
+          </div>
           <h5 for="images">Bilder hochladen (max. 4):</h5>
           <div
             *ngFor="let index of [1, 2, 3, 4]"
@@ -230,38 +247,21 @@
               <li *ngFor="let file of imageFiles">{{ file.name }}</li>
             </ul>
           </div>
-          <h5>Vorhandene Bilder</h5>
-          <div class="deleteImageContainer">
-            <div *ngFor="let image of entry.images" class="deleteImage">
-              <img
-                [src]="image.thumbnail"
-                alt="Image"
-                width="100"
-                [ngClass]="{
-                  'grayed-out': isImageDeleted(image.original, entry)
-                }"
-              />
-              <button type="button" (click)="removeImageByUrl(image.original)">
-                Bild löschen
-              </button>
-            </div>
-          </div>
         </div>
+        <div class="divider"></div>
         <div>
           <h4>PDFs:</h4>
 
           <!-- Vorhandene PDFs -->
           <h5>Vorhandene PDFs</h5>
-          <div class="deleteImageContainer">
+          <div class="deletePdfContainer">
             <div
               *ngFor="let pdf of entry.pdfs; let i = index"
               class="deleteImage"
               [ngClass]="{ 'grayed-out': isPdfDeleted(pdf.url) }"
             >
-              <!-- PDF-Name editierbar -->
-              <span>{{ pdf.name }}</span>
 
-              <a [href]="pdf.url" target="_blank" rel="noopener">Ansehen</a>
+              <a [href]="pdf.url" target="_blank" rel="noopener">{{ pdf.name }}</a>
 
               <button type="button" (click)="removePdfByUrl(pdf.url)">
                 PDF löschen
@@ -301,13 +301,14 @@
             </ul>
           </div>
         </div>
+        <div class="divider"></div>
         <div class="buttonContainer">
           <button type="button" (click)="hidePopUp()">Abbrechen</button>
           <button
             type="submit"
             [disabled]="!entry.content || imageFiles.length > 4"
           >
-            Beitrag speichern
+            Speichern
           </button>
         </div>
       </form>
@@ -347,7 +348,7 @@
         <div class="buttonContainer">
           <button type="button" (click)="hidePopUp()">Abbrechen</button>
           <button type="submit" [disabled]="!commentToUpdate.content">
-            Beitrag speichern
+            Speichern
           </button>
         </div>
       </form>
