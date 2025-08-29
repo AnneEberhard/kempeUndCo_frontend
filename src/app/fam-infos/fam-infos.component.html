@@ -257,7 +257,7 @@
           <div class="deletePdfContainer">
             <div
               *ngFor="let pdf of entry.pdfs; let i = index"
-              class="deleteImage"
+              class="deletePdf"
               [ngClass]="{ 'grayed-out': isPdfDeleted(pdf.url) }"
             >
 

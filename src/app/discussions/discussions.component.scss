@@ -139,6 +139,14 @@ form {
 .deleteImageContainer {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
+}
+
+.deletePdfContainer {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-direction: column;
 }
 
 .deleteImage {

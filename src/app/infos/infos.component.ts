@@ -123,54 +123,36 @@ export class InfosComponent implements OnInit {
     });
   }
 
-  //  loadAllInfo() {
-  //    this.infoService.getAllInfos().subscribe(infos => {
-  //      this.infos = infos;
-  //      this.infos.sort((a, b) => {
-  //        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-  //      });
-  //      this.infos = infos.map((info: any) => ({ ...info, isHidden: false }));
-  //      this.filteredInfos = this.infos;
-  //      this.loadComments();
-  //    });
-  //  }
 
   /**
    * Loads a specific info item by its ID and sanitizes its content for safe display.
    *
    * @param {string} infoId - The ID of the info item to be loaded.
    */
-  loadInfo(infoId: string): void {
-    this.loadingService.show();
-    this.infoService.getInfoById(infoId).subscribe({
-      next: (info) => {
-        this.selectedInfo = info;
-        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
-      },
-      error: (error) => {
-        console.error('Fehler beim Laden:', error);
-        this.loadingService.hide();
-        if (error.status === 404) {
-          alert('Keine Info gefunden.');
-        } else if (error.status === 500) {
-          alert('Serverfehler. Bitte versuche es erneut.');
-        } else {
-          alert('Fehler beim Laden.');
-        }
-      },
-      complete: () => {
-        this.loadingService.hide();
-      }
-    });
-  }
-  //  loadInfo(infoId: string): void {
-  //    this.infoService.getInfoById(infoId).subscribe(
-  //      info => {
-  //        this.selectedInfo = info;
-  //        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
-  //      }
-  //    );
-  //  }
+  // loadInfo(infoId: string): void {
+  //   this.loadingService.show();
+  //   this.infoService.getInfoById(infoId).subscribe({
+  //     next: (info) => {
+  //       this.selectedInfo = info;
+  //       this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
+  //     },
+  //     error: (error) => {
+  //       console.error('Fehler beim Laden:', error);
+  //       this.loadingService.hide();
+  //       if (error.status === 404) {
+  //         alert('Keine Info gefunden.');
+  //       } else if (error.status === 500) {
+  //         alert('Serverfehler. Bitte versuche es erneut.');
+  //       } else {
+  //         alert('Fehler beim Laden.');
+  //       }
+  //     },
+  //     complete: () => {
+  //       this.loadingService.hide();
+  //     }
+  //   });
+  // }
+
 
   /**
    * Filters the list of information items based on the search term from the event input.
@@ -304,7 +286,11 @@ export class InfosComponent implements OnInit {
         image_3: null,
         image_4: null,
         family_1: '',
-        family_2: ''
+        family_2: '',
+        pdf_1: null,
+        pdf_2: null,
+        pdf_3: null,
+        pdf_4: null,
       };
     } else if (mode === 'edit') {
       this.entry = { ...data };
@@ -399,7 +385,10 @@ export class InfosComponent implements OnInit {
     formData.append('family_2', 'huenten');
 
     this.allpagesService.addNewImages(this.entry, this.imageFiles, formData);
+    this.allpagesService.addNewPdfs(this.entry, this.pdfFiles, formData);
+
     this.allpagesService.addNullFields(this.entry, formData);
+    this.allpagesService.addNullPdfFields(this.entry, formData);
 
     return formData;
   }
@@ -546,8 +535,13 @@ export class InfosComponent implements OnInit {
       image_2: null,
       image_3: null,
       image_4: null,
+      pdf_1: null,
+      pdf_2: null,
+      pdf_3: null,
+      pdf_4: null,
     };
     this.imageFiles = [];
+    this.pdfFiles = [];
   }
 
   /**
@@ -684,6 +678,92 @@ export class InfosComponent implements OnInit {
         this.entry.family_2 = '';
       }
     }
+  }
+
+  /**
+ * Handles file input changes and updates the image files array.
+ *
+ * @param {any} event - The change event from the file input.
+ * @param {number} index - The index of the image slot being updated.
+ */
+  onImageFileChange(event: any, index: number) {
+    const files = event.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg') {
+
+        if (this.imageFiles[index - 1]) {
+          this.imageFiles.splice(index - 1, 1, file);
+        } else {
+          this.imageFiles.push(file);
+        }
+
+      } else {
+        alert('Nur JPG, PNG und JPEG Dateien sind erlaubt.');
+      }
+    }
+  }
+
+
+  onPdfFileChange(event: any, index: number) {
+    const files = event.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type === 'application/pdf') {
+        const pdfObj = {
+          file,
+          name: file.name,     // Original-Dateiname
+          customName: ''       // leer, Nutzer vergibt eigenen Namen
+        };
+
+        if (this.pdfFiles[index - 1]) {
+          this.pdfFiles.splice(index - 1, 1, pdfObj);
+        } else {
+          this.pdfFiles.push(pdfObj);
+        }
+
+      } else {
+        alert('Nur Pdf Dateien sind erlaubt.');
+      }
+    }
+  }
+
+  removeNewPdf(index: number): void {
+    this.pdfFiles.splice(index, 1);
+  }
+
+  removePdfByUrl(pdfUrl: string): void {
+    if (this.entry.pdf_1_url === pdfUrl) {
+      this.entry.pdf_1_url = null;
+      this.entry.pdf_1 = null;
+    } else if (this.entry.pdf_2_url === pdfUrl) {
+      this.entry.pdf_2_url = null;
+      this.entry.pdf_2 = null;
+    } else if (this.entry.pdf_3_url === pdfUrl) {
+      this.entry.pdf_3_url = null;
+      this.entry.pdf_3 = null;
+    } else if (this.entry.pdf_4_url === pdfUrl) {
+      this.entry.pdf_4_url = null;
+      this.entry.pdf_4 = null;
+    }
+    this.deletedPdfs.add(pdfUrl);
+  }
+
+  isPdfDeleted(url: string): boolean {
+    return this.deletedPdfs.has(url);
+  }
+
+  triggerPdfUpload(index: number): void {
+    document.getElementById('pdf_' + index)?.click();
+  }
+
+
+  isPdfSlotAvailable(index: number): boolean {
+    return !this.entry[`pdf_${index}`];
   }
 
 }

@@ -130,29 +130,30 @@ export class RecipesComponent implements OnInit {
    *
    * @param {string} recipeId - The ID of the recipe item to be loaded.
    */
-  loadRecipe(recipeId: string): void {
-    this.loadingService.show();
-    this.recipeService.getRecipeById(recipeId).subscribe({
-      next: (recipe) => {
-        this.selectedRecipe = recipe;
-        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(recipe.content);
-      },
-      error: (error) => {
-        console.error('Fehler beim Laden:', error);
-        this.loadingService.hide();
-        if (error.status === 404) {
-          alert('Kein Rezept gefunden.');
-        } else if (error.status === 500) {
-          alert('Serverfehler. Bitte versuche es erneut.');
-        } else {
-          alert('Fehler beim Laden.');
-        }
-      },
-      complete: () => {
-        this.loadingService.hide();
-      }
-    });
-  }
+  //  loadRecipe(recipeId: string): void {
+  //    this.loadingService.show();
+  //    this.recipeService.getRecipeById(recipeId).subscribe({
+  //      next: (recipe) => {
+  //        this.selectedRecipe = recipe;
+  //        this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(recipe.content);
+  //      },
+  //      error: (error) => {
+  //        console.error('Fehler beim Laden:', error);
+  //        this.loadingService.hide();
+  //        if (error.status === 404) {
+  //          alert('Kein Rezept gefunden.');
+  //        } else if (error.status === 500) {
+  //          alert('Serverfehler. Bitte versuche es erneut.');
+  //        } else {
+  //          alert('Fehler beim Laden.');
+  //        }
+  //      },
+  //      complete: () => {
+  //        this.loadingService.hide();
+  //      }
+  //    });
+  //  }
+
   //  loadRecipe(recipeId: string): void {
   //    this.recipeService.getRecipeById(recipeId).subscribe(
   //      recipe => {
@@ -290,7 +291,11 @@ export class RecipesComponent implements OnInit {
         image_1: null,
         image_2: null,
         image_3: null,
-        image_4: null
+        image_4: null,
+        pdf_1: null,
+        pdf_2: null,
+        pdf_3: null,
+        pdf_4: null,
       };
     } else if (mode === 'edit') {
       this.entry = { ...data };
@@ -388,8 +393,11 @@ export class RecipesComponent implements OnInit {
     formData.append('title', this.entry.title);
     formData.append('content', this.entry.content);
 
-    this.addNewImages(formData);
-    this.addNullFields(formData);
+    this.allpagesService.addNewImages(this.entry, this.imageFiles, formData);
+    this.allpagesService.addNewPdfs(this.entry, this.pdfFiles, formData);
+
+    this.allpagesService.addNullFields(this.entry, formData);
+    this.allpagesService.addNullPdfFields(this.entry, formData);
 
     formData.append('deletedImages', JSON.stringify(this.deletedImages));
 
@@ -470,14 +478,6 @@ export class RecipesComponent implements OnInit {
       }
     });
   }
-  //  updateEntry(formData: FormData): void {
-  //    this.recipeService.updateRecipe(this.entry.id, formData).subscribe((response: any) => {
-  //      this.loadAllRecipes();
-  //      window.location.reload();
-  //    });
-  //    this.entry = null;
-  //    this.hidePopUp();
-  //  }
 
   /**
    * Gets the next available image field for a new image.
@@ -539,8 +539,13 @@ export class RecipesComponent implements OnInit {
       image_2: null,
       image_3: null,
       image_4: null,
+      pdf_1: null,
+      pdf_2: null,
+      pdf_3: null,
+      pdf_4: null,
     };
     this.imageFiles = [];
+    this.pdfFiles = [];
   }
 
   /**
@@ -572,13 +577,7 @@ export class RecipesComponent implements OnInit {
       }
     });
   }
-  //  deleteEntry() {
-  //    this.recipeService.deleteRecipe(this.entryToDelete.id).subscribe(() => {
-  //      this.recipes = this.recipes.filter((e: any) => e.id !== this.entryToDelete.id);
-  //      this.loadAllRecipes();
-  //      this.hidePopUp();
-  //    });
-  //  }
+
 
   /**
    * Loads comments for each recipe entry and stores them in the `comments` object.
@@ -653,4 +652,90 @@ export class RecipesComponent implements OnInit {
     }
     return 0;
   }
+
+  /**
+   * Handles file input changes and updates the image files array.
+   *
+   * @param {any} event - The change event from the file input.
+   * @param {number} index - The index of the image slot being updated.
+   */
+  onImageFileChange(event: any, index: number) {
+    const files = event.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg') {
+
+        if (this.imageFiles[index - 1]) {
+          this.imageFiles.splice(index - 1, 1, file);
+        } else {
+          this.imageFiles.push(file);
+        }
+
+      } else {
+        alert('Nur JPG, PNG und JPEG Dateien sind erlaubt.');
+      }
+    }
+  }
+
+
+  onPdfFileChange(event: any, index: number) {
+    const files = event.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type === 'application/pdf') {
+        const pdfObj = {
+          file,
+          name: file.name,     // Original-Dateiname
+          customName: ''       // leer, Nutzer vergibt eigenen Namen
+        };
+
+        if (this.pdfFiles[index - 1]) {
+          this.pdfFiles.splice(index - 1, 1, pdfObj);
+        } else {
+          this.pdfFiles.push(pdfObj);
+        }
+
+      } else {
+        alert('Nur Pdf Dateien sind erlaubt.');
+      }
+    }
+  }
+
+  removeNewPdf(index: number): void {
+    this.pdfFiles.splice(index, 1);
+  }
+
+  removePdfByUrl(pdfUrl: string): void {
+    if (this.entry.pdf_1_url === pdfUrl) {
+      this.entry.pdf_1_url = null;
+      this.entry.pdf_1 = null;
+    } else if (this.entry.pdf_2_url === pdfUrl) {
+      this.entry.pdf_2_url = null;
+      this.entry.pdf_2 = null;
+    } else if (this.entry.pdf_3_url === pdfUrl) {
+      this.entry.pdf_3_url = null;
+      this.entry.pdf_3 = null;
+    } else if (this.entry.pdf_4_url === pdfUrl) {
+      this.entry.pdf_4_url = null;
+      this.entry.pdf_4 = null;
+    }
+    this.deletedPdfs.add(pdfUrl);
+  }
+
+  isPdfDeleted(url: string): boolean {
+    return this.deletedPdfs.has(url);
+  }
+
+  triggerPdfUpload(index: number): void {
+    document.getElementById('pdf_' + index)?.click();
+  }
+  
+  isPdfSlotAvailable(index: number): boolean {
+    return !this.entry[`pdf_${index}`];
+  }
+  
 }
