@@ -21,6 +21,7 @@ import { LoadingService } from '../services/loading.service';
 export class DiscussionsComponent implements OnInit {
   public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};
   public imageFiles: File[] = [];
+  public pdfFiles: { file: File; name: string; customName?: string }[] = [];
   discussions: any[] = [];
   selectedDiscussion: any = null;
   filteredDiscussions: any[] = [];
@@ -36,7 +37,11 @@ export class DiscussionsComponent implements OnInit {
     image_1: null,
     image_2: null,
     image_3: null,
-    image_4: null
+    image_4: null,
+    pdf_1: null,
+    pdf_2: null,
+    pdf_3: null,
+    pdf_4: null,
   };
   filteredEntries: any[] = [];
   entry: any = null;
@@ -45,6 +50,7 @@ export class DiscussionsComponent implements OnInit {
   sanitizedContent: SafeHtml | null = null;
   showImageUrl: string | null = null;
   deletedImages: Set<string> = new Set();
+  deletedPdfs: Set<string> = new Set();
   thumbnailPath = 'discussions/thumbnails/';
 
   constructor(
@@ -96,9 +102,7 @@ export class DiscussionsComponent implements OnInit {
    * Loads and sorts all discussions, and sets the filtered discussions.
    */
   loadAllDiscussions(): void {
-    console.log('load');
     this.loadingService.show();
-  
     this.discussionService.getAllDiscussions().subscribe({
       next: (discussions) => {
         this.discussions = discussions;
@@ -124,18 +128,6 @@ export class DiscussionsComponent implements OnInit {
     });
   }
   
-//  loadAllDiscussions(): void {
-//    this.discussionService.getAllDiscussions().subscribe(discussions => {
-//      this.discussions = discussions;
-//      this.discussions.sort((a, b) => {
-//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-//      });
-//      this.filteredDiscussions = this.discussions;
-//    });
-//    this.filteredDiscussions.sort((a, b) => {
-//      return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
-//    });
-//  }
 
   /**
    * Loads a specific discussion based on person ID and sorts the discussion entries.
@@ -144,17 +136,27 @@ export class DiscussionsComponent implements OnInit {
    */
   loadDiscussion(personId: string): void {
     this.loadingService.show();
-  
+
     this.discussionService.getDiscussionByPersonId(personId).subscribe({
       next: (discussion) => {
         this.selectedDiscussion = discussion;
-        const selectedDiscussionEntries = discussion.entries;
+        const selectedDiscussionEntries = discussion.entries.map((entry: any) => {
+        const images = this.allpagesService.prepareImages(entry);
+        const pdfs = this.allpagesService.preparePdfs(entry);
+        return {
+          ...entry,
+          isHidden: false,
+          images,
+          pdfs,
+        };
+      });
   
         selectedDiscussionEntries.sort((a: { updated_at: string | number | Date; }, b: { updated_at: string | number | Date; }) => {
           return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
         });
   
         this.filteredEntries = selectedDiscussionEntries;
+        console.log(this.filteredEntries);
       },
       error: (error) => {
         console.error('Fehler beim Laden der Diskussion:', error);
@@ -173,16 +175,6 @@ export class DiscussionsComponent implements OnInit {
     });
   }
   
-//  loadDiscussion(personId: string): void {
-//    this.discussionService.getDiscussionByPersonId(personId).subscribe(discussion => {
-//      this.selectedDiscussion = discussion;
-//      const selectedDiscussionEntries = discussion.entries;
-//      selectedDiscussionEntries.sort((a: { updated_at: string | number | Date; }, b: { updated_at: string | number | Date; }) => {
-//        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-//      });
-//      this.filteredEntries = selectedDiscussionEntries;
-//    });
-//  }
 
   /**
    * Loads a person's details based on the person ID.
@@ -217,15 +209,7 @@ export class DiscussionsComponent implements OnInit {
     });
   }
   
-//  loadPerson(personId: number): void {
-//    this.familyService.getPerson(personId).subscribe(person => {
-//      this.personName = person.name;
-//      this.personRefn = person.refn;
-//      if (person.birt_date) {
-//        this.personGebDate = person.birt_date;
-//      }
-//    });
-//  }
+
 
   /**
    * Filters the discussions list based on the search term.
@@ -313,13 +297,6 @@ export class DiscussionsComponent implements OnInit {
     });
   }
   
-//  deleteEntry() {
-//    this.discussionService.deleteEntry(this.entryToDelete.id).subscribe(() => {
-//      this.selectedDiscussion.entries = this.selectedDiscussion.entries.filter((e: any) => e.id !== this.entryToDelete.id);
-//      this.loadDiscussion(this.selectedDiscussion.person.id);
-//      this.hidePopUp();
-//    });
-//  }
 
   /**
    * Shows a popup for different modes (add, edit, image, delete) with the specified data.
@@ -410,16 +387,7 @@ export class DiscussionsComponent implements OnInit {
     });
   }
   
-//  addEntry(formData: FormData) {
-//    formData.append('discussion', this.selectedDiscussion.id);
-//    this.discussionService.addEntry(formData).subscribe((response) => {
-//      this.entry.title = '';
-//      this.entry.content = '';
-//      this.loadDiscussion(this.selectedDiscussion.person.id);
-//    });
-//    this.entry = null;
-//    this.hidePopUp();
-//  }
+
 
   /**
   * Updates an existing entry in the selected discussion.
@@ -454,14 +422,6 @@ export class DiscussionsComponent implements OnInit {
     });
   }
   
-//  updateEntry(formData: FormData): void {
-//    this.discussionService.updateEntry(this.entry.id, formData).subscribe((response: any) => {
-//      this.loadDiscussion(this.selectedDiscussion.person.id);
-//      window.location.reload();
-//    });
-//    this.entry = null;
-//    this.hidePopUp();
-//  }
 
   /**
    * Resets the entry form and clears any uploaded images.
@@ -602,7 +562,10 @@ export class DiscussionsComponent implements OnInit {
     formData.append('content', this.entry.content);
 
     this.allpagesService.addNewImages(this.entry, this.imageFiles, formData);
+    this.allpagesService.addNewPdfs(this.entry, this.pdfFiles, formData);
+
     this.allpagesService.addNullFields(this.entry, formData);
+    this.allpagesService.addNullPdfFields(this.entry, formData);
 
     return formData;
   }
@@ -648,6 +611,91 @@ export class DiscussionsComponent implements OnInit {
       }
     }
     return null;
+  }
+
+    /**
+   * Handles file input changes and updates the image files array.
+   *
+   * @param {any} event - The change event from the file input.
+   * @param {number} index - The index of the image slot being updated.
+   */
+  onImageFileChange(event: any, index: number) {
+    const files = event.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg') {
+
+        if (this.imageFiles[index - 1]) {
+          this.imageFiles.splice(index - 1, 1, file);
+        } else {
+          this.imageFiles.push(file);
+        }
+
+      } else {
+        alert('Nur JPG, PNG und JPEG Dateien sind erlaubt.');
+      }
+    }
+  }
+
+
+  onPdfFileChange(event: any, index: number) {
+    const files = event.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type === 'application/pdf') {
+        const pdfObj = {
+          file,
+          name: file.name,     // Original-Dateiname
+          customName: ''       // leer, Nutzer vergibt eigenen Namen
+        };
+
+        if (this.pdfFiles[index - 1]) {
+          this.pdfFiles.splice(index - 1, 1, pdfObj);
+        } else {
+          this.pdfFiles.push(pdfObj);
+        }
+
+      } else {
+        alert('Nur Pdf Dateien sind erlaubt.');
+      }
+    }
+  }
+
+  removeNewPdf(index: number): void {
+    this.pdfFiles.splice(index, 1);
+  }
+
+  removePdfByUrl(pdfUrl: string): void {
+    if (this.entry.pdf_1_url === pdfUrl) {
+      this.entry.pdf_1_url = null;
+      this.entry.pdf_1 = null;
+    } else if (this.entry.pdf_2_url === pdfUrl) {
+      this.entry.pdf_2_url = null;
+      this.entry.pdf_2 = null;
+    } else if (this.entry.pdf_3_url === pdfUrl) {
+      this.entry.pdf_3_url = null;
+      this.entry.pdf_3 = null;
+    } else if (this.entry.pdf_4_url === pdfUrl) {
+      this.entry.pdf_4_url = null;
+      this.entry.pdf_4 = null;
+    }
+    this.deletedPdfs.add(pdfUrl);
+  }
+
+  isPdfDeleted(url: string): boolean {
+    return this.deletedPdfs.has(url);
+  }
+
+  triggerPdfUpload(index: number): void {
+    document.getElementById('pdf_' + index)?.click();
+  }
+  
+  isPdfSlotAvailable(index: number): boolean {
+    return !this.entry[`pdf_${index}`];
   }
 
 }

@@ -145,6 +145,4 @@ addNewPdfs(entry: { [key: string]: any }, pdfFiles: any[], formData: FormData): 
 }
 
 
-
-
 }

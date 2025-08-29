@@ -47,6 +47,11 @@
           />
         </div>
       </div>
+      <div>
+        <div *ngFor="let pdf of entry.pdfs">
+          <a [href]="pdf.url" target="_blank" rel="noopener">{{ pdf.name }}</a>
+        </div>
+      </div>
       <div class="entryMeta">
         <p>
           <small>Erstellt am: {{ entry.created_at | date : "short" }}</small
@@ -148,8 +153,25 @@
         </div>
 
         <div>
-          <h5>Bilder:</h5>
-          <label for="images">Bilder hochladen (max. 4):</label>
+          <div class="divider"></div>
+          <h4>Bilder:</h4>
+          <h5>Vorhandene Bilder</h5>
+          <div class="deleteImageContainer">
+            <div *ngFor="let image of entry.images" class="deleteImage">
+              <img
+                [src]="image.thumbnail"
+                alt="Image"
+                width="100"
+                [ngClass]="{
+                  'grayed-out': isImageDeleted(image.original, entry)
+                }"
+              />
+              <button type="button" (click)="removeImageByUrl(image.original)">
+                Bild löschen
+              </button>
+            </div>
+          </div>
+          <h5 for="images">Bilder hochladen (max. 4):</h5>
           <div
             *ngFor="let index of [1, 2, 3, 4]"
             class="image-upload-container"
@@ -158,33 +180,74 @@
               <input
                 type="file"
                 [id]="'image' + index"
-                (change)="onFileChange($event, index)"
-                accept=".png,.jpg,.jpeg" 
+                (change)="onImageFileChange($event, index)"
+                accept=".jpg,.png"
               />
             </div>
           </div>
           <div *ngIf="imageFiles.length > 0">
-            <p>Neue Bilder:</p>
+            <h5>Neue Bilder:</h5>
             <ul>
               <li *ngFor="let file of imageFiles">{{ file.name }}</li>
             </ul>
           </div>
-          <div class="deleteImageContainer">
-            <div *ngFor="let image of getImageArray(entry)">
-              <div *ngIf="image.original" class="deleteImage">
-                <img
-                  [src]="image.thumbnail"
-                  alt="Image"
-                  width="100"
-                  [ngClass]="{'grayed-out': isImageDeleted(image.original, entry)}" 
+        </div>
+        <div>
+          <div class="divider"></div>
+          <h4>PDFs:</h4>
+
+          <!-- Vorhandene PDFs -->
+          <h5>Vorhandene PDFs</h5>
+          <div class="deletePdfContainer">
+            <div
+              *ngFor="let pdf of entry.pdfs; let i = index"
+              class="deletePdf"
+              [ngClass]="{ 'grayed-out': isPdfDeleted(pdf.url) }"
+            >
+              <!-- PDF-Name editierbar -->
+              <span>{{ pdf.name }}</span>
+
+              <a [href]="pdf.url" target="_blank" rel="noopener">Ansehen</a>
+
+              <button type="button" (click)="removePdfByUrl(pdf.url)">
+                PDF löschen
+              </button>
+            </div>
+          </div>
+
+          <!-- Neue PDFs -->
+          <h5>Neue PDFs hochladen (max. 4):</h5>
+          <div *ngFor="let index of [1, 2, 3, 4]" class="pdf-upload-container">
+            <div *ngIf="isPdfSlotAvailable(index)">
+              <!-- Falls noch kein PDF hochgeladen wurde → Button statt Input -->
+              <div>
+                <input
+                  type="file"
+                  [id]="'pdf_' + index"
+                  (change)="onPdfFileChange($event, index)"
+                  accept=".pdf"
                 />
-                <button type="button" (click)="removeImageByUrl(image.original)">
-                  Bild löschen
-                </button>
               </div>
             </div>
           </div>
+          <div *ngIf="pdfFiles.length > 0">
+            <h5>Neue PDFs:</h5>
+            <ul>
+              <li *ngFor="let pdf of pdfFiles; let i = index" class="newList">
+                {{ pdf.file.name }}
+                <input
+                  type="text"
+                  [(ngModel)]="pdf.customName"
+                  placeholder="andere Namen vergeben"
+                />
+                <button type="button" (click)="removeNewPdf(i)">
+                  Entfernen
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
+        <div class="divider"></div>
 
         <div class="buttonContainer">
           <button type="button" (click)="hidePopUp()">Abbrechen</button>
