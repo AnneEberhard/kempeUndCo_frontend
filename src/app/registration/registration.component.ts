@@ -43,20 +43,20 @@ export class RegistrationComponent {
   };
 
   constructor(
-    private authService: AuthService, 
-    private router: Router, 
+    private authService: AuthService,
+    private router: Router,
     private loadingService: LoadingService) { }
 
- /**
-  * toggles between passwort visible and not
-  */
- togglePasswordVisibility(mode: string) {
-  if (mode =='passwort') {
-    this.passwordVisible = !this.passwordVisible;
-  } else {
-    this.confirmPasswordVisible = !this.confirmPasswordVisible;
+  /**
+   * toggles between passwort visible and not
+   */
+  togglePasswordVisibility(mode: string) {
+    if (mode == 'passwort') {
+      this.passwordVisible = !this.passwordVisible;
+    } else {
+      this.confirmPasswordVisible = !this.confirmPasswordVisible;
+    }
   }
-}
 
 
   /**
@@ -103,7 +103,7 @@ export class RegistrationComponent {
    * @param userData 
    */
   registerUser(userData: any) {
-    this.loadingService.show(); 
+    this.loadingService.show();
     this.authService.registerUser(userData).pipe(take(1))
       .subscribe({
         next: (response) => {
@@ -113,15 +113,19 @@ export class RegistrationComponent {
         error: (error) => {
           this.loadingService.hide();
           if (error instanceof HttpErrorResponse) {
-            const errorMessage = typeof error.error === 'string' ? error.error : '';
-        
+            //const errorMessage = typeof error.error === 'string' ? error.error : '';
+            console.log(error.error.detail);
+            const errorMessage =
+              error.error?.detail ||
+              (typeof error.error === 'string' ? error.error : '');
             if (error.status === 400 && error.error && error.error.email && error.error.email[0] === "user with this email already exists.") {
               this.errorMessage = 'Ein Nutzer mit dieser Email ist bereits bei uns registriert.';
               this.renderPasswordForgotLink();
-            } else if (errorMessage.includes('Der angegebene Bürge existiert nicht.')) {
+            } else if (errorMessage.includes("Der angegebene Bürge existiert nicht.")) {
               this.errorMessage = 'Der angegebene Bürge existiert nicht in unserer Datenbank.';
-            } else if (errorMessage.includes('Der Bürge ist für die ausgewählten Familien nicht berechtigt.')) {
-              this.errorMessage = 'Der Bürge ist für die ausgewählte Familien nicht berechtigt. Bitte nur Familien auswählen, für die der Bürge autorisiert ist.';
+            } else if (errorMessage.includes("Der Bürge ist für die ausgewählten Familien nicht berechtigt.")) {
+            
+              this.errorMessage = 'Der Bürge ist für die ausgewählte Familien nicht berechtigt.';
             } else {
               console.error('An error occurred:', error);
               this.errorMessage = 'Ein Fehler ist vorgefallen!';
@@ -136,7 +140,7 @@ export class RegistrationComponent {
         complete: () => {
           this.loadingService.hide();
         }
-        
+
       });
   }
 
@@ -255,28 +259,28 @@ export class RegistrationComponent {
    * @returns userData as a json for sending
    */
   assembleData(form: NgForm) {
-  return {
-    email: this.formData.email,
-    password: this.formData.password,
-    first_name: this.formData.first_name,
-    last_name: this.formData.last_name,
-    guarantor: this.formData.guarantor,
-    guarantor_email: this.formData.guarantorEmail,
-    selected_families: this.formData.selectedFamilies
-  };
-}
-//  assembleData(form: NgForm) {
-//    const userData = {
-//      email: this.formData.email,
-//      password: this.formData.password,
-//      first_name: this.formData.first_name,
-//      last_name: this.formData.last_name,
-//      guarantor: this.formData.guarantor,
-//      guarantor_email: this.formData.guarantorEmail,
-//      selected_families: this.formData.selectedFamilies
-//    };
-//    return userData;
-//  }
+    return {
+      email: this.formData.email,
+      password: this.formData.password,
+      first_name: this.formData.first_name,
+      last_name: this.formData.last_name,
+      guarantor: this.formData.guarantor,
+      guarantor_email: this.formData.guarantorEmail,
+      selected_families: this.formData.selectedFamilies
+    };
+  }
+  //  assembleData(form: NgForm) {
+  //    const userData = {
+  //      email: this.formData.email,
+  //      password: this.formData.password,
+  //      first_name: this.formData.first_name,
+  //      last_name: this.formData.last_name,
+  //      guarantor: this.formData.guarantor,
+  //      guarantor_email: this.formData.guarantorEmail,
+  //      selected_families: this.formData.selectedFamilies
+  //    };
+  //    return userData;
+  //  }
 
   /**
   * renders info of success in case the backend responded well

@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '../services/loading.service';
+import * as Sentry from "@sentry/angular";
 
 @Component({
   selector: 'app-login',
@@ -63,6 +64,7 @@ export class LoginComponent implements OnInit{
           this.errorMessage = 'Dein Account ist leider noch nicht aktiviert.';
         } else {
           this.errorMessage = 'Fehler beim Einloggen. Bitte überprüfe Login-Informationen.';
+          Sentry.captureException(error); 
         }
       },
       complete: () => {

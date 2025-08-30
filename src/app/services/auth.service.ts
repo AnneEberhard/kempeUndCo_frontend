@@ -30,7 +30,7 @@ export class AuthService {
       "email": email,
       "password": password
     };
-    return this.http.post<any>(url, body)
+    return this.http.post<any>(url, body, { withCredentials: true } )
   }
 
   /**
@@ -107,7 +107,7 @@ export class AuthService {
    */
   registerUser(userData: any): Observable<any> {
     const url = environment.baseUrl + '/register/';
-    return this.http.post<any>(url, userData);
+    return this.http.post<any>(url, userData, { withCredentials: true });
   }
 
   /**
