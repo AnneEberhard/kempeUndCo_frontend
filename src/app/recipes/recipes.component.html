@@ -53,7 +53,7 @@
     </div>
     <div [hidden]="recipe.isHidden">
       <div
-        [innerHTML]="sanitizer.bypassSecurityTrustHtml(recipe.content)"
+        [innerHTML]="sanitizer.bypassSecurityTrustHtml(recipe.content)" class="entryContent"
       ></div>
       <div class="entryImagesContainer">
         <div *ngFor="let image of recipe.images">

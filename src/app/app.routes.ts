@@ -18,51 +18,17 @@ import { AccountComponent } from './account/account.component';
 import { FamInfosComponent } from './fam-infos/fam-infos.component';
 import { DummyComponent } from './dummy/dummy.component';
 
-export const routes: Routes = [
-    {
-        path: '',
-        component: PublicLayoutComponent,
-        children: [
-            { path: '', component: DummyComponent },
-            { path: 'login', component: DummyComponent },
-            { path: 'register', component: DummyComponent },
-            { path: 'legal', component: LegalComponent },
-            { path: 'forgot', component: DummyComponent },
-            { path: 'reset-password/:uidb64/:token', component: DummyComponent },
-            { path: 'activation-success', component: ActivationSuccessComponent },
-            { path: 'activation-failure', component: ActivationFailureComponent },
-        ] 
-    },
-    {
-        path: '',
-        component: PrivateLayoutComponent,
-        canActivate: [AuthGuard],
-        children: [
-            { path: 'welcome', component: DummyComponent },
-            { path: 'ancestors', component: DummyComponent },
-            { path: 'ancestors/:id', component: DummyComponent },
-            { path: 'discussions', component: DummyComponent },
-            { path: 'discussions/:id', component: DummyComponent },
-            { path: 'infos', component: DummyComponent },
-            { path: 'faminfos', component: DummyComponent },
-            { path: 'recipes', component: DummyComponent },
-            { path: 'account', component: DummyComponent }
-        ]
-    }
-];
-
-
 //export const routes: Routes = [
 //    {
 //        path: '',
 //        component: PublicLayoutComponent,
 //        children: [
-//            { path: '', component: LoginComponent },
-//            { path: 'login', component: LoginComponent },
-//            { path: 'register', component: RegistrationComponent },
+//            { path: '', component: DummyComponent },
+//            { path: 'login', component: DummyComponent },
+//            { path: 'register', component: DummyComponent },
 //            { path: 'legal', component: LegalComponent },
-//            { path: 'forgot', component: ForgotComponent },
-//            { path: 'reset-password/:uidb64/:token', component: ResetComponent },
+//            { path: 'forgot', component: DummyComponent },
+//            { path: 'reset-password/:uidb64/:token', component: DummyComponent },
 //            { path: 'activation-success', component: ActivationSuccessComponent },
 //            { path: 'activation-failure', component: ActivationFailureComponent },
 //        ] 
@@ -72,15 +38,49 @@ export const routes: Routes = [
 //        component: PrivateLayoutComponent,
 //        canActivate: [AuthGuard],
 //        children: [
-//            { path: 'welcome', component: WelcomeComponent },
-//            { path: 'ancestors', component: AncestorsComponent },
-//            { path: 'ancestors/:id', component: AncestorsComponent },
-//            { path: 'discussions', component: DiscussionsComponent },
-//            { path: 'discussions/:id', component: DiscussionsComponent },
-//            { path: 'infos', component: InfosComponent },
-//            { path: 'faminfos', component: FamInfosComponent },
-//            { path: 'recipes', component: RecipesComponent },
-//            { path: 'account', component: AccountComponent }
+//            { path: 'welcome', component: DummyComponent },
+//            { path: 'ancestors', component: DummyComponent },
+//            { path: 'ancestors/:id', component: DummyComponent },
+//            { path: 'discussions', component: DummyComponent },
+//            { path: 'discussions/:id', component: DummyComponent },
+//            { path: 'infos', component: DummyComponent },
+//            { path: 'faminfos', component: DummyComponent },
+//            { path: 'recipes', component: DummyComponent },
+//            { path: 'account', component: DummyComponent }
 //        ]
 //    }
 //];
+
+
+export const routes: Routes = [
+    {
+        path: '',
+        component: PublicLayoutComponent,
+        children: [
+            { path: '', component: LoginComponent },
+            { path: 'login', component: LoginComponent },
+            { path: 'register', component: RegistrationComponent },
+            { path: 'legal', component: LegalComponent },
+            { path: 'forgot', component: ForgotComponent },
+            { path: 'reset-password/:uidb64/:token', component: ResetComponent },
+            { path: 'activation-success', component: ActivationSuccessComponent },
+            { path: 'activation-failure', component: ActivationFailureComponent },
+        ] 
+    },
+    {
+        path: '',
+        component: PrivateLayoutComponent,
+        canActivate: [AuthGuard],
+        children: [
+            { path: 'welcome', component: WelcomeComponent },
+            { path: 'ancestors', component: AncestorsComponent },
+            { path: 'ancestors/:id', component: AncestorsComponent },
+            { path: 'discussions', component: DiscussionsComponent },
+            { path: 'discussions/:id', component: DiscussionsComponent },
+            { path: 'infos', component: InfosComponent },
+            { path: 'faminfos', component: FamInfosComponent },
+            { path: 'recipes', component: RecipesComponent },
+            { path: 'account', component: AccountComponent }
+        ]
+    }
+];

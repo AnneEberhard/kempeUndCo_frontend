@@ -36,6 +36,21 @@ h5 {
   }
 }
 
+.entryContent {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.entryContent p,
+.entryContent div,
+.entryContent span {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
 form {
   display: flex;
   flex-direction: column;

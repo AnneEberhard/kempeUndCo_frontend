@@ -58,7 +58,7 @@
     </div>
 
     <div [hidden]="info.isHidden">
-      <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)"></div>
+      <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)" class="entryContent"></div>
       <div class="entryImagesContainer">
         <div *ngFor="let image of info.images">
           <img
@@ -100,7 +100,7 @@
       <div *ngIf="comments[info.id]" class="comments">
         <h4>Kommentare:</h4>
 
-        <div *ngFor="let comment of comments[info.id]" class="singleComment">
+        <div *ngFor="let comment of comments[info.id]" class="singleComment" class="entryContent">
           <div>
             <p>{{ comment.content }}</p>
             <small

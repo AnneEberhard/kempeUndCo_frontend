@@ -10,6 +10,20 @@
   }
 }
 
+.entryContent {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.entryContent p,
+.entryContent div,
+.entryContent span {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
 .entryHeader {
   display: flex;
   justify-content: space-between;
