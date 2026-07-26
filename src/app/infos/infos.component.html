@@ -58,7 +58,7 @@
     </div>
 
     <div [hidden]="info.isHidden">
-      <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(info.content)" class="entryContent"></div>
+      <div [innerHTML]="info.content" class="entryContent"></div>
       <div class="entryImagesContainer">
         <div *ngFor="let image of info.images">
           <img
