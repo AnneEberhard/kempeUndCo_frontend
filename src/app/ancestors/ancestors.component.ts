@@ -11,6 +11,7 @@ import { LoadingService } from '../services/loading.service';
 
 @Component({
     selector: 'app-ancestors',
+    standalone: true,
     imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule],
     templateUrl: './ancestors.component.html',
     styleUrl: './ancestors.component.scss'

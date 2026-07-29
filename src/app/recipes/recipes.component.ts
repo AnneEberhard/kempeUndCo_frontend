@@ -13,6 +13,7 @@ import { LoadingService } from '../services/loading.service';
 
 @Component({
     selector: 'app-recipes',
+    standalone: true,
     imports: [CommonModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
     templateUrl: './recipes.component.html',
     styleUrl: './recipes.component.scss'

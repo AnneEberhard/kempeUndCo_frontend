@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-forgot',
+    standalone: true,
     imports: [RouterModule, FormsModule, CommonModule],
     templateUrl: './forgot.component.html',
     styleUrl: './forgot.component.scss'

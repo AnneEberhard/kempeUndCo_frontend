@@ -7,6 +7,7 @@ import { AuthService } from '../services/auth.service';
 
 @Component({
     selector: 'app-reset',
+    standalone: true,
     imports: [RouterModule, FormsModule, CommonModule],
     templateUrl: './reset.component.html',
     styleUrl: './reset.component.scss',

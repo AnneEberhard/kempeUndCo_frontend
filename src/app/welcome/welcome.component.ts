@@ -4,6 +4,7 @@ import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/sc
 
 @Component({
     selector: 'app-welcome',
+    standalone: true,
     imports: [RouterModule, ScrollToTopButtonComponent],
     templateUrl: './welcome.component.html',
     styleUrl: './welcome.component.scss'

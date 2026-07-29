@@ -8,6 +8,7 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import * as Sentry from "@sentry/angular";
 import { headerInterceptor } from './services/header.interceptor';
+import { inject, provideAppInitializer } from '@angular/core';
 // added here: provideHttpClient(withInterceptors([authInterceptor, headerInterceptor])), causes CORS Error
 
 
@@ -27,11 +28,9 @@ export const appConfig: ApplicationConfig = {
       provide: Sentry.TraceService,
       deps: [Router],
     },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => {},
-      deps: [Sentry.TraceService],
-      multi: true,
-    },
+    provideAppInitializer(() => {
+  inject(Sentry.TraceService);
+})
+  
   ]
 };

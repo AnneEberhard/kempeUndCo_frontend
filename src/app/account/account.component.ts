@@ -10,6 +10,7 @@ import { LoadingService } from '../services/loading.service';
 
 @Component({
     selector: 'app-account',
+    standalone: true,
     imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
     templateUrl: './account.component.html',
     styleUrl: './account.component.scss'

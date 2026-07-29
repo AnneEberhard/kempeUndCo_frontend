@@ -14,6 +14,7 @@ import { LoadingService } from '../services/loading.service';
 
 @Component({
     selector: 'app-fam-infos',
+    standalone: true,
     imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule, CapitalizePipe],
     templateUrl: './fam-infos.component.html',
     styleUrl: './fam-infos.component.scss'

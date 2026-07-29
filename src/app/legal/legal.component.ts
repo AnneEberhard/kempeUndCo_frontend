@@ -4,6 +4,7 @@ import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/sc
 
 @Component({
     selector: 'app-legal',
+    standalone: true,
     imports: [RouterModule, RouterLink, RouterLinkActive, ScrollToTopButtonComponent],
     templateUrl: './legal.component.html',
     styleUrl: './legal.component.scss'

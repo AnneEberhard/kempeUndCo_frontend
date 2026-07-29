@@ -12,6 +12,7 @@ import { LoadingService } from '../services/loading.service';
 
 @Component({
     selector: 'app-registration',
+    standalone: true,
     imports: [CommonModule, FormsModule, RouterModule, ScrollToTopButtonComponent],
     templateUrl: './registration.component.html',
     styleUrl: './registration.component.scss',

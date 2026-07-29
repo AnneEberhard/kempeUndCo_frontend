@@ -13,6 +13,7 @@ import { LoadingService } from '../services/loading.service';
 
 @Component({
     selector: 'app-discussions',
+    standalone: true,
     imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
     templateUrl: './discussions.component.html',
     styleUrl: './discussions.component.scss'

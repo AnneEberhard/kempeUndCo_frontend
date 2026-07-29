@@ -8,6 +8,7 @@ import * as Sentry from "@sentry/angular";
 
 @Component({
     selector: 'app-login',
+    standalone: true,
     imports: [
         FormsModule,
         CommonModule,

@@ -15,6 +15,7 @@ import { LoadingService } from '../services/loading.service';
 
 @Component({
     selector: 'app-infos',
+    standalone: true,
     imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule,],
     templateUrl: './infos.component.html',
     styleUrl: './infos.component.scss'
