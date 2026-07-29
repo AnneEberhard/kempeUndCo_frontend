@@ -12,11 +12,10 @@ import { LoadingService } from '../services/loading.service';
 
 
 @Component({
-  selector: 'app-discussions',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
-  templateUrl: './discussions.component.html',
-  styleUrl: './discussions.component.scss'
+    selector: 'app-discussions',
+    imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
+    templateUrl: './discussions.component.html',
+    styleUrl: './discussions.component.scss'
 })
 export class DiscussionsComponent implements OnInit {
   public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};

@@ -4,11 +4,10 @@ import { ScrollService } from '../../services/scroll.service';
 
 
 @Component({
-  selector: 'app-scroll-to-top-button',
-  standalone: true,
-  imports: [],
-  templateUrl: './scroll-to-top-button.component.html',
-  styleUrl: './scroll-to-top-button.component.scss'
+    selector: 'app-scroll-to-top-button',
+    imports: [],
+    templateUrl: './scroll-to-top-button.component.html',
+    styleUrl: './scroll-to-top-button.component.scss'
 })
 export class ScrollToTopButtonComponent implements AfterViewInit, OnDestroy {
   showScrollTopButton: boolean = false;

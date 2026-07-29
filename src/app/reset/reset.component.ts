@@ -6,12 +6,11 @@ import { AuthService } from '../services/auth.service';
 
 
 @Component({
-  selector: 'app-reset',
-  standalone: true,
-  imports: [RouterModule, FormsModule, CommonModule],
-  templateUrl: './reset.component.html',
-  styleUrl: './reset.component.scss',
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-reset',
+    imports: [RouterModule, FormsModule, CommonModule],
+    templateUrl: './reset.component.html',
+    styleUrl: './reset.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class ResetComponent implements OnInit {
   errorMessage: string = '';

@@ -11,12 +11,11 @@ import { LoadingService } from '../services/loading.service';
 
 
 @Component({
-  selector: 'app-registration',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ScrollToTopButtonComponent],
-  templateUrl: './registration.component.html',
-  styleUrl: './registration.component.scss',
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-registration',
+    imports: [CommonModule, FormsModule, RouterModule, ScrollToTopButtonComponent],
+    templateUrl: './registration.component.html',
+    styleUrl: './registration.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class RegistrationComponent {
   showErrorEmailAlert: boolean = false;

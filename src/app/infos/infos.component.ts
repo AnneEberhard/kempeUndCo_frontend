@@ -14,11 +14,10 @@ import { LoadingService } from '../services/loading.service';
 
 
 @Component({
-  selector: 'app-infos',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule,],
-  templateUrl: './infos.component.html',
-  styleUrl: './infos.component.scss'
+    selector: 'app-infos',
+    imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule, QuillModule,],
+    templateUrl: './infos.component.html',
+    styleUrl: './infos.component.scss'
 })
 export class InfosComponent implements OnInit {
   public imageCache: { [id: string]: { original: string; thumbnail: string }[] } = {};

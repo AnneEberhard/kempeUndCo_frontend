@@ -10,11 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { LoadingService } from '../services/loading.service';
 
 @Component({
-  selector: 'app-ancestors',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule],
-  templateUrl: './ancestors.component.html',
-  styleUrl: './ancestors.component.scss'
+    selector: 'app-ancestors',
+    imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule],
+    templateUrl: './ancestors.component.html',
+    styleUrl: './ancestors.component.scss'
 })
 export class AncestorsComponent implements OnInit {
 

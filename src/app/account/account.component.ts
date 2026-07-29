@@ -9,11 +9,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingService } from '../services/loading.service';
 
 @Component({
-  selector: 'app-account',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './account.component.html',
-  styleUrl: './account.component.scss'
+    selector: 'app-account',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+    templateUrl: './account.component.html',
+    styleUrl: './account.component.scss'
 })
 export class AccountComponent implements OnInit{
   showErrorPasswordAlert: boolean = false;

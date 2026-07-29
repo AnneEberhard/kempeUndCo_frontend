@@ -5,11 +5,10 @@ import { ScrollToTopButtonComponent } from '../scroll-to-top-button/scroll-to-to
 import { PublicHeaderComponent } from "../public-header/public-header.component";
 
 @Component({
-  selector: 'app-public-layout',
-  standalone: true,
-  imports: [RouterOutlet, RouterLink, PublicHeaderComponent, FooterComponent, ScrollToTopButtonComponent, PublicHeaderComponent],
-  templateUrl: './public-layout.component.html',
-  styleUrl: './public-layout.component.scss'
+    selector: 'app-public-layout',
+    imports: [RouterOutlet, RouterLink, PublicHeaderComponent, FooterComponent, ScrollToTopButtonComponent, PublicHeaderComponent],
+    templateUrl: './public-layout.component.html',
+    styleUrl: './public-layout.component.scss'
 })
 export class PublicLayoutComponent {
 
