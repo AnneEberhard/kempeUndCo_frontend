@@ -93,7 +93,6 @@ export class RecipesComponent implements OnInit {
         this.recipes.sort((a, b) => {
           return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
         });
-        console.log(this.recipes);
         this.filteredRecipes = this.recipes;
         this.loadComments();
       },
@@ -275,6 +274,7 @@ export class RecipesComponent implements OnInit {
    * @param {any} data - The data to be used in the pop-up, which varies depending on the mode.
    */
   showPopUp(mode: string, data: any) {
+    console.log('showPopUp', mode, data);
     if (mode === 'add') {
       this.entry = {
         title: '',

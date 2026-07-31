@@ -34,50 +34,57 @@
         </div>
       </div>
       <!-- single entry containers -->
-      <div *ngFor="let entry of filteredEntries" class="entryContainer">
-        <h5>{{ entry.author_name }}: {{ entry.title }}</h5>
-        <div [innerHTML]="entry.content" class="entryContent"></div>
-        <div class="entryImagesContainer">
-          <div *ngFor="let image of entry.images">
-            <img
-              (click)="showPopUp('image', image.original)"
-              loading="lazy"
-              [src]="image.thumbnail"
-              alt="Info Image"
-            />
-          </div>
-        </div>
-        <div>
-          <div *ngFor="let pdf of entry.pdfs">
-            <a [href]="pdf.url" target="_blank" rel="noopener">{{
-              pdf.name
-            }}</a>
-          </div>
-        </div>
-        <div class="entryMeta">
-          <p>
-            <small>Erstellt am: {{ entry.created_at | date: "short" }}</small
-            ><br />
-            <small
-              >Zuletzt bearbeitet: {{ entry.updated_at | date: "short" }}</small
-            >
-          </p>
-          <div class="editOrDeleteContainer">
-            @if (entry.author === userEmail) {
-              <img
-                src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-                (click)="showPopUp('edit', entry)"
-              />
-            }
-            @if (entry.author === userEmail) {
-              <img
-                src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-                (click)="showPopUp('delete', entry)"
-              />
+      @for (entry of filteredEntries; track entry.id) {
+        <div class="entryContainer">
+          <h5>{{ entry.author_name }}: {{ entry.title }}</h5>
+          <div [innerHTML]="entry.content" class="entryContent"></div>
+          <div class="entryImagesContainer">
+            @for (image of entry.images; track $index) {
+              <div>
+                <img
+                  (click)="showPopUp('image', image.original)"
+                  loading="lazy"
+                  [src]="image.thumbnail"
+                  alt="Info Image"
+                />
+              </div>
             }
           </div>
+          <div>
+            @for (pdf of entry.pdfs; track $index) {
+              <div>
+                <a [href]="pdf.url" target="_blank" rel="noopener">{{
+                  pdf.name
+                }}</a>
+              </div>
+            }
+          </div>
+          <div class="entryMeta">
+            <p>
+              <small>Erstellt am: {{ entry.created_at | date: "short" }}</small
+              ><br />
+              <small
+                >Zuletzt bearbeitet:
+                {{ entry.updated_at | date: "short" }}</small
+              >
+            </p>
+            <div class="editOrDeleteContainer">
+              @if (entry.author === userEmail) {
+                <img
+                  src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+                  (click)="showPopUp('edit', entry)"
+                />
+              }
+              @if (entry.author === userEmail) {
+                <img
+                  src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+                  (click)="showPopUp('delete', entry)"
+                />
+              }
+            </div>
+          </div>
         </div>
-      </div>
+      }
     </div>
   }
 
@@ -109,14 +116,13 @@
     </div>
     <h3>Vorhandene Diskussionen</h3>
     <ul>
-      <li
-        *ngFor="let discussion of filteredDiscussions"
-        (click)="goToDiscussion(discussion.person.id)"
-      >
-        Diskussion zu Person: {{ discussion.person.id }} -
-        {{ discussion.person.name }} - Stand
-        {{ discussion.updated_at | date: "short" }}
-      </li>
+      @for (discussion of filteredDiscussions; track discussion.id) {
+        <li (click)="goToDiscussion(discussion.person.id)">
+          Diskussion zu Person: {{ discussion.person.id }} -
+          {{ discussion.person.name }} - Stand
+          {{ discussion.updated_at | date: "short" }}
+        </li>
+      }
     </ul>
   }
   <!-- PopUp container for all popups on this site -->
@@ -157,44 +163,48 @@
             <h4>Bilder:</h4>
             <h5>Vorhandene Bilder</h5>
             <div class="deleteImageContainer">
-              <div *ngFor="let image of entry.images" class="deleteImage">
-                <img
-                  [src]="image.thumbnail"
-                  alt="Image"
-                  width="100"
-                  [ngClass]="{
-                    'grayed-out': isImageDeleted(image.original, entry),
-                  }"
-                />
-                <button
-                  type="button"
-                  (click)="removeImageByUrl(image.original)"
-                >
-                  Bild löschen
-                </button>
-              </div>
-            </div>
-            <h5 for="images">Bilder hochladen (max. 4):</h5>
-            <div
-              *ngFor="let index of [1, 2, 3, 4]"
-              class="image-upload-container"
-            >
-              @if (isImageSlotAvailable(index)) {
-                <div class="upload-image-field">
-                  <input
-                    type="file"
-                    [id]="'image' + index"
-                    (change)="onImageFileChange($event, index)"
-                    accept=".jpg,.png"
+              @for (image of entry.images; track $index) {
+                <div class="deleteImage">
+                  <img
+                    [src]="image.thumbnail"
+                    alt="Image"
+                    width="100"
+                    [ngClass]="{
+                      'grayed-out': isImageDeleted(image.original, entry),
+                    }"
                   />
+                  <button
+                    type="button"
+                    (click)="removeImageByUrl(image.original)"
+                  >
+                    Bild löschen
+                  </button>
                 </div>
               }
             </div>
+            <h5 for="images">Bilder hochladen (max. 4):</h5>
+            @for (index of [1, 2, 3, 4]; track index) {
+              <div class="image-upload-container">
+                @if (isImageSlotAvailable(index)) {
+                  <div class="upload-image-field">
+                    <input
+                      type="file"
+                      [id]="'image' + index"
+                      (change)="onImageFileChange($event, index)"
+                      accept=".jpg,.png"
+                    />
+                  </div>
+                }
+              </div>
+            }
+
             @if (imageFiles.length > 0) {
               <div>
                 <h5>Neue Bilder:</h5>
                 <ul>
-                  <li *ngFor="let file of imageFiles">{{ file.name }}</li>
+                  @for (file of imageFiles; track $index) {
+                    <li>{{ file.name }}</li>
+                  }
                 </ul>
               </div>
             }
@@ -206,60 +216,59 @@
             <!-- Vorhandene PDFs -->
             <h5>Vorhandene PDFs</h5>
             <div class="deletePdfContainer">
-              <div
-                *ngFor="let pdf of entry.pdfs; let i = index"
-                class="deletePdf"
-                [ngClass]="{ 'grayed-out': isPdfDeleted(pdf.url) }"
-              >
-                <!-- PDF-Name editierbar -->
-                <span>{{ pdf.name }}</span>
+              @for (pdf of entry.pdfs; track $index) {
+                <div
+                  class="deletePdf"
+                  [ngClass]="{ 'grayed-out': isPdfDeleted(pdf.url) }"
+                >
+                  <!-- PDF-Name editierbar -->
+                  <span>{{ pdf.name }}</span>
 
-                <a [href]="pdf.url" target="_blank" rel="noopener">Ansehen</a>
+                  <a [href]="pdf.url" target="_blank" rel="noopener">Ansehen</a>
 
-                <button type="button" (click)="removePdfByUrl(pdf.url)">
-                  PDF löschen
-                </button>
-              </div>
+                  <button type="button" (click)="removePdfByUrl(pdf.url)">
+                    PDF löschen
+                  </button>
+                </div>
+              }
             </div>
 
             <!-- Neue PDFs -->
             <h5>Neue PDFs hochladen (max. 4):</h5>
-            <div
-              *ngFor="let index of [1, 2, 3, 4]"
-              class="pdf-upload-container"
-            >
-              @if (isPdfSlotAvailable(index)) {
-                <div>
-                  <!-- Falls noch kein PDF hochgeladen wurde → Button statt Input -->
+            @for (index of [1, 2, 3, 4]; track index) {
+              <div class="pdf-upload-container">
+                @if (isPdfSlotAvailable(index)) {
                   <div>
-                    <input
-                      type="file"
-                      [id]="'pdf_' + index"
-                      (change)="onPdfFileChange($event, index)"
-                      accept=".pdf"
-                    />
+                    <!-- Falls noch kein PDF hochgeladen wurde → Button statt Input -->
+                    <div>
+                      <input
+                        type="file"
+                        [id]="'pdf_' + index"
+                        (change)="onPdfFileChange($event, index)"
+                        accept=".pdf"
+                      />
+                    </div>
                   </div>
-                </div>
-              }
-            </div>
+                }
+              </div>
+            }
             @if (pdfFiles.length > 0) {
               <div>
                 <h5>Neue PDFs:</h5>
                 <ul>
-                  <li
-                    *ngFor="let pdf of pdfFiles; let i = index"
-                    class="newList"
-                  >
-                    {{ pdf.file.name }}
-                    <input
-                      type="text"
-                      [(ngModel)]="pdf.customName"
-                      placeholder="andere Namen vergeben"
-                    />
-                    <button type="button" (click)="removeNewPdf(i)">
-                      Entfernen
-                    </button>
-                  </li>
+                  @for (pdf of pdfFiles; track $index; let i = $index) {
+                    <li class="newList">
+                      {{ pdf.file.name }}
+                      <input
+                        type="text"
+                        [(ngModel)]="pdf.customName"
+                        placeholder="andere Namen vergeben"
+                      />
+                      <button type="button" (click)="removeNewPdf(i)">
+                        Entfernen
+                      </button>
+                    </li>
+                  }
                 </ul>
               </div>
             }
