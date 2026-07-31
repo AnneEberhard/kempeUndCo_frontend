@@ -61,10 +61,10 @@ export class FamilyService {
         );
         const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn).pipe(
           catchError(() => of(this.createUnknownPerson())) // Fängt Fehler für den Vater ab
-        ) : of(null);
+        ) : of(this.createUnknownPerson());
         const mother$ = relations.moth_refn ? this.getPerson(relations.moth_refn).pipe(
           catchError(() => of(this.createUnknownPerson())) // Fängt Fehler für die Mutter ab
-        ) : of(null);
+        ) : of(this.createUnknownPerson());
 
         const marriages$ = [1, 2, 3, 4].map(i => {
           const spouseRefn = relations[`marr_spou_refn_${i}` as keyof Relations];
@@ -107,7 +107,7 @@ export class FamilyService {
       catchError(() => of({ // Fängt Fehler für das gesamte Observable ab
         person: this.createUnknownPerson(),
         grandparents: [],
-        parents: [null, null],
+        parents: [],
         marriages: []
       }))
     );
@@ -126,7 +126,7 @@ export class FamilyService {
   getGrandparents(father: Person | null, mother: Person | null): Observable<Person[]> {
     const unknownPerson = this.createUnknownPerson();
 
-    const fatherParents$ = father ? this.getRelations(father.id).pipe(
+    const fatherParents$ = father && father.id !== 0 ? this.getRelations(father.id).pipe(
       switchMap(relations => {
         const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn).pipe(
           catchError(() => of(unknownPerson))  // Fängt Fehler ab, wenn die Person nicht gefunden wird
@@ -141,7 +141,7 @@ export class FamilyService {
       catchError(() => of([unknownPerson, unknownPerson]))  // Fängt Fehler ab, wenn die Relation nicht gefunden wird
     ) : of([unknownPerson, unknownPerson]);
 
-    const motherParents$ = mother ? this.getRelations(mother.id).pipe(
+    const motherParents$ = mother && mother.id !== 0? this.getRelations(mother.id).pipe(
       switchMap(relations => {
         const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn).pipe(
           catchError(() => of(unknownPerson))  // Fängt Fehler ab, wenn die Person nicht gefunden wird

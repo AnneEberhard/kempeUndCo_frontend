@@ -108,7 +108,7 @@ export class RegistrationComponent {
       .subscribe({
         next: (response) => {
           this.renderInfo();
-          setTimeout(this.clearForm, 4000);
+          setTimeout(() => this.clearForm(), 4000);
         },
         error: (error) => {
           this.loadingService.hide();
@@ -300,11 +300,32 @@ export class RegistrationComponent {
   }
 
   /**
-   * reloads the page to refresh content
-   */
-  clearForm() {
-    window.location.reload();
+  * lets info box disappear and resets button
+  */
+  unRenderInfo() {
+    document.getElementById('popUpContainer')?.classList.add('dNone');
+    this.sent = false;
+    this.buttonText = 'Senden';
   }
+
+  /**
+   * clears form
+   */
+clearForm() {
+  this.formData = {
+    email: '',
+    first_name: '',
+    last_name: '',
+    password: '',
+    confirmPassword: '',
+    guarantorEmail: '',
+    guarantor: false,
+    noGuarantor: false,
+    selectedFamilies: []
+  };
+  this.unRenderInfo();
+
+}
 
   /**
   * renders link to forgot passwort component in case user already exists

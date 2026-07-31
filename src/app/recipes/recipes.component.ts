@@ -447,7 +447,7 @@ export class RecipesComponent implements OnInit {
     this.recipeService.updateRecipe(this.entry.id, formData).subscribe({
       next: (response: any) => {
         this.loadAllRecipes();
-        window.location.reload();
+        // window.location.reload();
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
@@ -496,7 +496,7 @@ export class RecipesComponent implements OnInit {
         this.loadAllRecipes();
         this.entry.title = '';
         this.entry.content = '';
-        window.location.reload();
+        // window.location.reload();
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);

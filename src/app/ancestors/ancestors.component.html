@@ -8,112 +8,120 @@
           src="assets/images/refresh.png"
           alt="refresh"
         />
-        <div (click)="showOverview()" *ngIf="userKempe" class="hint">Übersicht</div>
+        @if (userKempe) {
+          <div (click)="showOverview()" class="hint">Übersicht</div>
+        }
       </div>
 
       <div class="searchContainer">
         <input [(ngModel)]="searchTerm" required placeholder="Name eingeben" />
         <button (click)="search()">Suchen</button>
       </div>
-      <div
-        *ngIf="searchResults.length > 0 || showNoResultsMessage"
-        class="popUpInfoContainer"
-        (click)="clearSearch()"
-      >
-        <div *ngIf="showNoResultsMessage" class="popUpInfo">
-          Keine Ergebnisse gefunden.
+      @if (searchResults.length > 0 || showNoResultsMessage) {
+        <div class="popUpInfoContainer" (click)="clearSearch()">
+          @if (showNoResultsMessage) {
+            <div class="popUpInfo">Keine Ergebnisse gefunden.</div>
+          }
         </div>
-      </div>
+      }
       <div (click)="showHint()" class="hint">Hinweise</div>
     </div>
 
     <!--the search results with position fixed-->
-    <div *ngIf="searchResults.length > 0" class="searchResultsContainer">
-      <div class="searchResults">
-        <div
-          *ngFor="let person of searchResults"
-          (click)="selectPerson(person)"
-        >
-          {{ person.name }}
+    @if (searchResults.length > 0) {
+      <div class="searchResultsContainer">
+        <div class="searchResults">
+          @for (person of searchResults; track person.id) {
+            <div (click)="selectPerson(person)">
+              {{ person.name }}
+            </div>
+          }
         </div>
       </div>
-    </div>
+    }
 
     <!--Family tree area-->
-    <div class="familyTree" *ngIf="family">
-      <div
-        class="generation grandparents"
-        *ngIf="family.grandparents && family.grandparents.length > 0"
-      >
-        <h3>Großeltern</h3>
-        <div class="personList">
-          <ng-container *ngFor="let grandparent of family.grandparents">
-            <div
-              *ngIf="grandparent"
-              class="person"
-              (click)="getNewData(grandparent.id)"
-            >
-              {{ grandparent.name }}
-            </div>
-          </ng-container>
-        </div>
-      </div>
-
-      <div
-        class="generation parents"
-        *ngIf="family.parents && family.parents.length > 0"
-      >
-        <h3>Eltern</h3>
-        <div class="personList">
-          <ng-container *ngFor="let parent of family.parents">
-            <div *ngIf="parent" class="person" (click)="getNewData(parent.id)">
-              {{ parent.name }}
-            </div>
-          </ng-container>
-        </div>
-      </div>
-
-      <div class="center">
-        <div class="person mainPerson" (click)="showInfos(family.person)">
-          {{
-            family.person.confidential === "yes"
-              ? "vertraulich"
-              : family.person.name
-          }}
-        </div>
-      </div>
-
-      <div
-        class="generation spouses"
-        *ngIf="family.marriages && family.marriages.length > 0"
-      >
-        <div class="personList">
-          <ng-container *ngFor="let marriage of family.marriages">
-            <div *ngIf="marriage.spouse">
-              <h4>Ehepartner:</h4>
-              <div class="person" (click)="getNewData(marriage.spouse.id)">
-                {{ marriage.spouse.name }}
-              </div>
-              <div
-                class="children"
-                *ngIf="marriage.children && marriage.children.length > 0"
-              >
-                <h4 *ngIf="marriage.children.length > 0">Kinder:</h4>
-                <ng-container *ngFor="let child of marriage.children">
-                  <div
-                    *ngIf="child"
-                    class="person"
-                    (click)="getNewData(child.id)"
-                  >
-                    {{ child.name }}
+    @if (family) {
+      <div class="familyTree">
+        @if (family.grandparents && family.grandparents.length > 0) {
+          <div class="generation grandparents">
+            <h3>Großeltern</h3>
+            <div class="personList">
+              @for (grandparent of family.grandparents; track grandparent?.id) {
+                @if (grandparent) {
+                  <div class="person" (click)="getNewData(grandparent.id)">
+                    {{ grandparent.name }}
                   </div>
-                </ng-container>
-              </div>
+                }
+              }
             </div>
-          </ng-container>
+          </div>
+        }
+        @if (family.parents && family.parents.length > 0) {
+          <div class="generation parents">
+            <h3>Eltern</h3>
+            <div class="personList">
+              @for (parent of family.parents; track parent?.id) {
+                @if (parent) {
+                  <div class="person" (click)="getNewData(parent.id)">
+                    {{ parent.name }}
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+
+        <div class="center">
+          <div class="person mainPerson" (click)="showInfos(family.person)">
+            {{
+              family.person.confidential === "yes"
+                ? "vertraulich"
+                : family.person.name
+            }}
+          </div>
         </div>
+
+        @if (family.marriages && family.marriages.length > 0) {
+          <div class="generation spouses">
+            <div class="personList">
+              @for (marriage of family.marriages; track $index) {
+                <ng-container>
+                  @if (marriage.spouse) {
+                    <div>
+                      <h4>Ehepartner:</h4>
+                      <div
+                        class="person"
+                        (click)="getNewData(marriage.spouse.id)"
+                      >
+                        {{ marriage.spouse.name }}
+                      </div>
+                      @if (marriage.children && marriage.children.length > 0) {
+                        <div class="children">
+                          @if (marriage.children.length > 0) {
+                            <h4>Kinder:</h4>
+                          }
+                          @for (child of marriage.children; track $index) {
+                            @if (child) {
+                              <div
+                                class="person"
+                                (click)="getNewData(child.id)"
+                              >
+                                {{ child.name }}
+                              </div>
+                            }
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </ng-container>
+              }
+            </div>
+          </div>
+        }
       </div>
-    </div>
+    }
   </div>
 
   <!--following are several popup container position absolute-->
@@ -144,115 +152,157 @@
   <!--popUp for infos on a person-->
   <div id="popUpInfoContainer" class="popUpInfoContainer dNone">
     <div (click)="hideInfos()" id="filler"></div>
-    <div id="infoBar" *ngIf="selectedPerson">
-      <div class="infoHeader">
-        <h4>Personeninformationen</h4>
-        <button
-          (click)="goToDiscussions()"
-          class="discussionButton"
-          [disabled]="selectedPerson.name === 'vertraulich'"
-        >
-          Diskussion
-        </button>
+    @if (selectedPerson) {
+      <div id="infoBar">
+        <div class="infoHeader">
+          <h4>Personeninformationen</h4>
+          <button
+            (click)="goToDiscussions()"
+            class="discussionButton"
+            [disabled]="selectedPerson.name === 'vertraulich'"
+          >
+            Diskussion
+          </button>
+        </div>
+        <div>
+          <p><strong>ID:</strong> {{ selectedPerson.id }}</p>
+          @if (selectedPerson.name) {
+            <p><strong>Name:</strong> {{ selectedPerson.name }}</p>
+          }
+
+          @if (selectedPerson.surn) {
+            <p><strong>Nachname:</strong> {{ selectedPerson.surn }}</p>
+          }
+
+          @if (selectedPerson.givn) {
+            <p><strong>Vorname:</strong> {{ selectedPerson.givn }}</p>
+          }
+
+          @if (selectedPerson.name_rufname) {
+            <p><strong>Rufname:</strong> {{ selectedPerson.name_rufname }}</p>
+          }
+
+          @if (selectedPerson.name_npfx) {
+            <p><strong>Namenspräfix:</strong> {{ selectedPerson.name_npfx }}</p>
+          }
+
+          @if (selectedPerson.name_nick) {
+            <p><strong>Spitzname:</strong> {{ selectedPerson.name_nick }}</p>
+          }
+
+          @if (selectedPerson.name_marnm) {
+            <p><strong>Ehename:</strong> {{ selectedPerson.name_marnm }}</p>
+          }
+
+          @if (selectedPerson.sex) {
+            <p><strong>Geschlecht:</strong> {{ selectedPerson.sex }}</p>
+          }
+
+          @if (selectedPerson.occu) {
+            <p><strong>Beruf:</strong> {{ selectedPerson.occu }}</p>
+          }
+
+          @if (selectedPerson.birt_date) {
+            <p><strong>Geburtsdatum:</strong> {{ selectedPerson.birt_date }}</p>
+          }
+
+          @if (selectedPerson.birt_plac) {
+            <p><strong>Geburtsort:</strong> {{ selectedPerson.birt_plac }}</p>
+          }
+
+          @if (selectedPerson.deat_date) {
+            <p><strong>Sterbedatum:</strong> {{ selectedPerson.deat_date }}</p>
+          }
+
+          @if (selectedPerson.deat_plac) {
+            <p><strong>Sterbeort:</strong> {{ selectedPerson.deat_plac }}</p>
+          }
+
+          @if (selectedPerson.note) {
+            <p><strong>Notizen:</strong> {{ selectedPerson.note }}</p>
+          }
+
+          @if (selectedPerson.chr_date) {
+            <p><strong>Taufdatum:</strong> {{ selectedPerson.chr_date }}</p>
+          }
+
+          @if (selectedPerson.chr_plac) {
+            <p><strong>Taufort:</strong> {{ selectedPerson.chr_plac }}</p>
+          }
+
+          @if (selectedPerson.chr_addr) {
+            <p><strong>Taufadresse:</strong> {{ selectedPerson.chr_addr }}</p>
+          }
+
+          @if (selectedPerson.buri_date) {
+            <p>
+              <strong>Beerdigungsdatum:</strong> {{ selectedPerson.buri_date }}
+            </p>
+          }
+
+          @if (selectedPerson.buri_plac) {
+            <p>
+              <strong>Beerdigungsort:</strong> {{ selectedPerson.buri_plac }}
+            </p>
+          }
+
+          @if (selectedPerson.reli) {
+            <p><strong>Religion:</strong> {{ selectedPerson.reli }}</p>
+          }
+
+          @if (selectedPerson.sour) {
+            <p><strong>Quellen:</strong> {{ selectedPerson.sour }}</p>
+          }
+
+          <!-- Bildverlinkungen  -->
+          @if (selectedPerson.obje_file_1) {
+            <p>
+              <button (click)="showImage(selectedPerson.obje_file_1)">
+                Bild 1 anzeigen
+              </button>
+            </p>
+          }
+          @if (selectedPerson.obje_file_2) {
+            <p>
+              <button (click)="showImage(selectedPerson.obje_file_2)">
+                Bild 2 anzeigen
+              </button>
+            </p>
+          }
+
+          @if (selectedPerson.obje_file_3) {
+            <p>
+              <button (click)="showImage(selectedPerson.obje_file_3)">
+                Bild 3 anzeigen
+              </button>
+            </p>
+          }
+          @if (selectedPerson.obje_file_4) {
+            <p>
+              <button (click)="showImage(selectedPerson.obje_file_4)">
+                Bild 4 anzeigen
+              </button>
+            </p>
+          }
+
+          @if (selectedPerson.obje_file_5) {
+            <p>
+              <button (click)="showImage(selectedPerson.obje_file_5)">
+                Bild 5 anzeigen
+              </button>
+            </p>
+          }
+
+          @if (selectedPerson.obje_file_6) {
+            <p>
+              <button (click)="showImage(selectedPerson.obje_file_6)">
+                Bild 6 anzeigen
+              </button>
+            </p>
+          }
+        </div>
       </div>
-      <div>
-        <p><strong>ID:</strong> {{ selectedPerson.id }}</p>
-        <p *ngIf="selectedPerson.name">
-          <strong>Name:</strong> {{ selectedPerson.name }}
-        </p>
-        <p *ngIf="selectedPerson.surn">
-          <strong>Nachname:</strong> {{ selectedPerson.surn }}
-        </p>
-        <p *ngIf="selectedPerson.givn">
-          <strong>Vorname:</strong> {{ selectedPerson.givn }}
-        </p>
-        <p *ngIf="selectedPerson.name_rufname">
-          <strong>Rufname:</strong> {{ selectedPerson.name_rufname }}
-        </p>
-        <p *ngIf="selectedPerson.name_npfx">
-          <strong>Namenspräfix:</strong> {{ selectedPerson.name_npfx }}
-        </p>
-        <p *ngIf="selectedPerson.name_nick">
-          <strong>Spitzname:</strong> {{ selectedPerson.name_nick }}
-        </p>
-        <p *ngIf="selectedPerson.name_marnm">
-          <strong>Ehename:</strong> {{ selectedPerson.name_marnm }}
-        </p>
-        <p *ngIf="selectedPerson.sex">
-          <strong>Geschlecht:</strong> {{ selectedPerson.sex }}
-        </p>
-        <p *ngIf="selectedPerson.occu">
-          <strong>Beruf:</strong> {{ selectedPerson.occu }}
-        </p>
-        <p *ngIf="selectedPerson.birt_date">
-          <strong>Geburtsdatum:</strong> {{ selectedPerson.birt_date }}
-        </p>
-        <p *ngIf="selectedPerson.birt_plac">
-          <strong>Geburtsort:</strong> {{ selectedPerson.birt_plac }}
-        </p>
-        <p *ngIf="selectedPerson.deat_date">
-          <strong>Sterbedatum:</strong> {{ selectedPerson.deat_date }}
-        </p>
-        <p *ngIf="selectedPerson.deat_plac">
-          <strong>Sterbeort:</strong> {{ selectedPerson.deat_plac }}
-        </p>
-        <p *ngIf="selectedPerson.note">
-          <strong>Notizen:</strong> {{ selectedPerson.note }}
-        </p>
-        <p *ngIf="selectedPerson.chr_date">
-          <strong>Taufdatum:</strong> {{ selectedPerson.chr_date }}
-        </p>
-        <p *ngIf="selectedPerson.chr_plac">
-          <strong>Taufort:</strong> {{ selectedPerson.chr_plac }}
-        </p>
-        <p *ngIf="selectedPerson.chr_addr">
-          <strong>Taufadresse:</strong> {{ selectedPerson.chr_addr }}
-        </p>
-        <p *ngIf="selectedPerson.buri_date">
-          <strong>Beerdigungsdatum:</strong> {{ selectedPerson.buri_date }}
-        </p>
-        <p *ngIf="selectedPerson.buri_plac">
-          <strong>Beerdigungsort:</strong> {{ selectedPerson.buri_plac }}
-        </p>
-        <p *ngIf="selectedPerson.reli">
-          <strong>Religion:</strong> {{ selectedPerson.reli }}
-        </p>
-        <p *ngIf="selectedPerson.sour">
-          <strong>Quellen:</strong> {{ selectedPerson.sour }}
-        </p>
-        <!-- Bildverlinkungen  -->
-        <p *ngIf="selectedPerson.obje_file_1">
-          <button (click)="showImage(selectedPerson.obje_file_1)">
-            Bild 1 anzeigen
-          </button>
-        </p>
-        <p *ngIf="selectedPerson.obje_file_2">
-          <button (click)="showImage(selectedPerson.obje_file_2)">
-            Bild 2 anzeigen
-          </button>
-        </p>
-        <p *ngIf="selectedPerson.obje_file_3">
-          <button (click)="showImage(selectedPerson.obje_file_3)">
-            Bild 3 anzeigen
-          </button>
-        </p>
-        <p *ngIf="selectedPerson.obje_file_4">
-          <button (click)="showImage(selectedPerson.obje_file_4)">
-            Bild 4 anzeigen
-          </button>
-        </p>
-        <p *ngIf="selectedPerson.obje_file_5">
-          <button (click)="showImage(selectedPerson.obje_file_5)">
-            Bild 5 anzeigen
-          </button>
-        </p>
-        <p *ngIf="selectedPerson.obje_file_6">
-          <button (click)="showImage(selectedPerson.obje_file_6)">
-            Bild 6 anzeigen
-          </button>
-        </p>
-      </div>
-    </div>
+    }
   </div>
   <!--popUp for a picture-->
   <div id="imageModal" class="imageModal dNone">
@@ -264,7 +314,6 @@
 
   <!--popUp for overview-->
   <div id="popUpOverviewContainer" class="popUpInfoContainer dNone">
-    
     <div class="tree">
       <table class="no-border" cellpadding="5" cellspacing="0">
         <tr>
@@ -272,7 +321,9 @@
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I1@')">Hans Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I1@')">
+            Hans Kempe
+          </td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
@@ -296,7 +347,9 @@
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I5@')">Daniel (I) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I5@')">
+            Daniel (I) Kempe
+          </td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
@@ -318,10 +371,14 @@
         <tr>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="click" (click)="showPerson('@I12@')">Enno Friedrich (I) Kempe</td>
+          <td class="click" (click)="showPerson('@I12@')">
+            Enno Friedrich (I) Kempe
+          </td>
           <td></td>
           <td></td>
-          <td class="click" (click)="showPerson('@I13@')">Johann Ludwig (I) Kempe</td>
+          <td class="click" (click)="showPerson('@I13@')">
+            Johann Ludwig (I) Kempe
+          </td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
@@ -342,7 +399,9 @@
         <tr>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I22@')">Daniel (II) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I22@')">
+            Daniel (II) Kempe
+          </td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
@@ -365,8 +424,8 @@
         </tr>
         <tr>
           <td class="no-border"></td>
-          <td class="click" (click)="showPerson('@I32@')">Enno Friedrich (II P) Kempe
-            <br><i>Pewsumer Ast</i>
+          <td class="click" (click)="showPerson('@I32@')">
+            Enno Friedrich (II P) Kempe <br /><i>Pewsumer Ast</i>
           </td>
           <td></td>
           <td></td>
@@ -374,7 +433,9 @@
           <td></td>
           <td></td>
           <td></td>
-          <td class="click" (click)="showPerson('@I35@')">Daniel (III A) Kempe<br><i>Auricher Ast</i><br></td>
+          <td class="click" (click)="showPerson('@I35@')">
+            Daniel (III A) Kempe<br /><i>Auricher Ast</i><br />
+          </td>
           <td class="no-border"></td>
         </tr>
         <tr>
@@ -391,14 +452,18 @@
         </tr>
         <tr>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I241@')">Daniel (III P Kempe)</td>
+          <td class="click no-border" (click)="showPerson('@I241@')">
+            Daniel (III P Kempe)
+          </td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I330@')">Daniel (IV A) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I330@')">
+            Daniel (IV A) Kempe
+          </td>
           <td class="no-border"></td>
         </tr>
         <tr>
@@ -414,16 +479,62 @@
           <td class="no-border"></td>
         </tr>
         <tr>
-          <td class="click" (click)="showPerson('@I862@')">Paul (I PG) Kempe<br><i>Groothusener Zweig</i></td>
-          <td class="click" (click)="showPerson('@I870@')">Friedrich Wilhelm Otto (PD) Kempe<br><i>Düsseldorfer Zweig</i></td>
-          <td class="click" (click)="showPerson('@I872@')">Eberhard Johann Leonard Kempe<br><i>Dresdener Zweig</i></td>
+          <td class="click" (click)="showPerson('@I862@')">
+            Paul (I PG) Kempe<br /><i>Groothusener Zweig</i>
+          </td>
+          <td class="click" (click)="showPerson('@I870@')">
+            Friedrich Wilhelm Otto (PD) Kempe<br /><i>Düsseldorfer Zweig</i>
+          </td>
+          <td class="click" (click)="showPerson('@I872@')">
+            Eberhard Johann Leonard Kempe<br /><i>Dresdener Zweig</i>
+          </td>
           <td></td>
-          <td class="click"(click)="showPerson('@I873@')">Enno Friedrich (III PB) Kempe<br><i>Bunder Zweig</i></td>
+          <td class="click" (click)="showPerson('@I873@')">
+            Enno Friedrich (III PB) Kempe<br /><i>Bunder Zweig</i>
+          </td>
           <td></td>
-          <td class="click"(click)="showPerson('@I874@')">Daniel (IV PW) Kempe<br><i>Weener Zweig</i></td>
+          <td class="click" (click)="showPerson('@I874@')">
+            Daniel (IV PW) Kempe<br /><i>Weener Zweig</i>
+          </td>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I2080@')">Johann Ludwig (II A) Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I2080@')">
+            Johann Ludwig (II A) Kempe
+          </td>
           <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border">|</td>
+          <td class="no-border"></td>
+        </tr>
+        <tr>
+          <td class="click no-border" (click)="showPerson('@I881@')">
+            Klaas Heykes (I) Kempe
+          </td>
+          <td class="no-border"></td>
+          <td class="click no-border" (click)="showPerson('@I944@')">
+            Alfred Friedrich Ferdinand Kempe
+          </td>
+          <td class="no-border"></td>
+          <td class="click no-border" (click)="showPerson('@I971@')">
+            Fritz Georg Kempe
+          </td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="no-border"></td>
+          <td class="click" (click)="showPerson('@I2076@')">
+            Daniel (V A) Kempe
+          </td>
+          <td class="click" (click)="showPerson('@I2091@')">
+            Johann Ludwig (III A) Kempe
+          </td>
         </tr>
         <tr>
           <td class="no-border">|</td>
@@ -434,44 +545,30 @@
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-        </tr>
-        <tr>
-          <td class="click no-border" (click)="showPerson('@I881@')">Klaas Heykes (I) Kempe</td>
-          <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I944@')">Alfred Friedrich Ferdinand Kempe</td>
-          <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I971@')">Fritz Georg Kempe</td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="click" (click)="showPerson('@I2076@')">Daniel (V A) Kempe</td>
-          <td class="click" (click)="showPerson('@I2091@')">Johann Ludwig (III A) Kempe</td>
-        </tr>
-        <tr>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-          <td class="no-border">|</td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
-          <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border">|</td>
         </tr>
         <tr>
-          <td class="click no-border" (click)="showPerson('@I887@')">Enno Friedrich Albert Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I887@')">
+            Enno Friedrich Albert Kempe
+          </td>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I950@')">Friedrich Karl Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I950@')">
+            Friedrich Karl Kempe
+          </td>
           <td class="no-border"></td>
-          <td class="click" (click)="showPerson('@I1079@')">Enno Friedrich (IV PB Kempe)</td>
-          <td class="click" (click)="showPerson('@I1080@')">Fonger Bellinga Kempe</td>
+          <td class="click" (click)="showPerson('@I1079@')">
+            Enno Friedrich (IV PB Kempe)
+          </td>
+          <td class="click" (click)="showPerson('@I1080@')">
+            Fonger Bellinga Kempe
+          </td>
           <td class="no-border"></td>
           <td class="no-border"></td>
           <td class="no-border"></td>
-          <td class="click no-border" (click)="showPerson('@I2126@')">Henning Kempe</td>
+          <td class="click no-border" (click)="showPerson('@I2126@')">
+            Henning Kempe
+          </td>
         </tr>
       </table>
       <span class="close" (click)="hideOverview()">X</span>

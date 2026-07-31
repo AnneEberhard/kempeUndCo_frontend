@@ -8,11 +8,17 @@
       braucht ihr die Empfehlung eines bereits registrierten, uns bekannten
       Nutzers oder müsst euch anderweitig ausweisen.
       <br />
-      <br /><b>Noch ein Hinweis: Diese Seite läuft über ein sicheres, aber
-      kostengünstiges Backend. Der Nachteil ist, dass dies recht langsam ist.
-      Dadurch kann es zu Fehlern kommen - manchmal muss man es leider etwas
-      öfter probieren oder die Seite neu laden.</b> <br>
-      <b>Die Probleme mit dem iPhones sollten behoben sein - wenn nicht, bitte informiert Anne!</b>
+      <br /><b
+        >Noch ein Hinweis: Diese Seite läuft über ein sicheres, aber
+        kostengünstiges Backend. Der Nachteil ist, dass dies recht langsam ist.
+        Dadurch kann es zu Fehlern kommen - manchmal muss man es leider etwas
+        öfter probieren oder die Seite neu laden.</b
+      >
+      <br />
+      <b
+        >Die Probleme mit dem iPhones sollten behoben sein - wenn nicht, bitte
+        informiert Anne!</b
+      >
     </p>
     <p>Hier geht es zur <a routerLink="/register">Registrierung!</a></p>
     <h3>Schon registriert? Hier ist der Login:</h3>
@@ -38,11 +44,16 @@
           (click)="togglePasswordVisibility()"
           class="togglePassword"
         >
-          <span *ngIf="passwordVisible">👁️</span>
-          <span *ngIf="!passwordVisible">🙈</span>
+          @if (passwordVisible) {
+            <span>👁️</span>
+          }
+          @if (!passwordVisible) {
+            <span>🙈</span>
+          }
         </div>
       </div>
-      <p *ngIf="errorMessage" class="errorMessage">{{ errorMessage }}</p>
+      @if (errorMessage) { <p class="errorMessage">{{ errorMessage }}</p>}
+      
       <button type="submit" [disabled]="!form.valid">Einloggen</button>
     </form>
 

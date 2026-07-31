@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
-import { FormsModule, NgForm,FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NgForm, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { take } from 'rxjs';
@@ -9,13 +9,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingService } from '../services/loading.service';
 
 @Component({
-    selector: 'app-account',
-    standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
-    templateUrl: './account.component.html',
-    styleUrl: './account.component.scss'
+  selector: 'app-account',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  templateUrl: './account.component.html',
+  styleUrl: './account.component.scss'
 })
-export class AccountComponent implements OnInit{
+export class AccountComponent implements OnInit {
   showErrorPasswordAlert: boolean = false;
   showErrorPasswordMatchAlert: boolean = false;
   errorMessage: string = '';
@@ -37,9 +37,9 @@ export class AccountComponent implements OnInit{
   alertForm!: FormGroup;
 
   constructor(
-    private authService: AuthService, 
-    private router: Router, 
-    private fb: FormBuilder, 
+    private authService: AuthService,
+    private router: Router,
+    private fb: FormBuilder,
     private loadingService: LoadingService) {
     this.userEmail = localStorage.getItem('userEmail');
     this.authorName = localStorage.getItem('authorName')
@@ -53,14 +53,14 @@ export class AccountComponent implements OnInit{
       alert_recipe: [localStorage.getItem('alert_recipe') === 'true'],
       alert_discussion: [localStorage.getItem('alert_discussion') === 'true']
     });
-  // this.alertForm.valueChanges.subscribe(val => {
-  //   console.log('Formularwerte geändert:', val);
-  // });
+    // this.alertForm.valueChanges.subscribe(val => {
+    //   console.log('Formularwerte geändert:', val);
+    // });
   }
 
 
   onSubmitPreferences(): void {
-    this.loadingService.show(); 
+    this.loadingService.show();
     localStorage.setItem('alert_faminfo', this.alertForm.get('alert_faminfo')?.value);
     localStorage.setItem('alert_info', this.alertForm.get('alert_info')?.value);
     localStorage.setItem('alert_recipe', this.alertForm.get('alert_recipe')?.value);
@@ -70,7 +70,7 @@ export class AccountComponent implements OnInit{
     this.authService.updateAlertPreferences(preferences).subscribe({
       next: (response) => {
         this.renderInfo('alerts');
-        setTimeout(this.clearForm, 4000);
+        setTimeout(() => this.clearForm(), 4000);
       },
       error: (error: HttpErrorResponse) => {
         console.error('Ein Fehler ist aufgetreten:', error);
@@ -213,12 +213,12 @@ export class AccountComponent implements OnInit{
    * @param userData 
    */
   changePasswort(userData: any) {
-    this.loadingService.show(); 
+    this.loadingService.show();
     this.authService.changePasswort(userData).pipe(take(1))
       .subscribe({
         next: (response) => {
           this.renderInfo('password');
-          setTimeout(this.clearForm, 4000);
+          setTimeout(() => this.clearForm(), 4000);
         },
         error: (error: HttpErrorResponse) => {
           console.error('Ein Fehler ist aufgetreten:', error);
@@ -261,12 +261,32 @@ export class AccountComponent implements OnInit{
     this.buttonText = 'Gesendet';
   }
 
+
   /**
   * reloads the page to refresh content
   */
-  clearForm() {
-    window.location.reload();
+
+  clearForm(): void {
+    this.showErrorPasswordAlert = false;
+    this.showErrorPasswordMatchAlert = false;
+    this.errorMessage = '';
+    this.buttonText = 'Absenden';
+    this.sent = false;
+
+    this.newPasswordVisible = false;
+    this.oldPasswordVisible = false;
+    this.confirmPasswordVisible = false;
+
+    this.newAuthorName = '';
+
+    this.formData = {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    };
+    document.getElementById('popUpContainer')?.classList.add('dNone');
   }
+
 
   /**
 * shows overlay with password rules
@@ -292,7 +312,7 @@ export class AccountComponent implements OnInit{
  * starts changing the authorname and handles logic of the frontend
   */
   changeName() {
-    this.loadingService.show(); 
+    this.loadingService.show();
     const userData = {
       email: this.userEmail,
       author_name: this.newAuthorName,
@@ -301,8 +321,9 @@ export class AccountComponent implements OnInit{
       .subscribe({
         next: (response) => {
           this.renderInfo('name');
+          this.authorName = this.newAuthorName;
           localStorage.setItem('authorName', this.newAuthorName);
-          setTimeout(this.clearForm, 4000);
+          setTimeout(() => this.clearForm(), 4000);
         },
         error: (error: HttpErrorResponse) => {
           this.loadingService.hide();

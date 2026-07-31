@@ -552,7 +552,7 @@ export class FamInfosComponent implements OnInit {
     this.faminfoService.updateInfo(this.entry.id, formData).subscribe({
       next: (response: any) => {
         this.loadAllInfo();
-        window.location.reload();
+       // window.location.reload();
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);
@@ -602,7 +602,7 @@ export class FamInfosComponent implements OnInit {
         this.loadAllInfo();
         this.entry.title = '';
         this.entry.content = '';
-        window.location.reload();
+        // window.location.reload();
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren:', error);

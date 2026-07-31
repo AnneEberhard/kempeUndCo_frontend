@@ -30,7 +30,7 @@ export class AuthService {
       "email": email,
       "password": password
     };
-    return this.http.post<any>(url, body, { withCredentials: true } )
+    return this.http.post<any>(url, body, { withCredentials: true })
   }
 
   /**
@@ -38,7 +38,7 @@ export class AuthService {
    * @param {string} accessToken - The access token to set.
    * @param {string} refreshToken - The refresh token to set.
    */
-  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail: string, authorname: string, 
+  setTokens(accessToken: string, refreshToken: string, userId: string, userEmail: string, authorname: string,
     family_1: string, family_2: string, alert_faminfo: string, alert_info: string, alert_recipe: string, alert_discussion: string): void {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
@@ -87,7 +87,7 @@ export class AuthService {
         console.error('Logout failed', err);
       }
     });
-    this.router.navigate(['/login']);
+
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
@@ -99,6 +99,7 @@ export class AuthService {
     localStorage.removeItem('alert_info');
     localStorage.removeItem('alert_recipe');
     localStorage.removeItem('alert_discussion');
+    this.router.navigate(['/login']);
   }
 
   /**

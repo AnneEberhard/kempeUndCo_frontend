@@ -131,6 +131,7 @@ export class AncestorsComponent implements OnInit {
     this.familyService.getFamily(this.personId).subscribe({
       next: (family) => {
         this.family = family;
+        console.log (this.family);
       },
       error: (error) => {
         console.error('Fehler beim Laden der Familiendaten:', error);
@@ -148,12 +149,6 @@ export class AncestorsComponent implements OnInit {
       }
     });
   }
-
-// loadFamilyData() {
-//   this.familyService.getFamily(this.personId).subscribe(family => {
-//     this.family = family;
-//   });
-// }
 
   /**
    * Searches for persons based on the search term and updates the search results.
@@ -197,14 +192,6 @@ export class AncestorsComponent implements OnInit {
     });
   }
 
-//  selectPerson(person: Person): void {
-//    this.personId = person.id;
-//    this.familyService.getFamily(this.personId).subscribe(family => {
-//      this.family = family;
-//      this.clearSearch();
-//    });
-//  }
-
   /**
    * Clears the search term and search results.
    */
@@ -238,6 +225,7 @@ export class AncestorsComponent implements OnInit {
       this.familyService.getFamily(this.personId).subscribe({
         next: (family) => {
           this.family = family;
+          console.log (this.family);
         },
         error: (error) => {
           console.error('Fehler beim Laden:', error);
@@ -256,15 +244,6 @@ export class AncestorsComponent implements OnInit {
       });
     }
   }
-  
-//  getNewData(id: number) {
-//    if (id != 0) {
-//      this.personId = id;
-//      this.familyService.getFamily(this.personId).subscribe(family => {
-//        this.family = family;
-//      });
-//    }
-//  }
 
 
   /**

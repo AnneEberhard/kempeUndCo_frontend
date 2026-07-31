@@ -399,7 +399,7 @@ export class DiscussionsComponent implements OnInit {
     this.discussionService.updateEntry(this.entry.id, formData).subscribe({
       next: (response: any) => {
         this.loadDiscussion(this.selectedDiscussion.person.id);
-        window.location.reload();
+        // window.location.reload();
       },
       error: (error) => {
         console.error('Fehler beim Aktualisieren des Eintrags:', error);
