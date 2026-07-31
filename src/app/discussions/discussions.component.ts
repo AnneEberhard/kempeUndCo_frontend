@@ -156,7 +156,6 @@ export class DiscussionsComponent implements OnInit {
         });
   
         this.filteredEntries = selectedDiscussionEntries;
-        console.log(this.filteredEntries);
       },
       error: (error) => {
         console.error('Fehler beim Laden der Diskussion:', error);

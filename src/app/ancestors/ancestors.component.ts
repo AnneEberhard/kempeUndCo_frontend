@@ -131,7 +131,6 @@ export class AncestorsComponent implements OnInit {
     this.familyService.getFamily(this.personId).subscribe({
       next: (family) => {
         this.family = family;
-        console.log (this.family);
       },
       error: (error) => {
         console.error('Fehler beim Laden der Familiendaten:', error);
@@ -225,7 +224,6 @@ export class AncestorsComponent implements OnInit {
       this.familyService.getFamily(this.personId).subscribe({
         next: (family) => {
           this.family = family;
-          console.log (this.family);
         },
         error: (error) => {
           console.error('Fehler beim Laden:', error);

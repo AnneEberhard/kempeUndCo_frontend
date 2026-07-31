@@ -43,18 +43,21 @@
   <div *ngFor="let info of infos; let i = index" class="entryContainer">
     <div class="entryHeader">
       <h2 [id]="info.id">{{ info.title }}</h2>
-      <img
-        *ngIf="!info.isHidden"
-        src="assets/images/arrow_up.png"
-        alt="Show"
-        (click)="toggleVisibility(i)"
-      />
-      <img
-        *ngIf="info.isHidden"
-        src="assets/images/arrow_down.png"
-        alt="Hide"
-        (click)="toggleVisibility(i)"
-      />
+      @if (!info.isHidden) {
+        <img
+          src="assets/images/arrow_up.png"
+          alt="Show"
+          (click)="toggleVisibility(i)"
+        />
+      }
+
+      @if (info.isHidden) {
+        <img
+          src="assets/images/arrow_down.png"
+          alt="Hide"
+          (click)="toggleVisibility(i)"
+        />
+      }
     </div>
 
     <div [hidden]="info.isHidden">
@@ -77,51 +80,64 @@
       <div class="entryMeta">
         <p>Author: {{ info.author_name }}</p>
         <p>
-          <small>Erstellt am: {{ info.created_at | date : "short" }}</small
+          <small>Erstellt am: {{ info.created_at | date: "short" }}</small
           ><br />
           <small
-            >Zuletzt bearbeitet: {{ info.updated_at | date : "short" }}</small
+            >Zuletzt bearbeitet: {{ info.updated_at | date: "short" }}</small
           >
         </p>
         <div class="editOrDeleteContainer">
-          <img
-            src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-            *ngIf="info.author_email === userEmail"
-            (click)="showPopUp('edit', info)"
-          />
-          <img
-            src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-            *ngIf="info.author_email === userEmail"
-            (click)="showPopUp('delete', info)"
-          />
+          @if (info.author_email === userEmail) {
+            <img
+              src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+              (click)="showPopUp('edit', info)"
+            />
+          }
+
+          @if (info.author_email === userEmail) {
+            <img
+              src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+              (click)="showPopUp('delete', info)"
+            />
+          }
         </div>
       </div>
       <!-- comment section of single entry containers -->
-      <div *ngIf="comments[info.id]" class="comments">
-        <h4>Kommentare:</h4>
+      @if (comments[info.id]) {
+        <div class="comments">
+          <h4>Kommentare:</h4>
 
-        <div *ngFor="let comment of comments[info.id]" class="singleComment" class="entryContent">
-          <div>
-            <p>{{ comment.content }}</p>
-            <small
-              >Von: {{ comment.author_name }} am
-              {{ comment.created_at | date : "short" }}</small
-            >
-          </div>
-          <div class="editOrDeleteContainer">
-            <img
-              src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-              *ngIf="comment.author_email === userEmail"
-              (click)="showPopUp('editComment', comment)"
-            />
-            <img
-              src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
-              *ngIf="comment.author_email === userEmail"
-              (click)="showPopUp('deleteComment', comment)"
-            />
+          <div
+            *ngFor="let comment of comments[info.id]"
+            class="singleComment"
+            class="entryContent"
+          >
+            <div>
+              <p>{{ comment.content }}</p>
+              <small
+                >Von: {{ comment.author_name }} am
+                {{ comment.created_at | date: "short" }}</small
+              >
+            </div>
+            <div class="editOrDeleteContainer">
+              @if (comment.author_email === userEmail) {
+                <img
+                  src="assets/images/edit_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+                  (click)="showPopUp('editComment', comment)"
+                />
+              }
+
+              @if (comment.author_email === userEmail) {
+                <img
+                  src="assets\images\delete_24dp_RGBA(100, 16, 32)_FILL0_wght400_GRAD0_opsz24.png"
+                  (click)="showPopUp('deleteComment', comment)"
+                />
+              }
+            </div>
           </div>
         </div>
-      </div>
+      }
+
       <div class="newComments">
         <textarea
           [(ngModel)]="newComment[info.id]"
@@ -140,196 +156,210 @@
     (click)="hidePopUp()"
   >
     <!-- PopUp box for adding or editing an entry -->
-    <div
-      id="popUp"
-      class="editEntry"
-      (click)="$event.stopPropagation()"
-      *ngIf="entry"
-    >
-      <form (ngSubmit)="saveEntry()" enctype="multipart/form-data">
-        <div class="entryHeader column">
-          <h4>
-            {{ entry.id ? "Beitrag bearbeiten" : "Neuen Beitrag erstellen" }}
-          </h4>
-          <h5>Betreff (bitte ausfüllen):</h5>
-          <input
-            class="entryInput"
-            type="text"
-            placeholder="Betreff"
-            [(ngModel)]="entry.title"
-            name="title"
-            required
-          />
-        </div>
+    @if (entry) {
+      <div id="popUp" class="editEntry" (click)="$event.stopPropagation()">
+        <form (ngSubmit)="saveEntry()" enctype="multipart/form-data">
+          <div class="entryHeader column">
+            <h4>
+              {{ entry.id ? "Beitrag bearbeiten" : "Neuen Beitrag erstellen" }}
+            </h4>
+            <h5>Betreff (bitte ausfüllen):</h5>
+            <input
+              class="entryInput"
+              type="text"
+              placeholder="Betreff"
+              [(ngModel)]="entry.title"
+              name="title"
+              required
+            />
+          </div>
 
-        <div>
-          <h5>Inhalt (bitte ausfüllen):</h5>
-          <quill-editor
-            [(ngModel)]="entry.content"
-            name="content"
-            placeholder="Dein Beitrag"
-          ></quill-editor>
-        </div>
-        <div class="divider"></div>
-        <div>
-          <h4>Bilder:</h4>
-          <h5>Vorhandene Bilder</h5>
-          <div class="deleteImageContainer">
-            <div *ngFor="let image of entry.images" class="deleteImage">
-              <img
-                [src]="image.thumbnail"
-                alt="Image"
-                width="100"
-                [ngClass]="{
-                  'grayed-out': isImageDeleted(image.original, entry)
-                }"
-              />
-              <button type="button" (click)="removeImageByUrl(image.original)">
-                Bild löschen
-              </button>
-            </div>
+          <div>
+            <h5>Inhalt (bitte ausfüllen):</h5>
+            <quill-editor
+              [(ngModel)]="entry.content"
+              name="content"
+              placeholder="Dein Beitrag"
+            ></quill-editor>
           </div>
-          <h5 for="images">Bilder hochladen (max. 4):</h5>
-          <div
-            *ngFor="let index of [1, 2, 3, 4]"
-            class="image-upload-container"
-          >
-            <div *ngIf="isImageSlotAvailable(index)" class="upload-image-field">
-              <input
-                type="file"
-                [id]="'image' + index"
-                (change)="onImageFileChange($event, index)"
-                accept=".jpg,.png"
-              />
-            </div>
-          </div>
-          <div *ngIf="imageFiles.length > 0">
-            <h5>Neue Bilder:</h5>
-            <ul>
-              <li *ngFor="let file of imageFiles">{{ file.name }}</li>
-            </ul>
-          </div>
-        </div>
-        <div>
           <div class="divider"></div>
-          <h4>PDFs:</h4>
-
-          <!-- Vorhandene PDFs -->
-          <h5>Vorhandene PDFs</h5>
-          <div class="deletePdfContainer">
-            <div
-              *ngFor="let pdf of entry.pdfs; let i = index"
-              class="deletePdf"
-              [ngClass]="{ 'grayed-out': isPdfDeleted(pdf.url) }"
-            >
-
-              <a [href]="pdf.url" target="_blank" rel="noopener">{{ pdf.name }}</a>
-
-              <button type="button" (click)="removePdfByUrl(pdf.url)">
-                PDF löschen
-              </button>
-            </div>
-          </div>
-
-          <!-- Neue PDFs -->
-          <h5>Neue PDFs hochladen (max. 4):</h5>
-          <div *ngFor="let index of [1, 2, 3, 4]" class="pdf-upload-container">
-            <div *ngIf="isPdfSlotAvailable(index)">
-              <!-- Falls noch kein PDF hochgeladen wurde → Button statt Input -->
-              <div>
-                <input
-                  type="file"
-                  [id]="'pdf_' + index"
-                  (change)="onPdfFileChange($event, index)"
-                  accept=".pdf"
+          <div>
+            <h4>Bilder:</h4>
+            <h5>Vorhandene Bilder</h5>
+            <div class="deleteImageContainer">
+              <div *ngFor="let image of entry.images" class="deleteImage">
+                <img
+                  [src]="image.thumbnail"
+                  alt="Image"
+                  width="100"
+                  [ngClass]="{
+                    'grayed-out': isImageDeleted(image.original, entry),
+                  }"
                 />
+                <button
+                  type="button"
+                  (click)="removeImageByUrl(image.original)"
+                >
+                  Bild löschen
+                </button>
               </div>
             </div>
+            <h5 for="images">Bilder hochladen (max. 4):</h5>
+            <div
+              *ngFor="let index of [1, 2, 3, 4]"
+              class="image-upload-container"
+            >
+              @if (isImageSlotAvailable(index)) {
+                <div class="upload-image-field">
+                  <input
+                    type="file"
+                    [id]="'image' + index"
+                    (change)="onImageFileChange($event, index)"
+                    accept=".jpg,.png"
+                  />
+                </div>
+              }
+            </div>
+            @if (imageFiles.length > 0) {
+              <div>
+                <h5>Neue Bilder:</h5>
+                <ul>
+                  <li *ngFor="let file of imageFiles">{{ file.name }}</li>
+                </ul>
+              </div>
+            }
           </div>
-          <div *ngIf="pdfFiles.length > 0">
-            <h5>Neue PDFs:</h5>
-            <ul>
-              <li *ngFor="let pdf of pdfFiles; let i = index" class="newList">
-                {{ pdf.file.name }}
-                <input
-                  type="text"
-                  [(ngModel)]="pdf.customName"
-                  placeholder="andere Namen vergeben"
-                />
-                <button type="button" (click)="removeNewPdf(i)">
-                  Entfernen
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
+          <div>
+            <div class="divider"></div>
+            <h4>PDFs:</h4>
 
-        <div class="buttonContainer">
-          <button type="button" (click)="hidePopUp()">Abbrechen</button>
-          <button
-            type="submit"
-            [disabled]="!entry.content || imageFiles.length > 4"
-          >
-            Speichern
-          </button>
-        </div>
-      </form>
-    </div>
-    <!-- PopUp box for showing image -->
-    <div *ngIf="this.showImageUrl" class="showImage">
-      <img [src]="this.showImageUrl" />
-    </div>
-    <!-- PopUp box for deleting an entry -->
-    <div
-      class="editEntry"
-      (click)="$event.stopPropagation()"
-      *ngIf="entryToDelete"
-    >
-      <h3>Beitrag löschen</h3>
-      <p>Möchtest du diesen Beitrag löschen?</p>
-      <div class="buttonContainer">
-        <button (click)="hidePopUp()">Abbrechen</button>
-        <button (click)="deleteEntry()">Löschen</button>
+            <!-- Vorhandene PDFs -->
+            <h5>Vorhandene PDFs</h5>
+            <div class="deletePdfContainer">
+              <div
+                *ngFor="let pdf of entry.pdfs; let i = index"
+                class="deletePdf"
+                [ngClass]="{ 'grayed-out': isPdfDeleted(pdf.url) }"
+              >
+                <a [href]="pdf.url" target="_blank" rel="noopener">{{
+                  pdf.name
+                }}</a>
+
+                <button type="button" (click)="removePdfByUrl(pdf.url)">
+                  PDF löschen
+                </button>
+              </div>
+            </div>
+
+            <!-- Neue PDFs -->
+            <h5>Neue PDFs hochladen (max. 4):</h5>
+            <div
+              *ngFor="let index of [1, 2, 3, 4]"
+              class="pdf-upload-container"
+            >
+              @if (isPdfSlotAvailable(index)) {
+                <div>
+                  <!-- Falls noch kein PDF hochgeladen wurde → Button statt Input -->
+                  <div>
+                    <input
+                      type="file"
+                      [id]="'pdf_' + index"
+                      (change)="onPdfFileChange($event, index)"
+                      accept=".pdf"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+            @if (pdfFiles.length > 0) {
+              <div>
+                <h5>Neue PDFs:</h5>
+                <ul>
+                  <li
+                    *ngFor="let pdf of pdfFiles; let i = index"
+                    class="newList"
+                  >
+                    {{ pdf.file.name }}
+                    <input
+                      type="text"
+                      [(ngModel)]="pdf.customName"
+                      placeholder="andere Namen vergeben"
+                    />
+                    <button type="button" (click)="removeNewPdf(i)">
+                      Entfernen
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            }
+          </div>
+
+          <div class="buttonContainer">
+            <button type="button" (click)="hidePopUp()">Abbrechen</button>
+            <button
+              type="submit"
+              [disabled]="!entry.content || imageFiles.length > 4"
+            >
+              Speichern
+            </button>
+          </div>
+        </form>
       </div>
-    </div>
-    <!-- PopUp box for editing a comment -->
-    <div
-      class="editEntry"
-      (click)="$event.stopPropagation()"
-      *ngIf="commentToUpdate"
-    >
-      <form (ngSubmit)="saveComment()">
-        <div class="entryHeader column">
-          <h5>Kommentar bearbeiten</h5>
-          <textarea
-            [(ngModel)]="commentToUpdate.content"
-            name="content"
-            class="editComment"
-          ></textarea>
-        </div>
-        <div class="divider"></div>
+    }
+
+    <!-- PopUp box for showing image -->
+    @if (this.showImageUrl) {
+      <div class="showImage">
+        <img [src]="this.showImageUrl" />
+      </div>
+    }
+
+    <!-- PopUp box for deleting an entry -->
+    @if (entryToDelete) {
+      <div class="editEntry" (click)="$event.stopPropagation()">
+        <h3>Beitrag löschen</h3>
+        <p>Möchtest du diesen Beitrag löschen?</p>
         <div class="buttonContainer">
-          <button type="button" (click)="hidePopUp()">Abbrechen</button>
-          <button type="submit" [disabled]="!commentToUpdate.content">
-            Speichern
-          </button>
+          <button (click)="hidePopUp()">Abbrechen</button>
+          <button (click)="deleteEntry()">Löschen</button>
         </div>
-      </form>
-    </div>
+      </div>
+    }
+
+    <!-- PopUp box for editing a comment -->
+    @if (commentToUpdate) {
+      <div class="editEntry" (click)="$event.stopPropagation()">
+        <form (ngSubmit)="saveComment()">
+          <div class="entryHeader column">
+            <h5>Kommentar bearbeiten</h5>
+            <textarea
+              [(ngModel)]="commentToUpdate.content"
+              name="content"
+              class="editComment"
+            ></textarea>
+          </div>
+          <div class="divider"></div>
+          <div class="buttonContainer">
+            <button type="button" (click)="hidePopUp()">Abbrechen</button>
+            <button type="submit" [disabled]="!commentToUpdate.content">
+              Speichern
+            </button>
+          </div>
+        </form>
+      </div>
+    }
 
     <!-- Popup box for deleting a comment -->
-    <div
-      class="editEntry"
-      (click)="$event.stopPropagation()"
-      *ngIf="commentToDelete"
-    >
-      <h3>Kommentar löschen</h3>
-      <p>Möchtest du diesen Kommentar löschen?</p>
-      <div class="buttonContainer">
-        <button (click)="hidePopUp()">Abbrechen</button>
-        <button (click)="deleteComment()">Löschen</button>
+    @if (commentToDelete) {
+      <div class="editEntry" (click)="$event.stopPropagation()">
+        <h3>Kommentar löschen</h3>
+        <p>Möchtest du diesen Kommentar löschen?</p>
+        <div class="buttonContainer">
+          <button (click)="hidePopUp()">Abbrechen</button>
+          <button (click)="deleteComment()">Löschen</button>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </section>
 
