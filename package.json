@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:kempeUndCo_frontend": "node dist/kempe-und-co-frontend/server/server.mjs",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org anderland-books --project kempeundco_frontend kempeUndCo_frontend/dist/kempe-und-co-frontend/browser && sentry-cli sourcemaps upload --org anderland-books --project kempeundco_frontend kempeUndCo_frontend/dist/kempe-und-co-frontend/browser"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org anderland-books --project kempeundco_frontend dist/kempe-und-co-frontend/browser && sentry-cli sourcemaps upload --org anderland-books --project kempeundco_frontend dist/kempe-und-co-frontend/browser"
   },
   "private": true,
   "dependencies": {
