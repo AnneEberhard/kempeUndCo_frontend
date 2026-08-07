@@ -12,11 +12,11 @@ import { ChangeDetectorRef } from '@angular/core';
 import { LoadingService } from '../services/loading.service';
 
 @Component({
-    selector: 'app-recipes',
-    standalone: true,
-    imports: [CommonModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
-    templateUrl: './recipes.component.html',
-    styleUrl: './recipes.component.scss'
+  selector: 'app-recipes',
+  standalone: true,
+  imports: [CommonModule, ScrollToTopButtonComponent, FormsModule, QuillModule],
+  templateUrl: './recipes.component.html',
+  styleUrl: './recipes.component.scss'
 })
 export class RecipesComponent implements OnInit {
   userId: string | null = null;
@@ -453,7 +453,10 @@ export class RecipesComponent implements OnInit {
         console.error('Fehler beim Aktualisieren:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          const message =
+            error.error?.pdf_1?.[0] ??
+            'Fehlerhafte Eingabe. Bitte überprüfe deine Daten.';
+          alert(message);
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {
@@ -502,7 +505,10 @@ export class RecipesComponent implements OnInit {
         console.error('Fehler beim Aktualisieren:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          const message =
+            error.error?.pdf_1?.[0] ??
+            'Fehlerhafte Eingabe. Bitte überprüfe deine Daten.';
+          alert(message);
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {
@@ -724,9 +730,9 @@ export class RecipesComponent implements OnInit {
   triggerPdfUpload(index: number): void {
     document.getElementById('pdf_' + index)?.click();
   }
-  
+
   isPdfSlotAvailable(index: number): boolean {
     return !this.entry[`pdf_${index}`];
   }
-  
+
 }

@@ -455,7 +455,10 @@ export class InfosComponent implements OnInit {
         console.error('Fehler beim Aktualisieren:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          const message =
+            error.error?.pdf_1?.[0] ??
+            'Fehlerhafte Eingabe. Bitte überprüfe deine Daten.';
+          alert(message);
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {
@@ -507,7 +510,10 @@ export class InfosComponent implements OnInit {
         this.loadingService.hide();
         // Benutzerfreundliche Fehlermeldung setzen
         if (error.status === 400) {
-          alert('Fehlerhafte Eingabe. Bitte überprüfe deine Daten.');
+          const message =
+            error.error?.pdf_1?.[0] ??
+            'Fehlerhafte Eingabe. Bitte überprüfe deine Daten.';
+          alert(message);
         } else if (error.status === 403) {
           alert('Du hast keine Berechtigung für diese Aktion.');
         } else if (error.status === 500) {

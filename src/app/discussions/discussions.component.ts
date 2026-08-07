@@ -371,7 +371,10 @@ export class DiscussionsComponent implements OnInit {
         console.error('Fehler beim Hinzufügen des Eintrags:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert('Ungültige Eingabe. Bitte überprüfe deine Daten.');
+          const message =
+            error.error?.pdf_1?.[0] ??
+            'Fehlerhafte Eingabe. Bitte überprüfe deine Daten.';
+          alert(message);
         } else if (error.status === 500) {
           alert('Serverfehler. Bitte versuche es später erneut.');
         } else {
@@ -404,7 +407,10 @@ export class DiscussionsComponent implements OnInit {
         console.error('Fehler beim Aktualisieren des Eintrags:', error);
         this.loadingService.hide();
         if (error.status === 400) {
-          alert('Ungültige Eingabe. Bitte überprüfe deine Daten.');
+          const message =
+            error.error?.pdf_1?.[0] ??
+            'Fehlerhafte Eingabe. Bitte überprüfe deine Daten.';
+          alert(message);
         } else if (error.status === 404) {
           alert('Eintrag nicht gefunden.');
         } else if (error.status === 500) {
