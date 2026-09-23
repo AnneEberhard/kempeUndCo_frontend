@@ -1,7 +1,7 @@
 header {
     display: flex;
     flex-direction: column;
-    padding: 180px 16px;
+    padding: 60px 16px;
     align-items: center;
     background-color: rgb(100,16,32);
     height:100%;
@@ -54,7 +54,7 @@ header {
   @media(max-width:1000px) {
     header {
       display: none;
-      padding: 120px 16px;
+      padding: 60px 16px;
       height:auto;
       position:fixed;
       top:0;

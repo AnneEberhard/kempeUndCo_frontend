@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         this.authService.setTokens(response.access, response.refresh, response.user.id, response.user.email,
-          response.user.authorname, response.user.family_1, response.user.family_2,
+          response.user.authorname, response.user.family_1, response.user.family_2, response.user.is_staff,
           response.user.alert_faminfo, response.user.alert_info, response.user.alert_recipe, response.user.alert_discussion);
         this.router.navigate(['/welcome']);
       },

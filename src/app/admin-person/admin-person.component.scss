@@ -1,0 +1,97 @@
+input {
+  line-height: 1;
+  font-size: 1rem;
+  color: inherit;
+  padding: 1rem;
+  border: solid 1px #b2b8b8;
+  appearance: none;
+  background: antiquewhite;
+  border-radius: 0.25rem;
+  ::placeholder {
+    color: #b2b8b8;
+  }
+}
+
+select {
+  line-height: 1;
+  font-size: 1rem;
+  color: inherit;
+  padding: 1rem;
+  border: solid 1px #b2b8b8;
+  background: antiquewhite;
+  border-radius: 0.25rem;
+  ::placeholder {
+    color: #b2b8b8;
+  }
+}
+
+.editPersonWrapper {
+  display: flex;
+  width: 60vw;
+  flex-wrap: wrap;
+  flex-direction: column;
+  margin: 16px;
+}
+
+.editPersonTwoBoxes {
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  align-items: center;
+}
+
+.editPersonBox {
+  display: flex;
+  align-items: center;
+
+  label {
+    width: 150px;
+  }
+}
+
+.textBox {
+  margin: 8px 0 8px 0;
+  display: flex;
+  width: 80vw;
+  label {
+    width: 150px;
+  }
+  textarea {
+    width: 60%;
+  }
+}
+
+.buttonBox {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.editPersonTwoSelects {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.popUpConfirmation {
+  position: fixed;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.popUpConfirmationContent {
+    background-color: #fff;
+  border-radius: 10px;
+  width: 400px;
+  padding: 48px;
+  overflow: auto;
+}

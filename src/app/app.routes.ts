@@ -17,6 +17,8 @@ import { ResetComponent } from './reset/reset.component';
 import { AccountComponent } from './account/account.component';
 import { FamInfosComponent } from './fam-infos/fam-infos.component';
 import { DummyComponent } from './dummy/dummy.component';
+import { AdminAncestorsComponent } from './admin-ancestors/admin-ancestors.component';
+import { AdminPersonComponent } from './admin-person/admin-person.component';
 
 //export const routes: Routes = [
 //    {
@@ -65,7 +67,7 @@ export const routes: Routes = [
             { path: 'reset-password/:uidb64/:token', component: ResetComponent },
             { path: 'activation-success', component: ActivationSuccessComponent },
             { path: 'activation-failure', component: ActivationFailureComponent },
-        ] 
+        ]
     },
     {
         path: '',
@@ -80,7 +82,9 @@ export const routes: Routes = [
             { path: 'infos', component: InfosComponent },
             { path: 'faminfos', component: FamInfosComponent },
             { path: 'recipes', component: RecipesComponent },
-            { path: 'account', component: AccountComponent }
+            { path: 'account', component: AccountComponent },
+            { path: 'admin-ancestors', component: AdminAncestorsComponent },
+            { path: 'admin-ancestors/person/:refn', component: AdminPersonComponent }
         ]
     }
 ];

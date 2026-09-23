@@ -7,6 +7,8 @@
     <div class="X" (click)="hideNav()">X</div>
     <a routerLink="/welcome" routerLinkActive="active" (click)="onLinkClick()">Startseite</a>
     <a routerLink="/ancestors" routerLinkActive="active" (click)="onLinkClick()">Stammfolge</a>
+    @if (this.isAdmin) {
+    <a routerLink="/admin-ancestors" routerLinkActive="active" (click)="onLinkClick()">Stammfolge bearbeiten</a>}
     <a routerLink="/discussions" routerLinkActive="active" (click)="onLinkClick()">Diskussionen zur Stammfolge</a>
     <a routerLink="/faminfos" routerLinkActive="active" (click)="onLinkClick()">Familieninfos</a>
     <a routerLink="/recipes" routerLinkActive="active" (click)="onLinkClick()">Familienrezepte</a>

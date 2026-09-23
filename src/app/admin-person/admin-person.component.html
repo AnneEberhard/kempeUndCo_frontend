@@ -1,0 +1,201 @@
+<section>
+  <h2>Person bearbeiten</h2>
+
+  @if (error) {
+    <p>{{ error }}</p>
+  }
+
+  @if (person) {
+    <div class="editPersonWrapper">
+      <b>REFN: {{ person.refn }}</b>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="givn">Vorname</label>
+          <input id="givn" type="text" [(ngModel)]="givn" />
+        </div>
+        <div class="editPersonBox">
+          <label for="surn">Nachname</label>
+          <input id="surn" type="text" [(ngModel)]="surn" />
+        </div>
+      </div>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="nameRufname">Rufname</label>
+          <input id="nameRufname" type="text" [(ngModel)]="nameRufname" />
+        </div>
+        <div class="editPersonBox">
+          <label for="nameNick">Spitzname</label>
+          <input id="nameNick" type="text" [(ngModel)]="nameNick" />
+        </div>
+      </div>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="nameNpfx">Namenspräfix</label>
+          <input id="nameNpfx" type="text" [(ngModel)]="nameNpfx" />
+        </div>
+        <div class="editPersonBox">
+          <label for="nameMarnm">Ehename</label>
+          <input id="nameMarnm" type="text" [(ngModel)]="nameMarnm" />
+        </div>
+      </div>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="sex">Geschlecht</label>
+
+          <select id="sex" [(ngModel)]="sex">
+            <option value="F">weiblich</option>
+            <option value="M">männlich</option>
+            <option value="D">divers</option>
+          </select>
+        </div>
+        <div class="editPersonBox">
+          <label for="occu">Beruf</label>
+          <input id="occu" type="text" [(ngModel)]="occu" />
+        </div>
+      </div>
+
+      <h3>Geburts- und Sterbedaten</h3>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="birtDate">Geburtsdatum</label>
+          <input
+            id="birtDate"
+            type="text"
+            [(ngModel)]="birtDate"
+            placeholder="z. B. 12.03.1847 oder nach 1389"
+          />
+        </div>
+        <div class="editPersonBox">
+          <label for="birtPlac">Geburtsort</label>
+          <input id="birtPlac" type="text" [(ngModel)]="birtPlac" />
+        </div>
+      </div>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="deatDate">Sterbedatum</label>
+          <input
+            id="deatDate"
+            type="text"
+            [(ngModel)]="deatDate"
+            placeholder="z. B. 12.03.1847 oder nach 1389"
+          />
+        </div>
+        <div class="editPersonBox">
+          <label for="deatPlac">Sterbeort</label>
+          <input id="deatPlac" type="text" [(ngModel)]="deatPlac" />
+        </div>
+      </div>
+
+      <h3>Taufe und Beerdigung</h3>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="reli">Religion</label>
+          <input id="reli" type="text" [(ngModel)]="reli" />
+        </div>
+        <div class="editPersonBox">
+          <label for="chrAddr">Taufadresse</label>
+          <input id="chrAddr" type="text" [(ngModel)]="chrAddr" />
+        </div>
+      </div>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="chrDate">Taufdatum</label>
+          <input
+            id="chrDate"
+            type="text"
+            [(ngModel)]="chrDate"
+            placeholder="z. B. 12.03.1847 oder nach 1389"
+          />
+        </div>
+        <div class="editPersonBox">
+          <label for="chrPlac">Taufort</label>
+          <input id="chrPlac" type="text" [(ngModel)]="chrPlac" />
+        </div>
+      </div>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="buriDate">Beerdigungsdatum</label>
+          <input
+            id="buriDate"
+            type="text"
+            [(ngModel)]="buriDate"
+            placeholder="z. B. 12.03.1847 oder nach 1389"
+          />
+        </div>
+        <div class="editPersonBox">
+          <label for="buriPlac">Beerdigungsort</label>
+          <input id="buriPlac" type="text" [(ngModel)]="buriPlac" />
+        </div>
+      </div>
+      <h3>Vertraulichkeit</h3>
+      <div class="editPersonTwoBoxes">
+        <div class="editPersonBox">
+          <label for="confidential">Vertraulichkeit</label>
+
+          <select id="confidential" [(ngModel)]="confidential">
+            <option value="no">Nein</option>
+            <option value="restricted">Eingeschränkt</option>
+            <option value="yes">Ja</option>
+          </select>
+        </div>
+        <p>
+          Hinweis: Vertraulichkeit <i>ja</i> bedeutet, dass nichts von dieser
+          Person angezeigt wird und sie als <i>vertraulich</i> im Staummbaum
+          dargestellt wird. Bei <i>eingeschränkt</i> wird nur der Name
+          angezeigt. Als Standard ist bei allen lebenden Personen
+          <i>eingeschränkt</i> hinterlegt, es sei denn, es wurde anders
+          gewünscht. Bitte nutzt dieses Feld mit Bedacht.
+        </p>
+      </div>
+
+      <h3>Quellen und Notizen</h3>
+      <div class="textBox">
+        <label for="note">Quellen</label>
+        <textarea id="note" [(ngModel)]="sour" rows="6"></textarea>
+      </div>
+      <div class="textBox">
+        <label for="note">Notizen</label>
+        <textarea id="note" [(ngModel)]="note" rows="6"></textarea>
+      </div>
+    </div>
+    <div class="buttonBox">
+      <button type="button" (click)="cancel()">Abbrechen</button>
+      <button type="button" (click)="save()">Speichern</button>
+    </div>
+  }
+
+  @if (showSaveConfirmation) {
+  <div class="popUpConfirmation">
+    <div class="popUpConfirmationContent">
+
+      <h3>Änderungen bestätigen</h3>
+
+      <p>Folgende Änderungen werden gespeichert:</p>
+
+      <ul>
+        @for (change of pendingChanges; track change.label) {
+          <li>
+            <strong>{{ change.label }}:</strong>
+            <span>
+              „{{ change.oldValue }}“
+              →
+              „{{ change.newValue }}“
+            </span>
+          </li>
+        }
+      </ul>
+
+      <div class="buttonBox">
+        <button type="button" (click)="cancelSave()">
+          Abbrechen
+        </button>
+
+        <button type="button" (click)="confirmSave()">
+          Änderungen speichern
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+</section>

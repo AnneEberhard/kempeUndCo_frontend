@@ -72,7 +72,7 @@ export class AncestorsComponent implements OnInit {
           }
         },
         complete: () => {
-          this.loadingService.hide(); 
+          this.loadingService.hide();
         }
       });
     });
@@ -109,6 +109,7 @@ export class AncestorsComponent implements OnInit {
     } else {
       console.error('Person mit dem angegebenen Namen nicht gefunden');
     }
+    
   }
 
   /**

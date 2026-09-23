@@ -39,7 +39,7 @@ export class AuthService {
    * @param {string} refreshToken - The refresh token to set.
    */
   setTokens(accessToken: string, refreshToken: string, userId: string, userEmail: string, authorname: string,
-    family_1: string, family_2: string, alert_faminfo: string, alert_info: string, alert_recipe: string, alert_discussion: string): void {
+    family_1: string, family_2: string, is_staff: boolean, alert_faminfo: string, alert_info: string, alert_recipe: string, alert_discussion: string): void {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('userId', userId);
@@ -47,6 +47,7 @@ export class AuthService {
     localStorage.setItem('authorName', authorname);
     localStorage.setItem('family_1', family_1);
     localStorage.setItem('family_2', family_2);
+    localStorage.setItem('is_staff', String(is_staff));
     localStorage.setItem('alert_faminfo', alert_faminfo);
     localStorage.setItem('alert_info', alert_info);
     localStorage.setItem('alert_recipe', alert_recipe);
@@ -95,6 +96,7 @@ export class AuthService {
     localStorage.removeItem('authorName');
     localStorage.removeItem('family_1');
     localStorage.removeItem('family_2');
+    localStorage.removeItem('is_staff');
     localStorage.removeItem('alert_faminfo');
     localStorage.removeItem('alert_info');
     localStorage.removeItem('alert_recipe');

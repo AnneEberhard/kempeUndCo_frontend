@@ -1,0 +1,49 @@
+<section>
+  <h2>Stammbaum bearbeiten</h2>
+  <p>
+    Bitte gebt zur Bearbeitung entweder den Namen oder die REFN der Person ein,
+    die ihr bearbeiten möchtet. Da der Name exakt der Angabe in der Datenbank
+    entsprechen musst, hilft es vielleicht, nur den Vornamen einzugeben und dann
+    aus der Liste zu wählen. Genauer ist die REFN. Diese findet ihr in den
+    Details auf der Seite mit der
+    <a routerLink="/ancestors" routerLinkActive="active">Stammfolge</a>, wenn
+    ihr auf den Kasten mit der Person klickt. Sie ist immer von zwei at-Zeichen
+    umgeben und beginnt mit einem großen I.
+  </p>
+  <b
+    >Bitte nutzt die Bearbeitungsfunktion unserer Stammfolge mit Bedacht. Bitte
+    stellt sicher, dass, wenn ihr Daten bei lebenden Personen hinterlegt oder
+    deren Vertraulichkeitsstatus ändert, dies mit der jeweiligen Person
+    abgesprochen ist und deren Willen nicht widerspricht. Bei Missbrauch wird
+    die Berechtigung zur Bearbeitung entzogen.</b
+  >
+  <p>
+    Auf der anderen Seite: Keine Angst. Alle Änderungen werden protokolliert,
+    und wenn mal etwas ganz schief geht, kann es anhand dieser Protokolle wieder
+    in Ordnung gebracht werden!
+  </p>
+  <div class="searchContainer">
+    <input type="text" [(ngModel)]="search" placeholder="Name oder REFN" />
+
+    <button type="button" (click)="searchPersons()">Suchen</button>
+  </div>
+
+  @if (searchError) {
+    <p>{{ searchError }}</p>
+  }
+
+  @if (persons.length > 0) {
+    <ul>
+      @for (person of persons; track person.refn) {
+        <li>
+          <a [routerLink]="['/admin-ancestors/person', person.refn]">
+            {{ person.name }} – {{ person.refn }}
+          </a>
+        </li>
+      }
+    </ul>
+  }
+  @if (persons.length == 0) {
+    <p>(Noch) keine Ergebnisse für diese Suche</p>
+  }
+</section>
