@@ -48,4 +48,22 @@ export interface AdminPerson {
   last_modified_date: string;
   created_by: number | null;
   last_modified_by: number | null;
+
+   obje_file_1?: string | null;
+  obje_titl_1?: string | null;
+
+  obje_file_2?: string | null;
+  obje_titl_2?: string | null;
+
+  obje_file_3?: string | null;
+  obje_titl_3?: string | null;
+
+  obje_file_4?: string | null;
+  obje_titl_4?: string | null;
+
+  obje_file_5?: string | null;
+  obje_titl_5?: string | null;
+
+  obje_file_6?: string | null;
+  obje_titl_6?: string | null;
 }

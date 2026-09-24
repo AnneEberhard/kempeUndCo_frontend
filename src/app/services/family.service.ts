@@ -57,13 +57,13 @@ export class FamilyService {
     return this.getRelations(id).pipe(
       switchMap(relations => {
         const person$ = this.getPerson(relations.person).pipe(
-          catchError(() => of(this.createUnknownPerson())) // Fängt Fehler für die Hauptperson ab
+          catchError(() => of(this.createUnknownPerson()))
         );
         const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn).pipe(
-          catchError(() => of(this.createUnknownPerson())) // Fängt Fehler für den Vater ab
+          catchError(() => of(this.createUnknownPerson()))
         ) : of(this.createUnknownPerson());
         const mother$ = relations.moth_refn ? this.getPerson(relations.moth_refn).pipe(
-          catchError(() => of(this.createUnknownPerson())) // Fängt Fehler für die Mutter ab
+          catchError(() => of(this.createUnknownPerson()))
         ) : of(this.createUnknownPerson());
 
         const marriages$ = [1, 2, 3, 4].map(i => {
@@ -104,7 +104,7 @@ export class FamilyService {
           })
         );
       }),
-      catchError(() => of({ // Fängt Fehler für das gesamte Observable ab
+      catchError(() => of({
         person: this.createUnknownPerson(),
         grandparents: [],
         parents: [],

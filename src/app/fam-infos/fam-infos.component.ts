@@ -123,70 +123,6 @@ export class FamInfosComponent implements OnInit {
 
 
   /**
-   * Loads all information from the info service and sorts them by the updated date.
-   */
-  //  loadAllInfo(): void {
-  //    this.loadingService.show(); // Lade-Overlay aktivieren
-  //
-  //    this.faminfoService.getAllInfos().subscribe({
-  //      next: (infos) => {
-  //        this.infos = infos;
-  //        console.log(infos);
-  //        this.infos.sort((a, b) => {
-  //          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-  //        });
-  //        this.infos = infos.map((recipe: any) => ({ ...recipe, isHidden: false }));
-  //        this.filteredInfos = this.infos;
-  //        this.loadComments();
-  //      },
-  //      error: (error) => {
-  //        console.error('Fehler beim Laden:', error);
-  //        this.loadingService.hide();
-  //        if (error.status === 404) {
-  //          alert('Keine Infos gefunden.');
-  //        } else if (error.status === 500) {
-  //          alert('Serverfehler. Bitte versuche es erneut.');
-  //        } else {
-  //          alert('Fehler beim Laden.');
-  //        }
-  //      },
-  //      complete: () => {
-  //        this.loadingService.hide(); // Lade-Overlay ausblenden
-  //      }
-  //    });
-  //  }
-
-  /**
-   * Loads a specific info item by its ID and sanitizes its content for safe display.
-   *
-   * @param {string} infoId - The ID of the info item to be loaded.
-   */
-  // loadInfo(infoId: string): void {
-  //   this.loadingService.show();
-  //   this.faminfoService.getInfoById(infoId).subscribe({
-  //     next: (info) => {
-  //       this.selectedInfo = info;
-  //       this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(info.content);
-  //     },
-  //     error: (error) => {
-  //       console.error('Fehler beim Laden:', error);
-  //       this.loadingService.hide();
-  //       if (error.status === 404) {
-  //         alert('Keine Info gefunden.');
-  //       } else if (error.status === 500) {
-  //         alert('Serverfehler. Bitte versuche es erneut.');
-  //       } else {
-  //         alert('Fehler beim Laden.');
-  //       }
-  //     },
-  //     complete: () => {
-  //       this.loadingService.hide();
-  //     }
-  //   });
-  // }
-  //
-
-  /**
    * Filters the list of information items based on the search term from the event input.
    *
    * @param {Event} event - The input event containing the search term.
@@ -335,47 +271,6 @@ export class FamInfosComponent implements OnInit {
   }
 
 
-  //  getImageArray(info: any): { original: string; thumbnail: string }[] {
-  //
-  //    if (this.imageCache[info.id]) {
-  //      return this.imageCache[info.id];
-  //    }
-  //
-  //    const images: { original: string; thumbnail: string }[] = [];
-  //
-  //    for (let i = 1; i <= 4; i++) {
-  //      const originalUrl = info[`image_${i}_url`];
-  //      const thumbnailUrl = info[`image_${i}_thumbnail_url`];
-  //
-  //      if (originalUrl) {
-  //        images.push({ original: originalUrl, thumbnail: thumbnailUrl });
-  //      }
-  //    }
-  //    this.imageCache[info.id] = images;
-  //    return images;
-  //  }
-  //
-  //  getPdfArray(info: any): { url: string; name: string }[] {
-  //    if (this.pdfCache[info.id]) {
-  //      return this.pdfCache[info.id];
-  //    }
-  //
-  //    const pdfs: { url: string; name: string }[] = [];
-  //
-  //    for (let i = 1; i <= 4; i++) {
-  //      const pdfUrl = info[`pdf_${i}_url`];
-  //      const pdfName = info[`pdf_${i}_name`];
-  //
-  //      if (pdfUrl) {
-  //        pdfs.push({ url: pdfUrl, name: pdfName  });
-  //      }
-  //    }
-  //    console.log(pdfs)
-  //    return pdfs;
-  //  }
-
-
-
   /**
    * Removes an image by its URL from the entry and marks it as deleted.
    *
@@ -397,6 +292,7 @@ export class FamInfosComponent implements OnInit {
     }
     this.deletedImages.add(imageUrl);
   }
+
 
   removePdfByUrl(pdfUrl: string): void {
     if (this.entry.pdf_1_url === pdfUrl) {
@@ -491,34 +387,6 @@ export class FamInfosComponent implements OnInit {
 
 
   /**
-   * Adds new images to the form data.
-   *
-   * @param {FormData} formData - The form data to which images will be added.
-   */
-  //  addNewImages(formData: FormData): void {
-  //    this.imageFiles.forEach((file) => {
-  //      const imageField = this.getNextAvailableImageField();
-  //      if (imageField) {
-  //        formData.append(imageField, file, file.name);
-  //      }
-  //    });
-  //  }
-
-  //  /**
-  //   * Adds fields for any deleted images to the form data, marking them as empty.
-  //   *
-  //   * @param {FormData} formData - The form data to which empty fields will be added.
-  //   */
-  //  addNullFields(formData: FormData): void {
-  //    for (let i = 1; i <= 4; i++) {
-  //      const imageField = `image_${i}`;
-  //      if (!this.entry[imageField] && !formData.has(imageField)) {
-  //        formData.append(imageField, '');
-  //      }
-  //    }
-  //  }
-
-  /**
    * Saves the entry by either adding a new one or updating an existing one.
    * Displays an alert if no family is selected.
    * differs from recipe due to family info
@@ -530,10 +398,6 @@ export class FamInfosComponent implements OnInit {
       return;
 
     }
-
-    //  formData.forEach((value, key) => {
-    //    console.log(`${key}:`, value);
-    //  });
 
     if (this.entry.id) {
       this.updateEntry(formData);
@@ -578,20 +442,6 @@ export class FamInfosComponent implements OnInit {
     });
   }
 
-  /**
-   * Gets the next available image field for a new image.
-   * differs from recipe due to service
-   * @returns {string | null} The name of the next available image field (e.g., 'image_1'), or `null` if all fields are occupied.
-   */
-  //  getNextAvailableImageField(): string | null {
-  //    for (let i = 1; i <= 4; i++) {
-  //      const imageField = `image_${i}`;
-  //      if (!this.entry[imageField]) {
-  //        return imageField;
-  //      }
-  //    }
-  //    return null;
-  //  }
 
   /**
    * Adds a new entry using the provided form data.

@@ -157,6 +157,68 @@
         <label for="note">Notizen</label>
         <textarea id="note" [(ngModel)]="note" rows="6"></textarea>
       </div>
+
+      <div>
+        <h4>Bilder:</h4>
+
+        <h5>Vorhandene Bilder</h5>
+
+        <div class="deleteImageContainer">
+          @for (index of [1, 2, 3, 4, 5, 6]; track index) {
+            @if (getExistingImage(index)) {
+              <div class="deleteImage">
+                <img
+                  [src]="getExistingImage(index)"
+                  alt="Bild {{ index }}"
+                  width="100"
+                  [ngClass]="{
+                    'grayed-out': isImageDeleted(index),
+                  }"
+                />
+
+                <button type="button" (click)="removeExistingImage(index)">
+                  {{ isImageDeleted(index) ? "Rückgängig" : "Bild löschen" }}
+                </button>
+              </div>
+            }
+          }
+        </div>
+
+        <h5>Bilder hochladen (max. 6):</h5>
+
+        @for (index of [1, 2, 3, 4, 5, 6]; track index) {
+          @if (isImageSlotAvailable(index)) {
+            <div class="imageUploadContainer">
+              <div class="upload-image-field">
+                <label [for]="'image' + index"> Bild {{ index }} </label>
+
+                <input
+                  type="file"
+                  [id]="'image' + index"
+                  (change)="onImageFileChange($event, index)"
+                  accept=".jpg,.jpeg,.png"
+                />
+              </div>
+              <div class="previewBox">
+                @if (imagePreviews[index - 1]) {
+                  <div
+                    class="previewImage"
+                    (click)="removeImagePreview(index)"
+                    title="Bild entfernen"
+                  >
+                    <img
+                      [src]="imagePreviews[index - 1]"
+                      alt="Vorschau"
+                      [id]="'preview' + index"
+                      width="100"
+                    />
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
     </div>
     <div class="buttonBox">
       <button type="button" (click)="cancel()">Abbrechen</button>
@@ -165,37 +227,36 @@
   }
 
   @if (showSaveConfirmation) {
-  <div class="popUpConfirmation">
-    <div class="popUpConfirmationContent">
+    <div class="popUpConfirmation">
+      <div class="popUpConfirmationContent">
+        <h3>Änderungen bestätigen</h3>
 
-      <h3>Änderungen bestätigen</h3>
-
-      <p>Folgende Änderungen werden gespeichert:</p>
-
-      <ul>
-        @for (change of pendingChanges; track change.label) {
-          <li>
-            <strong>{{ change.label }}:</strong>
-            <span>
-              „{{ change.oldValue }}“
-              →
-              „{{ change.newValue }}“
-            </span>
-          </li>
+        <p>Folgende Änderungen werden gespeichert:</p>
+        @if (this.noNewChanges) {
+          <b>Keine Änderungen</b>
+          <br /><br />
         }
-      </ul>
 
-      <div class="buttonBox">
-        <button type="button" (click)="cancelSave()">
-          Abbrechen
-        </button>
+        @if (!this.noNewChanges) {
+          <ul>
+            @for (change of pendingChanges; track change.label) {
+              <li>
+                <strong>{{ change.label }}:</strong>
+                <span> „{{ change.oldValue }}“ → „{{ change.newValue }}“ </span>
+              </li>
+            }
+          </ul>
+        }
 
-        <button type="button" (click)="confirmSave()">
-          Änderungen speichern
-        </button>
+        <div class="buttonBox">
+          <button type="button" (click)="cancelSave()">Abbrechen</button>
+
+          <button type="button" (click)="confirmSave()">
+            Änderungen speichern
+          </button>
+        </div>
       </div>
-
     </div>
-  </div>
-}
+  }
 </section>
+<app-scroll-to-top-button></app-scroll-to-top-button>

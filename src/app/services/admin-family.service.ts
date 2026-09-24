@@ -30,7 +30,7 @@ export class AdminFamilyService {
     );
   }
 
-  updatePerson(refn: string, data: Partial<AdminPerson>): Observable<AdminPerson> {
+  updatePerson(refn: string, data: FormData): Observable<AdminPerson> {
   return this.http.patch<AdminPerson>(
     `${this.apiUrl}/persons/${encodeURIComponent(refn)}/`,
     data
