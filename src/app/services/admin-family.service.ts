@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap, forkJoin, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AdminPerson } from '../interfaces/admin-person';
 import { AdminRelations } from '../interfaces/admin-relations';
@@ -15,6 +15,7 @@ import { FamilyService } from './family.service';
 export class AdminFamilyService {
 
   private apiUrl = `${environment.baseUrl}/api/ancestors/admin`;
+  personsByRefn = new Map<string, AdminPerson>();
 
   constructor(private http: HttpClient, private familyService: FamilyService,) { }
 
@@ -55,17 +56,28 @@ export class AdminFamilyService {
   }
 
   getEditFamily(refn: string): Observable<EditFamily> {
+    this.personsByRefn.clear();
     return this.getAdminRelations(refn).pipe(
       switchMap(relations => {
 
         const father$ = relations.fath_refn
           ? this.getAdminPerson(relations.fath_refn).pipe(
+            tap(person => {
+              if (person) {
+                this.personsByRefn.set(person.refn, person);
+              }
+            }),
             catchError(() => of(null))
           )
           : of(null);
 
         const mother$ = relations.moth_refn
           ? this.getAdminPerson(relations.moth_refn).pipe(
+            tap(person => {
+              if (person) {
+                this.personsByRefn.set(person.refn, person);
+              }
+            }),
             catchError(() => of(null))
           )
           : of(null);
@@ -90,6 +102,11 @@ export class AdminFamilyService {
           const spouse$ =
             typeof spouseRefn === 'string'
               ? this.getAdminPerson(spouseRefn).pipe(
+                tap(person => {
+                  if (person) {
+                    this.personsByRefn.set(person.refn, person);
+                  }
+                }),
                 catchError(() => of(null))
               )
               : of(null);
@@ -99,6 +116,11 @@ export class AdminFamilyService {
               ? forkJoin(
                 childrenIds.map(childId =>
                   this.getAdminPerson(childId).pipe(
+                    tap(person => {
+                      if (person) {
+                        this.personsByRefn.set(person.refn, person);
+                      }
+                    }),
                     catchError(() => of(null))
                   )
                 )

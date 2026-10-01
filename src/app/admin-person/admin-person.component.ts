@@ -462,9 +462,12 @@ export class AdminPersonComponent implements OnInit {
       const newSpouseRefn = marriage.spouse?.refn ?? '';
 
       if ((oldSpouseRefn ?? '') !== newSpouseRefn) {
+        const oldSpouse = oldSpouseRefn
+          ? this.adminFamilyService.personsByRefn.get(oldSpouseRefn)
+          : null;
         changes.push({
           label: `Partnerschaft ${index}`,
-          oldValue: oldSpouseRefn ?? '',
+          oldValue: oldSpouse?.name ?? oldSpouseRefn ?? '',
           newValue: marriage.spouse?.name ?? newSpouseRefn
         });
       }
@@ -548,8 +551,17 @@ export class AdminPersonComponent implements OnInit {
         .filter((child): child is AdminPerson => child !== null)
         .map(child => child.refn);
 
-      const oldChildrenText = oldChildren.join(', ');
-      const newChildrenText = newChildren.join(', ');
+      const oldChildrenText = oldChildren
+        .map(refn => {
+          const child = this.adminFamilyService.personsByRefn.get(refn);
+          return child?.name ?? refn;
+        })
+        .join(', ');
+
+      const newChildrenText = marriage.children
+        .filter((child): child is AdminPerson => child !== null)
+        .map(child => child.name)
+        .join(', ');
 
       if (oldChildrenText !== newChildrenText) {
         changes.push({
@@ -719,32 +731,32 @@ export class AdminPersonComponent implements OnInit {
     }
   }
 
- hasMarriageData(
-  marriage: {
-    spouse: AdminPerson | null;
-    marr_date: string | null;
-    marr_plac: string | null;
-    fam_stat: string | null;
-    children: (AdminPerson | null)[];
-  },
-  index: number
-): boolean {
-  if (index === 0) {
-    return true;
-  }
+  hasMarriageData(
+    marriage: {
+      spouse: AdminPerson | null;
+      marr_date: string | null;
+      marr_plac: string | null;
+      fam_stat: string | null;
+      children: (AdminPerson | null)[];
+    },
+    index: number
+  ): boolean {
+    if (index === 0) {
+      return true;
+    }
 
-  if (this.expandedMarriageBoxes.has(index)) {
-    return true;
-  }
+    if (this.expandedMarriageBoxes.has(index)) {
+      return true;
+    }
 
-  return (
-    marriage.spouse !== null ||
-    !!marriage.marr_date?.trim() ||
-    !!marriage.marr_plac?.trim() ||
-    !!marriage.fam_stat ||
-    marriage.children.some(child => child !== null)
-  );
-}
+    return (
+      marriage.spouse !== null ||
+      !!marriage.marr_date?.trim() ||
+      !!marriage.marr_plac?.trim() ||
+      !!marriage.fam_stat ||
+      marriage.children.some(child => child !== null)
+    );
+  }
 
   newPartnerChildBox(index: number): void {
     this.expandedMarriageBoxes.add(index);

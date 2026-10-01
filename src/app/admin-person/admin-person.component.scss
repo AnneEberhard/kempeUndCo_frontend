@@ -235,3 +235,45 @@ select {
   font-size: 12px;
 }
 
+@media (max-width: 750px) {
+.editPersonTwoBoxes {
+  flex-direction: column;
+  align-items: flex-start;
+}
+}
+
+@media (max-width: 450px) {
+.editPersonBox {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.relationPersonBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+.selectedPersonBox {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.upload-image-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.emptyRelations {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.textBox {
+  display: flex;
+  flex-direction: column;
+}
+}
