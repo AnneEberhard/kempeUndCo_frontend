@@ -2,7 +2,9 @@ export interface AdminRelations {
   person: string;
 
   fath_refn: string | null;
+  fath_name: string | null;
   moth_refn: string | null;
+  moth_name: string | null;
 
   marr_spou_refn_1: string | null;
   marr_date_1: string | null;

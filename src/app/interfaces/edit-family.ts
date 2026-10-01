@@ -1,4 +1,5 @@
 import { AdminPerson } from './admin-person';
+import { AdminRelations } from './admin-relations';
 
 export interface EditFamily {
   parents: (AdminPerson | null)[];
@@ -9,4 +10,5 @@ export interface EditFamily {
     fam_stat: string | null;
     children: (AdminPerson | null)[];
   }[];
+  originalRelation: AdminRelations;
 }

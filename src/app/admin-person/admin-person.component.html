@@ -2,12 +2,17 @@
   <h2>Person bearbeiten</h2>
 
   @if (error) {
-    <p>{{ error }}</p>
+    <p class="errorMessage">{{ error }}</p>
+  }
+
+  @if (successMessage) {
+    <b><i>{{ successMessage }}</i></b>
   }
 
   @if (person) {
     <div class="editPersonWrapper">
       <b>REFN: {{ person.refn }}</b>
+
       <div class="editPersonTwoBoxes">
         <div class="editPersonBox">
           <label for="givn">Vorname</label>
@@ -256,7 +261,6 @@
                       Person ändern
                     </button>
                   </div>
-                  
                 } @else {
                   <div class="emptyRelations">
                     <span>Kein Partner eingetragen</span>
@@ -269,48 +273,48 @@
                     </button>
                   </div>
                 }
-                <br>
+                <br />
               </div>
-                <div class="editPersonTwoBoxes">
-                    <div class="editPersonBox">
-                      <label for="marr-date-{{ $index }}"> Heiratsdatum </label>
+              <div class="editPersonTwoBoxes">
+                <div class="editPersonBox">
+                  <label for="marr-date-{{ $index }}"> Heiratsdatum </label>
 
-                      <input
-                        id="marr-date-{{ $index }}"
-                        type="text"
-                        [(ngModel)]="marriage.marr_date"
-                        name="marr_date_{{ $index }}"
-                      />
-                    </div>
+                  <input
+                    id="marr-date-{{ $index }}"
+                    type="text"
+                    [(ngModel)]="marriage.marr_date"
+                    name="marr_date_{{ $index }}"
+                  />
+                </div>
 
-                    <div class="editPersonBox">
-                      <label for="marr-plac-{{ $index }}"> Heiratsort </label>
+                <div class="editPersonBox">
+                  <label for="marr-plac-{{ $index }}"> Heiratsort </label>
 
-                      <input
-                        id="marr-plac-{{ $index }}"
-                        type="text"
-                        [(ngModel)]="marriage.marr_plac"
-                        name="marr_plac_{{ $index }}"
-                      />
-                    </div>
-                  </div>
-                  <div class="editPersonBox">
-                    <label for="fam-stat-{{ $index }}"> Familienstand </label>
+                  <input
+                    id="marr-plac-{{ $index }}"
+                    type="text"
+                    [(ngModel)]="marriage.marr_plac"
+                    name="marr_plac_{{ $index }}"
+                  />
+                </div>
+              </div>
+              <div class="editPersonBox">
+                <label for="fam-stat-{{ $index }}"> Familienstand </label>
 
-                    <select
-                      id="fam-stat-{{ $index }}"
-                      [(ngModel)]="marriage.fam_stat"
-                      name="fam_stat_{{ $index }}"
-                    >
-                      <option [ngValue]="null">-- auswählen --</option>
+                <select
+                  id="fam-stat-{{ $index }}"
+                  [(ngModel)]="marriage.fam_stat"
+                  name="fam_stat_{{ $index }}"
+                >
+                  <option [ngValue]="null">-- auswählen --</option>
 
-                      @for (choice of familyStatusChoices; track choice.value) {
-                        <option [value]="choice.value">
-                          {{ choice.label }}
-                        </option>
-                      }
-                    </select>
-                  </div>
+                  @for (choice of familyStatusChoices; track choice.value) {
+                    <option [value]="choice.value">
+                      {{ choice.label }}
+                    </option>
+                  }
+                </select>
+              </div>
               <div class="dividerMedium"></div>
               <!-- Kinder -->
               <div class="relationPersonBox">
@@ -580,15 +584,9 @@
             (click)="savePersonPopup()"
             [disabled]="!personPopupSelectedPerson"
           >
-            Speichern
+            Hinzufügen
           </button>
         </div>
-        @if (personPopupSelectedPerson) {
-          <i class="infoText">
-            Hinweis: Hier wird nur zwischengespeichert. Für das endgültige
-            Speichern bitte noch die Person am Ende der Seite speichern.
-          </i>
-        }
       </div>
     </div>
   }

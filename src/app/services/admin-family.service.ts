@@ -117,12 +117,14 @@ export class AdminFamilyService {
         return forkJoin({
           father: father$,
           mother: mother$,
-          marriages: forkJoin(marriages$)
+          marriages: forkJoin(marriages$),
+          originalRelation: of(relations)
         });
       }),
-      map(({ father, mother, marriages }) => ({
+      map(({ father, mother, marriages, originalRelation }) => ({
         parents: [father, mother],
-        marriages
+        marriages,
+        originalRelation
       }))
     );
   }
@@ -130,6 +132,16 @@ export class AdminFamilyService {
   searchRelatedPersons(search: string): Observable<AdminPerson[]> {
     return this.http.get<AdminPerson[]>(
       `${this.apiUrl}/persons/?search=${encodeURIComponent(search)}`
+    );
+  }
+
+  updateRelation(
+    refn: string,
+    data: Partial<AdminRelations>
+  ): Observable<AdminRelations> {
+    return this.http.patch<AdminRelations>(
+      `${this.apiUrl}/relations/${encodeURIComponent(refn)}/`,
+      data
     );
   }
 }

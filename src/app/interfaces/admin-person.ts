@@ -6,11 +6,6 @@ export interface AdminPerson {
   family_1: string;
   family_2: string | null;
 
-  fath_name: string | null;
-  fath_refn: string | null;
-  moth_name: string | null;
-  moth_refn: string | null;
-
   uid: string | null;
   surn: string | null;
   givn: string | null;
@@ -49,7 +44,7 @@ export interface AdminPerson {
   created_by: number | null;
   last_modified_by: number | null;
 
-   obje_file_1?: string | null;
+  obje_file_1?: string | null;
   obje_titl_1?: string | null;
 
   obje_file_2?: string | null;
