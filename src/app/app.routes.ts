@@ -19,6 +19,7 @@ import { FamInfosComponent } from './fam-infos/fam-infos.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { AdminAncestorsComponent } from './admin-ancestors/admin-ancestors.component';
 import { AdminPersonComponent } from './admin-person/admin-person.component';
+import { AdminNewPersonComponent } from './admin-new-person/admin-new-person.component';
 
 //export const routes: Routes = [
 //    {
@@ -84,7 +85,8 @@ export const routes: Routes = [
             { path: 'recipes', component: RecipesComponent },
             { path: 'account', component: AccountComponent },
             { path: 'admin-ancestors', component: AdminAncestorsComponent },
-            { path: 'admin-ancestors/person/:refn', component: AdminPersonComponent }
+            { path: 'admin-ancestors/person/:refn', component: AdminPersonComponent },
+            { path: 'admin-ancestors/newperson', component: AdminNewPersonComponent }
         ]
     }
 ];

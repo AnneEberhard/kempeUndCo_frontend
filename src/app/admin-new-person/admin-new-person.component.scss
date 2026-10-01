@@ -1,0 +1,279 @@
+input {
+  line-height: 1;
+  font-size: 1rem;
+  color: inherit;
+  padding: 1rem;
+  border: solid 1px #b2b8b8;
+  appearance: none;
+  background: antiquewhite;
+  border-radius: 0.25rem;
+  ::placeholder {
+    color: #b2b8b8;
+  }
+}
+
+select {
+  line-height: 1;
+  font-size: 1rem;
+  color: inherit;
+  padding: 1rem;
+  border: solid 1px #b2b8b8;
+  background: antiquewhite;
+  border-radius: 0.25rem;
+  ::placeholder {
+    color: #b2b8b8;
+  }
+}
+
+.editPersonWrapper {
+  display: flex;
+  width: 60vw;
+  flex-wrap: wrap;
+  flex-direction: column;
+  margin: 16px;
+}
+
+.editPersonTwoBoxes {
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  align-items: center;
+}
+
+.editPersonBox {
+  display: flex;
+  align-items: center;
+
+  label {
+    width: 150px;
+  }
+}
+
+.textBox {
+  margin: 8px 0 8px 0;
+  display: flex;
+  width: 80vw;
+  label {
+    width: 150px;
+  }
+  textarea {
+    width: 60%;
+  }
+}
+
+.buttonBox {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.editPersonTwoSelects {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.popUpConfirmation {
+  position: fixed;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.popUpConfirmationContent {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 400px;
+  padding: 48px;
+  overflow: auto;
+}
+
+.deleteImageContainer {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.deleteImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  button {
+    font-size: 12px;
+  }
+}
+
+.previewBox {
+  display: flex;
+}
+
+.previewImage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  img {
+    display: block;
+    transition:
+      filter 0.2s ease,
+      opacity 0.2s ease;
+
+    &:hover {
+      filter: grayscale(100%);
+      opacity: 0.6;
+    }
+  }
+}
+
+.imageUploadContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px;
+}
+
+.newPartnerChildBox {
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
+}
+
+.emptyRelations {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selectedPersonBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selectedPerson {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.relationPersonBox {
+  label {
+    font-style: italic;
+  }
+}
+
+.popupOverlay {
+  position: fixed;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.personPopup {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 400px;
+  padding: 48px;
+  overflow: auto;
+}
+
+.personPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.margin8 {
+  margin: 8px 0 8px 0;
+}
+
+.personSearchResult {
+  cursor: pointer;
+  padding: 8px;
+}
+
+.personSearchResult.selected {
+  color: rgb(100, 16, 32);
+  background: #e0e2e6;
+}
+
+.dividerSmall {
+  background-color: rgb(192, 191, 191);
+  height: 0.5px;
+
+  margin-top: 8px;
+}
+
+.dividerMedium {
+  background-color: lightslategrey;
+  height: 0.5px;
+
+  margin: 8px 0 8px 0;
+}
+
+.infoText {
+  color: rgb(100, 16, 32);
+  font-size: 12px;
+}
+
+@media (max-width: 750px) {
+.editPersonTwoBoxes {
+  flex-direction: column;
+  align-items: flex-start;
+}
+}
+
+@media (max-width: 450px) {
+.editPersonBox {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.relationPersonBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+.selectedPersonBox {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.upload-image-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.emptyRelations {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.textBox {
+  display: flex;
+  flex-direction: column;
+}
+}

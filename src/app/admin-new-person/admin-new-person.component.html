@@ -1,0 +1,601 @@
+<section>
+  <h2>Neue Person anlegen</h2>
+  <button type="button" class="new-person-button" (click)="goToSearch()">
+    Person bearbeiten/suchen
+  </button>
+
+  @if (error) {
+    <p class="errorMessage">{{ error }}</p>
+  }
+
+  @if (successMessage) {
+    <b
+      ><i>{{ successMessage }}</i></b
+    >
+  }
+
+  <div class="editPersonWrapper">
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="givn">Vorname</label>
+        <input id="givn" type="text" [(ngModel)]="givn" />
+      </div>
+      <div class="editPersonBox">
+        <label for="surn">Nachname (geb.)</label>
+        <input id="surn" type="text" [(ngModel)]="surn" />
+      </div>
+    </div>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="nameRufname">Rufname</label>
+        <input id="nameRufname" type="text" [(ngModel)]="nameRufname" />
+      </div>
+      <div class="editPersonBox">
+        <label for="nameNick">Spitzname</label>
+        <input id="nameNick" type="text" [(ngModel)]="nameNick" />
+      </div>
+    </div>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="nameNpfx">Namenspräfix</label>
+        <input id="nameNpfx" type="text" [(ngModel)]="nameNpfx" />
+      </div>
+      <div class="editPersonBox">
+        <label for="nameMarnm">Ehename (verh.)</label>
+        <input id="nameMarnm" type="text" [(ngModel)]="nameMarnm" />
+      </div>
+    </div>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="sex">Geschlecht</label>
+
+        <select id="sex" [(ngModel)]="sex">
+          <option value="F">weiblich</option>
+          <option value="M">männlich</option>
+          <option value="D">divers</option>
+        </select>
+      </div>
+      <div class="editPersonBox">
+        <label for="occu">Beruf</label>
+        <input id="occu" type="text" [(ngModel)]="occu" />
+      </div>
+    </div>
+
+    <h3>Geburts- und Sterbedaten</h3>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="birtDate">Geburtsdatum</label>
+        <input
+          id="birtDate"
+          type="text"
+          [(ngModel)]="birtDate"
+          placeholder="z. B. 12.03.1847 oder nach 1389"
+        />
+      </div>
+      <div class="editPersonBox">
+        <label for="birtPlac">Geburtsort</label>
+        <input id="birtPlac" type="text" [(ngModel)]="birtPlac" />
+      </div>
+    </div>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="deatDate">Sterbedatum</label>
+        <input
+          id="deatDate"
+          type="text"
+          [(ngModel)]="deatDate"
+          placeholder="z. B. 12.03.1847 oder nach 1389"
+        />
+      </div>
+      <div class="editPersonBox">
+        <label for="deatPlac">Sterbeort</label>
+        <input id="deatPlac" type="text" [(ngModel)]="deatPlac" />
+      </div>
+    </div>
+
+    <h3>Taufe und Beerdigung</h3>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="reli">Religion</label>
+        <input id="reli" type="text" [(ngModel)]="reli" />
+      </div>
+      <div class="editPersonBox">
+        <label for="chrAddr">Taufadresse</label>
+        <input id="chrAddr" type="text" [(ngModel)]="chrAddr" />
+      </div>
+    </div>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="chrDate">Taufdatum</label>
+        <input
+          id="chrDate"
+          type="text"
+          [(ngModel)]="chrDate"
+          placeholder="z. B. 12.03.1847 oder nach 1389"
+        />
+      </div>
+      <div class="editPersonBox">
+        <label for="chrPlac">Taufort</label>
+        <input id="chrPlac" type="text" [(ngModel)]="chrPlac" />
+      </div>
+    </div>
+    <div class="editPersonTwoBoxes">
+      <div class="editPersonBox">
+        <label for="buriDate">Beerdigungsdatum</label>
+        <input
+          id="buriDate"
+          type="text"
+          [(ngModel)]="buriDate"
+          placeholder="z. B. 12.03.1847 oder nach 1389"
+        />
+      </div>
+      <div class="editPersonBox">
+        <label for="buriPlac">Beerdigungsort</label>
+        <input id="buriPlac" type="text" [(ngModel)]="buriPlac" />
+      </div>
+    </div>
+    <h3>Stammbaum (verpflichtend)</h3>
+    <div class="editPersonBox">
+      <label for="family">Stammbaum *</label>
+
+      @if (availableFamilies.length > 1) {
+        <select id="family" [(ngModel)]="selectedFamily" name="family">
+          <option value="">Bitte auswählen</option>
+
+          @for (family of availableFamilies; track family) {
+            <option [value]="family">
+              {{ family === 'kempe' ? 'Kempe' : family === 'huenten' ? 'Hünten' : family }}
+            </option>
+          }
+        </select>
+      } @else {
+        <input id="family" type="text" [value]="selectedFamily" readonly />
+      }
+    </div>
+    <h3>Vertraulichkeit</h3>
+    <div>
+      <div class="editPersonBox">
+        <label for="confidential">Vertraulichkeit</label>
+
+        <select id="confidential" [(ngModel)]="confidential">
+          <option value="no">Nein</option>
+          <option value="restricted">Eingeschränkt</option>
+          <option value="yes">Ja</option>
+        </select>
+      </div>
+      <br />
+      <i>
+        Hinweis: Vertraulichkeit <i>ja</i> bedeutet, dass nichts von dieser
+        Person angezeigt wird und sie als <i>vertraulich</i> im Staummbaum
+        dargestellt wird. Bei <i>eingeschränkt</i> wird nur der Name angezeigt.
+        Als Standard ist bei allen lebenden Personen
+        <i>eingeschränkt</i> hinterlegt, es sei denn, es wurde anders gewünscht.
+        Bitte nutzt dieses Feld mit Bedacht.
+      </i>
+    </div>
+
+    <div class="editRelationSection">
+      <h3>Verwandtschaften</h3>
+      <i>
+        Bitte beachten: Bevor hier Personen verknüpft werden können, müssen
+        diese zunächst als eigenständige Personen angelegt sein. Hier kann nur
+        diese Person neu angelegt werden.
+      </i>
+      <h3>Eltern</h3>
+
+      <div class="relationPersonBox">
+        <label>Vater</label>
+        @if (family.parents[0]; as father) {
+          <div class="selectedPersonBox">
+            <div class="selectedPerson">
+              <div class="selectedPersonName">
+                {{ father.name }}
+              </div>
+
+              <div class="selectedPersonRefn">({{ father.refn }})</div>
+            </div>
+            <button
+              type="button"
+              (click)="openPersonPopup('father', 0, father)"
+            >
+              Person ändern
+            </button>
+          </div>
+        } @else {
+          <div class="selectedPersonBox">
+            <span>Kein Vater ausgewählt</span>
+
+            <button type="button" (click)="openPersonPopup('father', 0, null)">
+              Person auswählen
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="relationPersonBox">
+        <label>Mutter</label>
+        @if (family.parents[1]; as mother) {
+          <div class="selectedPersonBox">
+            <div class="selectedPerson">
+              <div class="selectedPersonName">
+                {{ mother.name }}
+              </div>
+
+              <div class="selectedPersonRefn">({{ mother.refn }})</div>
+            </div>
+            <button
+              type="button"
+              (click)="openPersonPopup('mother', 1, mother)"
+            >
+              Person ändern
+            </button>
+          </div>
+        } @else {
+          <div class="selectedPersonBox">
+            <span>Keine Mutter ausgewählt</span>
+
+            <button type="button" (click)="openPersonPopup('mother', 0, null)">
+              Person auswählen
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="editRelationSection">
+      <h3>Ehen / Partnerschaften</h3>
+
+      @for (marriage of family.marriages; track $index; let i = $index) {
+        @if (hasMarriageData(marriage, i)) {
+          <div class="marriageBox">
+            <h4>Ehe / Partnerschaft {{ i + 1 }}</h4>
+
+            <!-- Ehepartner -->
+            <div class="relationPersonBox">
+              <label>Partner</label>
+
+              @if (marriage.spouse) {
+                <div class="selectedPersonBox">
+                  <div class="selectedPerson">
+                    <div class="selectedPersonName">
+                      {{ marriage.spouse.name }}
+                    </div>
+
+                    <div class="selectedPersonRefn">
+                      ({{ marriage.spouse.refn }})
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="openPersonPopup('spouse', i, marriage.spouse)"
+                  >
+                    Person ändern
+                  </button>
+                </div>
+              } @else {
+                <div class="emptyRelations">
+                  <span>Kein Partner eingetragen</span>
+
+                  <button
+                    type="button"
+                    (click)="openPersonPopup('spouse', i, null)"
+                  >
+                    Partner hinzufügen
+                  </button>
+                </div>
+              }
+              <br />
+            </div>
+            <div class="editPersonTwoBoxes">
+              <div class="editPersonBox">
+                <label for="marr-date-{{ $index }}"> Heiratsdatum </label>
+
+                <input
+                  id="marr-date-{{ $index }}"
+                  type="text"
+                  [(ngModel)]="marriage.marr_date"
+                  name="marr_date_{{ $index }}"
+                />
+              </div>
+
+              <div class="editPersonBox">
+                <label for="marr-plac-{{ $index }}"> Heiratsort </label>
+
+                <input
+                  id="marr-plac-{{ $index }}"
+                  type="text"
+                  [(ngModel)]="marriage.marr_plac"
+                  name="marr_plac_{{ $index }}"
+                />
+              </div>
+            </div>
+            <div class="editPersonBox">
+              <label for="fam-stat-{{ $index }}"> Familienstand </label>
+
+              <select
+                id="fam-stat-{{ $index }}"
+                [(ngModel)]="marriage.fam_stat"
+                name="fam_stat_{{ $index }}"
+              >
+                <option [ngValue]="null">-- auswählen --</option>
+
+                @for (choice of familyStatusChoices; track choice.value) {
+                  <option [value]="choice.value">
+                    {{ choice.label }}
+                  </option>
+                }
+              </select>
+            </div>
+            <div class="dividerMedium"></div>
+            <!-- Kinder -->
+            <div class="relationPersonBox">
+              <label>Kinder</label>
+
+              @if (marriage.children.length > 0) {
+                @for (
+                  child of marriage.children;
+                  track $index;
+                  let childIndex = $index
+                ) {
+                  @if (child) {
+                    @if (childIndex > 0) {
+                      <div class="dividerSmall"></div>
+                    }
+                    <div class="selectedPersonBox margin8">
+                      <div class="selectedPerson">
+                        <div class="selectedPersonName">
+                          {{ child.name }}
+                        </div>
+
+                        <div class="selectedPersonRefn">({{ child.refn }})</div>
+                      </div>
+                      <button
+                        type="button"
+                        (click)="openPersonPopup('child', i, child, childIndex)"
+                      >
+                        Person ändern
+                      </button>
+                    </div>
+                  } @else {
+                    <div class="emptyRelations">
+                      <span>Kein Kind zugeordnet</span>
+
+                      <button
+                        type="button"
+                        (click)="openPersonPopup('child', i, null)"
+                      >
+                        Kind hinzufügen
+                      </button>
+                    </div>
+                  }
+                }
+
+                <br />
+                <button
+                  type="button"
+                  (click)="openPersonPopup('child', i, null)"
+                >
+                  Kind dieser Partnerschaft hinzufügen
+                </button>
+              } @else {
+                <div class="emptyRelations">
+                  <span>Keine Kinder eingetragen</span>
+
+                  <button
+                    type="button"
+                    (click)="openPersonPopup('child', i, null)"
+                  >
+                    Kind hinzufügen
+                  </button>
+                </div>
+              }
+            </div>
+            <div class="divider"></div>
+          </div>
+        } @else {
+          <div class="newPartnerChildBox">
+            <button type="button" (click)="newPartnerChildBox(i)">
+              Partnerschaft {{ i + 1 }} / Kind anlegen
+            </button>
+          </div>
+        }
+      }
+
+      <!-- Keine Partnerschaften vorhanden -->
+    </div>
+
+    <h3>Quellen und Notizen</h3>
+    <div class="textBox">
+      <label for="note">Quellen</label>
+      <textarea id="note" [(ngModel)]="sour" rows="6"></textarea>
+    </div>
+    <div class="textBox">
+      <label for="note">Notizen</label>
+      <textarea id="note" [(ngModel)]="note" rows="6"></textarea>
+    </div>
+
+    <div>
+      <h4>Bilder:</h4>
+
+      <h5>Vorhandene Bilder</h5>
+
+      <div class="deleteImageContainer">
+        @for (index of [1, 2, 3, 4, 5, 6]; track index) {
+          @if (getExistingImage(index)) {
+            <div class="deleteImage">
+              <img
+                [src]="getExistingImage(index)"
+                alt="Bild {{ index }}"
+                width="100"
+                [ngClass]="{
+                  'grayed-out': isImageDeleted(index),
+                }"
+              />
+
+              <button type="button" (click)="removeExistingImage(index)">
+                {{ isImageDeleted(index) ? "Rückgängig" : "Bild löschen" }}
+              </button>
+            </div>
+          }
+        }
+      </div>
+
+      <h5>Bilder hochladen (max. 6):</h5>
+
+      @for (index of [1, 2, 3, 4, 5, 6]; track index) {
+        @if (isImageSlotAvailable(index)) {
+          <div class="imageUploadContainer">
+            <div class="upload-image-field">
+              <label [for]="'image' + index"> Bild {{ index }} </label>
+
+              <input
+                type="file"
+                [id]="'image' + index"
+                (change)="onImageFileChange($event, index)"
+                accept=".jpg,.jpeg,.png"
+              />
+            </div>
+            <div class="previewBox">
+              @if (imagePreviews[index - 1]) {
+                <div
+                  class="previewImage"
+                  (click)="removeImagePreview(index)"
+                  title="Bild entfernen"
+                >
+                  <img
+                    [src]="imagePreviews[index - 1]"
+                    alt="Vorschau"
+                    [id]="'preview' + index"
+                    width="100"
+                  />
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+  <div class="buttonBox">
+    <button type="button" (click)="cancel()">Abbrechen</button>
+    <button type="button" (click)="save()">Speichern</button>
+  </div>
+
+  @if (showSaveConfirmation) {
+    <div class="popUpConfirmation">
+      <div class="popUpConfirmationContent">
+        <h3>Anlage bestätigen</h3>
+
+        <p>Folgende Person wird gespeichert:</p>
+        @if (this.noNewChanges) {
+          <b>Keine Änderungen</b>
+          <br /><br />
+        }
+
+        @if (!this.noNewChanges) {
+          <ul>
+            @for (change of pendingChanges; track change.label) {
+              <li>
+                <strong>{{ change.label }}:</strong>
+                <span> {{ change.newValue }} </span>
+              </li>
+            }
+          </ul>
+        }
+
+        <div class="buttonBox">
+          <button type="button" (click)="cancelSave()">Abbrechen</button>
+
+          <button type="button" (click)="confirmSave()">
+            Änderungen speichern
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (personPopupOpen) {
+    <div class="popupOverlay" (click)="closePersonPopup()">
+      <div class="personPopup" (click)="$event.stopPropagation()">
+        <div class="personPopupHeader">
+          <h3>
+            @if (personPopupPerson) {
+              Person ändern
+            } @else {
+              Person hinzufügen
+            }
+          </h3>
+        </div>
+
+        @if (personPopupPerson) {
+          <div class="selectedPerson">
+            <div class="selectedPersonName">
+              {{ personPopupPerson.name }}
+            </div>
+
+            <div class="selectedPersonRefn">({{ personPopupPerson.refn }})</div>
+          </div>
+        }
+
+        <div class="personSearch">
+          <label for="personSearch"> Person suchen </label>
+
+          <input
+            id="personSearch"
+            type="text"
+            [(ngModel)]="personSearchTerm"
+            (input)="searchPersons()"
+            placeholder="Name oder REFN suchen ..."
+          />
+        </div>
+        @if (personSearchLoading) {
+          <div class="personSearchLoading">Suche läuft ...</div>
+        } @else if (personSearchResults.length > 0) {
+          <div class="personSearchResults">
+            @for (person of personSearchResults; track person.refn) {
+              <div
+                class="personSearchResult"
+                [class.selected]="
+                  personPopupSelectedPerson?.refn === person.refn
+                "
+                (click)="selectPerson(person)"
+              >
+                <div class="selectedPerson">
+                  <div class="selectedPersonName">
+                    {{ person.name }}
+                  </div>
+
+                  <div class="selectedPersonRefn">
+                    {{ person.refn }}
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (personSearchTerm.trim()) {
+          <div class="emptyRelations">Keine Person gefunden.</div>
+        }
+        <br />
+        <div class="buttonBox">
+          <button type="button" (click)="closePersonPopup()">Abbrechen</button>
+          <button
+            type="button"
+            class="deleteButton"
+            (click)="removePersonFromPopup()"
+          >
+            Person entfernen
+          </button>
+          <button
+            type="button"
+            (click)="savePersonPopup()"
+            [disabled]="!personPopupSelectedPerson"
+          >
+            Hinzufügen
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</section>
+
+<app-scroll-to-top-button></app-scroll-to-top-button>

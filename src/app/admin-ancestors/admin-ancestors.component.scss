@@ -1,0 +1,14 @@
+.newPersonClick {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (max-width: 350px) {
+  .newPersonClick {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 16px;
+  }
+}

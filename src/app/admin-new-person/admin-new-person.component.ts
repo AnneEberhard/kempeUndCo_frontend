@@ -8,20 +8,17 @@ import { PersonChange } from '../interfaces/person-change';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '../services/loading.service';
-import { EditFamily } from '../interfaces/edit-family';
 import { AdminRelations } from '../interfaces/admin-relations';
+import { NewFamily } from '../interfaces/new-family';
 
 @Component({
-  selector: 'app-admin-person',
-  standalone: true,
+  selector: 'app-admin-new-person',
   imports: [ScrollToTopButtonComponent, FormsModule, CommonModule],
-  templateUrl: './admin-person.component.html',
-  styleUrl: './admin-person.component.scss'
+  templateUrl: './admin-new-person.component.html',
+  styleUrl: './admin-new-person.component.scss',
 })
-export class AdminPersonComponent implements OnInit {
-
+export class AdminNewPersonComponent {
   person: AdminPerson | null = null;
-  family: EditFamily | undefined;
   error = '';
   givn = '';
   surn = '';
@@ -52,7 +49,6 @@ export class AdminPersonComponent implements OnInit {
     null,
     null
   ];
-
   imagePreviews: (string | null)[] = [
     null,
     null,
@@ -61,9 +57,7 @@ export class AdminPersonComponent implements OnInit {
     null,
     null
   ];
-
   deletedImageSlots = new Set<number>();;
-
   pendingChanges: PersonChange[] = [];
   noNewChanges: boolean = true;
   showSaveConfirmation = false;
@@ -78,14 +72,49 @@ export class AdminPersonComponent implements OnInit {
   personSearchLoading = false;
   personPopupSelectedPerson: AdminPerson | null = null;
 
+  family: NewFamily = {
+    parents: [null, null],
+
+    marriages: [
+      {
+        spouse: null,
+        marr_date: null,
+        marr_plac: null,
+        fam_stat: null,
+        children: []
+      },
+      {
+        spouse: null,
+        marr_date: null,
+        marr_plac: null,
+        fam_stat: null,
+        children: []
+      },
+      {
+        spouse: null,
+        marr_date: null,
+        marr_plac: null,
+        fam_stat: null,
+        children: []
+      },
+      {
+        spouse: null,
+        marr_date: null,
+        marr_plac: null,
+        fam_stat: null,
+        children: []
+      }
+    ]
+  };
+
   familyStatusChoices = [
     { value: 'married', label: 'verheiratet' },
     { value: 'not_married', label: 'nicht verheiratet' },
     { value: 'widowed', label: 'verwitwet' },
     { value: 'divorced', label: 'geschieden' }
   ];
-  originalRelation: AdminRelations | null = null;
-  originalFamily: EditFamily | null = null;
+  availableFamilies: string[] = [];
+  selectedFamily = '';
   successMessage = '';
 
   constructor(
@@ -94,81 +123,22 @@ export class AdminPersonComponent implements OnInit {
     private loadingService: LoadingService
   ) { }
 
-
   ngOnInit(): void {
-    const refn = this.route.snapshot.paramMap.get('refn');
+    const family1 = localStorage.getItem('family_1');
+    const family2 = localStorage.getItem('family_2');
 
-    if (!refn) {
-      this.error = 'Keine REFN angegeben.';
-      return;
+    this.availableFamilies = [family1, family2]
+      .filter((family): family is string => !!family);
+    console.log(this.availableFamilies);
+
+    if (this.availableFamilies.length === 1) {
+      this.selectedFamily = this.availableFamilies[0];
     }
-    this.loadingService.show();
-    this.adminFamilyService.getAdminPerson(refn).subscribe({
-      next: person => {
-        this.person = person;
-        this.givn = person.givn ?? '';
-        this.surn = person.surn ?? '';
-        this.nameRufname = person.name_rufname ?? '';
-        this.nameNick = person.name_nick ?? '';
-        this.occu = person.occu ?? '';
-        this.reli = person.reli ?? '';
-        this.nameNpfx = person.name_npfx ?? '';
-        this.nameMarnm = person.name_marnm ?? '';
-        this.sour = person.sour ?? '';
-        this.note = person.note ?? '';
-        this.birtDate = person.birt_date ?? '';
-        this.birtPlac = person.birt_plac ?? '';
-        this.deatDate = person.deat_date ?? '';
-        this.deatPlac = person.deat_plac ?? '';
-        this.chrDate = person.chr_date ?? '';
-        this.chrPlac = person.chr_plac ?? '';
-        this.chrAddr = person.chr_addr ?? '';
-        this.buriDate = person.buri_date ?? '';
-        this.buriPlac = person.buri_plac ?? '';
-        this.sex = person.sex ?? 'D';
-        this.confidential = person.confidential ?? 'no';
-
-      },
-      error: error => {
-        console.error(error);
-        this.error = `Person konnte nicht geladen werden. (${error.status})`;
-      }
-    });
-    this.loadFamilyData();
   }
-
-  loadFamilyData() {
-    const refn = this.route.snapshot.paramMap.get('refn');
-
-    if (!refn) {
-      this.error = 'Keine REFN angegeben.';
-      return;
-    }
-
-    this.adminFamilyService.getEditFamily(refn).subscribe({
-      next: (family) => {
-        this.family = family;
-      },
-      error: (error) => {
-        console.error('Fehler beim Laden der Familiendaten:', error);
-        this.loadingService.hide();
-        if (error.status === 404) {
-          alert('Familiendaten nicht gefunden.');
-        } else if (error.status === 500) {
-          alert('Serverfehler. Bitte versuche es später erneut.');
-        } else {
-          alert('Fehler beim Laden der Familiendaten.');
-        }
-      },
-      complete: () => {
-        this.loadingService.hide();
-      }
-    });
-  }
-
 
   save(): void {
-    if (!this.person) {
+    if (!this.selectedFamily) {
+      alert('Bitte wähle einen Stammbaum aus.');
       return;
     }
 
@@ -349,61 +319,50 @@ export class AdminPersonComponent implements OnInit {
 
 
   getChanges(): PersonChange[] {
-    if (!this.person) {
-      return [];
-    }
-
     const changes: PersonChange[] = [];
 
-    const compare = (
+    const addChange = (
       label: string,
-      oldValue: string | null,
-      newValue: string
+      value: string | null | undefined
     ): void => {
-      const oldText = oldValue ?? '';
+      const newValue = value?.trim() ?? '';
 
-      if (oldText !== newValue) {
+      if (newValue) {
         changes.push({
           label,
-          oldValue: oldText,
+          oldValue: '',
           newValue
         });
       }
     };
 
-    compare('Vorname', this.person.givn, this.givn);
-    compare('Nachname', this.person.surn, this.surn);
-    compare('Rufname', this.person.name_rufname, this.nameRufname);
-    compare('Spitzname', this.person.name_nick, this.nameNick);
-    compare('Beruf', this.person.occu, this.occu);
-    compare('Religion', this.person.reli, this.reli);
-
-    compare('Namenspräfix', this.person.name_npfx, this.nameNpfx);
-    compare('Geburtsname', this.person.name_marnm, this.nameMarnm);
-    compare('Quelle', this.person.sour, this.sour);
-    compare('Notiz', this.person.note, this.note);
-
-    compare('Geburtsdatum', this.person.birt_date, this.birtDate);
-    compare('Geburtsort', this.person.birt_plac, this.birtPlac);
-
-    compare('Sterbedatum', this.person.deat_date, this.deatDate);
-    compare('Sterbeort', this.person.deat_plac, this.deatPlac);
-
-    compare('Taufdatum', this.person.chr_date, this.chrDate);
-    compare('Taufort', this.person.chr_plac, this.chrPlac);
-
-    compare('Beerdigungsdatum', this.person.buri_date, this.buriDate);
-    compare('Beerdigungsort', this.person.buri_plac, this.buriPlac);
-
-    compare('Tauf-/Kirchenadresse', this.person.chr_addr, this.chrAddr);
-
-    compare('Geschlecht', this.person.sex, this.sex);
-    compare('Vertraulichkeit', this.person.confidential, this.confidential);
-
+    addChange('Vorname', this.givn);
+    addChange('Nachname', this.surn);
+    addChange('Rufname', this.nameRufname);
+    addChange('Spitzname', this.nameNick);
+    addChange('Beruf', this.occu);
+    addChange('Religion', this.reli);
+    addChange('Namenspräfix', this.nameNpfx);
+    addChange('Geburtsname', this.nameMarnm);
+    addChange('Quelle', this.sour);
+    addChange('Notiz', this.note);
+    addChange('Geburtsdatum', this.birtDate);
+    addChange('Geburtsort', this.birtPlac);
+    addChange('Sterbedatum', this.deatDate);
+    addChange('Sterbeort', this.deatPlac);
+    addChange('Taufdatum', this.chrDate);
+    addChange('Taufort', this.chrPlac);
+    addChange('Beerdigungsdatum', this.buriDate);
+    addChange('Beerdigungsort', this.buriPlac);
+    addChange('Tauf-/Kirchenadresse', this.chrAddr);
+   // addChange('Geschlecht', this.sex);
+ 
+    changes.push(...this.getSexChanges());
+    changes.push(...this.getConfidentialityChanges());
+    changes.push(...this.getFamilyChanges());
     changes.push(...this.getParentChanges());
     changes.push(...this.getSpousesChanges());
     changes.push(...this.getMarriageDataChanges());
-
     changes.push(...this.getChildrenChanges());
 
     changes.push(...this.getPictureChanges());
@@ -411,31 +370,92 @@ export class AdminPersonComponent implements OnInit {
     return changes;
   }
 
-  private getParentChanges(): PersonChange[] {
-    if (!this.person || !this.family) {
+private getSexChanges(): PersonChange[] {
+
+    const sexLabel =
+      this.sex === 'F'
+        ? 'weiblich'
+        : this.sex === 'M'
+          ? 'männlich'
+          : this.sex === 'D'
+            ? 'divers'
+            : this.sex;
+
+    return [
+      {
+        label: 'Vertraulichkeit',
+        oldValue: '',
+        newValue: sexLabel
+      }
+    ];
+  }
+
+
+  private getConfidentialityChanges(): PersonChange[] {
+    if (!this.confidential) {
       return [];
     }
 
-    const changes: PersonChange[] = [];
-    const oldFather = this.family.originalRelation.fath_refn ?? '';
-    const newFather = this.family.parents[0]?.refn ?? '';
+    const confidentialLabel =
+      this.confidential === 'no'
+        ? 'Nein'
+        : this.confidential === 'restricted'
+          ? 'Eingeschränkt'
+          : this.confidential === 'yes'
+            ? 'Ja'
+            : this.confidential;
 
-    if (oldFather !== newFather) {
+    return [
+      {
+        label: 'Vertraulichkeit',
+        oldValue: '',
+        newValue: confidentialLabel
+      }
+    ];
+  }
+
+
+  private getFamilyChanges(): PersonChange[] {
+    if (!this.selectedFamily) {
+      return [];
+    }
+
+    const familyLabel =
+      this.selectedFamily === 'kempe'
+        ? 'Kempe'
+        : this.selectedFamily === 'huenten'
+          ? 'Hünten'
+          : this.selectedFamily;
+
+    return [
+      {
+        label: 'Stammbaum',
+        oldValue: '',
+        newValue: familyLabel
+      }
+    ];
+  }
+
+  private getParentChanges(): PersonChange[] {
+    const changes: PersonChange[] = [];
+
+    const father = this.family.parents[0];
+
+    if (father) {
       changes.push({
         label: 'Vater',
-        oldValue: this.family.originalRelation.fath_name ?? oldFather,
-        newValue: this.family.parents[0]?.name ?? newFather
+        oldValue: '',
+        newValue: father.name
       });
     }
 
-    const oldMother = this.family.originalRelation.moth_refn ?? '';
-    const newMother = this.family.parents[1]?.refn ?? '';
+    const mother = this.family.parents[1];
 
-    if (oldMother !== newMother) {
+    if (mother) {
       changes.push({
         label: 'Mutter',
-        oldValue: this.family.originalRelation.moth_name ?? oldMother,
-        newValue: this.family.parents[1]?.name ?? newMother
+        oldValue: '',
+        newValue: mother.name
       });
     }
 
@@ -443,130 +463,77 @@ export class AdminPersonComponent implements OnInit {
   }
 
   private getSpousesChanges(): PersonChange[] {
-    if (!this.family) {
-      return [];
-    }
-
     const changes: PersonChange[] = [];
 
-    for (let i = 0; i < this.family.marriages.length; i++) {
-      const marriage = this.family.marriages[i];
-      const index = i + 1;
-
-      const oldSpouseRefn =
-        this.family.originalRelation[
-        `marr_spou_refn_${index}` as keyof AdminRelations
-        ] as string | null;
-
-      const newSpouseRefn = marriage.spouse?.refn ?? '';
-
-      if ((oldSpouseRefn ?? '') !== newSpouseRefn) {
-        const oldSpouse = oldSpouseRefn
-          ? this.adminFamilyService.personsByRefn.get(oldSpouseRefn)
-          : null;
+    this.family.marriages.forEach((marriage, i) => {
+      if (marriage.spouse) {
         changes.push({
-          label: `Partnerschaft ${index}`,
-          oldValue: oldSpouse?.name ?? oldSpouseRefn ?? '',
-          newValue: marriage.spouse?.name ?? newSpouseRefn
+          label: `Partnerschaft ${i + 1}`,
+          oldValue: '',
+          newValue: marriage.spouse.name
         });
       }
-    }
+    });
 
     return changes;
   }
 
   private getMarriageDataChanges(): PersonChange[] {
-    if (!this.family) {
-      return [];
-    }
     const changes: PersonChange[] = [];
 
     for (let i = 0; i < this.family.marriages.length; i++) {
       const marriage = this.family.marriages[i];
       const index = i + 1;
 
-      const oldDate =
-        this.family.originalRelation[
-        `marr_date_${index}` as keyof AdminRelations
-        ] as string | null | undefined;
-
-      const oldPlace =
-        this.family.originalRelation[
-        `marr_plac_${index}` as keyof AdminRelations
-        ] as string | null | undefined;
-
-      const oldStatus =
-        this.family.originalRelation[
-        `fam_stat_${index}` as keyof AdminRelations
-        ] as string | null | undefined;
-
-      if ((oldDate ?? '') !== (marriage.marr_date ?? '')) {
+      if (marriage.marr_date?.trim()) {
         changes.push({
           label: `Heiratsdatum ${index}`,
-          oldValue: oldDate ?? '',
-          newValue: marriage.marr_date ?? ''
+          oldValue: '',
+          newValue: marriage.marr_date
         });
       }
 
-      if ((oldPlace ?? '') !== (marriage.marr_plac ?? '')) {
+      if (marriage.marr_plac?.trim()) {
         changes.push({
           label: `Heiratsort ${index}`,
-          oldValue: oldPlace ?? '',
-          newValue: marriage.marr_plac ?? ''
+          oldValue: '',
+          newValue: marriage.marr_plac
         });
       }
 
-      if ((oldStatus ?? '') !== (marriage.fam_stat ?? '')) {
+      if (marriage.fam_stat) {
+        const status = this.familyStatusChoices.find(
+          choice => choice.value === marriage.fam_stat
+        );
+
         changes.push({
           label: `Familienstand ${index}`,
-          oldValue: oldStatus ?? '',
-          newValue: marriage.fam_stat ?? ''
+          oldValue: '',
+          newValue: status?.label ?? marriage.fam_stat
         });
       }
-
     }
+
     return changes;
   }
 
   private getChildrenChanges(): PersonChange[] {
-    if (!this.family) {
-      return [];
-    }
-
     const changes: PersonChange[] = [];
 
     for (let i = 0; i < this.family.marriages.length; i++) {
       const marriage = this.family.marriages[i];
       const index = i + 1;
 
-      const oldChildren =
-        (
-          this.family.originalRelation[
-          `children_${index}` as keyof AdminRelations
-          ] as string[] | null | undefined
-        ) ?? [];
-
-      const newChildren = marriage.children
-        .filter((child): child is AdminPerson => child !== null)
-        .map(child => child.refn);
-
-      const oldChildrenText = oldChildren
-        .map(refn => {
-          const child = this.adminFamilyService.personsByRefn.get(refn);
-          return child?.name ?? refn;
-        })
-        .join(', ');
-
-      const newChildrenText = marriage.children
+      const childrenText = marriage.children
         .filter((child): child is AdminPerson => child !== null)
         .map(child => child.name)
         .join(', ');
 
-      if (oldChildrenText !== newChildrenText) {
+      if (childrenText) {
         changes.push({
           label: `Kinder aus Partnerschaft ${index}`,
-          oldValue: oldChildrenText,
-          newValue: newChildrenText
+          oldValue: '',
+          newValue: childrenText
         });
       }
     }
@@ -659,8 +626,7 @@ export class AdminPersonComponent implements OnInit {
 
   clearRelationData() {
     if (this.family) {
-      this.originalFamily = structuredClone(this.family);
-      this.originalRelation = structuredClone(this.family.originalRelation);
+
     }
 
     this.expandedMarriageBoxes.clear();
@@ -757,10 +723,6 @@ export class AdminPersonComponent implements OnInit {
     );
   }
 
-  newPartnerChildBox(index: number): void {
-    this.expandedMarriageBoxes.add(index);
-  }
-
   openPersonPopup(
     type: 'spouse' | 'child' | 'father' | 'mother',
     marriageIndex: number,
@@ -810,6 +772,7 @@ export class AdminPersonComponent implements OnInit {
 
   selectPerson(person: AdminPerson): void {
     this.personPopupSelectedPerson = person;
+    console.log(this.personPopupSelectedPerson);
   }
 
   savePersonPopup(): void {
@@ -911,20 +874,25 @@ export class AdminPersonComponent implements OnInit {
     this.closePersonPopup();
   }
 
-  goToNewPerson(): void {
-  this.pendingChanges = this.getChanges();
-  if (this.pendingChanges.length > 0) {
-    const proceed = window.confirm(
-      'Es gibt ungespeicherte Änderungen.\n\n' +
-      'Bitte speichere die Änderungen zuerst, bevor du eine neue Person anlegst.\n\n' +
-      'Möchtest du trotzdem zur neuen Person wechseln?'
-    );
-
-    if (!proceed) {
-      return;
-    }
+  newPartnerChildBox(index: number): void {
+    this.expandedMarriageBoxes.add(index);
   }
 
-  this.router.navigate(['/admin-ancestors/newperson']);
-}
+  goToSearch(): void {
+    this.pendingChanges = this.getChanges();
+    if (this.pendingChanges.length > 0) {
+      const proceed = window.confirm(
+        'Es gibt ungespeicherte Änderungen.\n\n' +
+        'Bitte speichere die Änderungen zuerst, bevor du eine neue Person anlegst.\n\n' +
+        'Möchtest du trotzdem zur Suche wechseln?'
+      );
+
+      if (!proceed) {
+        return;
+      }
+    }
+
+    this.router.navigate(['/admin-ancestors']);
+  }
+
 }

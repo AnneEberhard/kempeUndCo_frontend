@@ -6,7 +6,9 @@
   }
 
   @if (successMessage) {
-    <b><i>{{ successMessage }}</i></b>
+    <b
+      ><i>{{ successMessage }}</i></b
+    >
   }
 
   @if (person) {
@@ -161,25 +163,34 @@
           diese zunächst als eigenständige Personen angelegt sein. Hier können
           keine neuen Personen angelegt werden.
         </i>
+        <button
+          type="button"
+          class="new-person-button"
+          (click)="goToNewPerson()"
+        >
+          Neue Person anlegen
+        </button>
         <h3>Eltern</h3>
 
         <div class="relationPersonBox">
           <label>Vater</label>
-          <div class="selectedPersonBox" *ngIf="family?.parents?.[0] as father">
-            <div class="selectedPerson">
-              <div class="selectedPersonName">
-                {{ father.name }}
-              </div>
+          @if (family?.parents?.[0]; as father) {
+            <div class="selectedPersonBox">
+              <div class="selectedPerson">
+                <div class="selectedPersonName">
+                  {{ father.name }}
+                </div>
 
-              <div class="selectedPersonRefn">({{ father.refn }})</div>
+                <div class="selectedPersonRefn">({{ father.refn }})</div>
+              </div>
+              <button
+                type="button"
+                (click)="openPersonPopup('father', 0, father)"
+              >
+                Person ändern
+              </button>
             </div>
-            <button
-              type="button"
-              (click)="openPersonPopup('father', 0, father)"
-            >
-              Person ändern
-            </button>
-          </div>
+          }
           @if (!family?.parents?.[0]) {
             <div class="selectedPersonBox">
               <span>Kein Vater ausgewählt</span>
@@ -196,22 +207,23 @@
 
         <div class="relationPersonBox">
           <label>Mutter</label>
+          @if (family?.parents?.[1]; as mother) {
+            <div class="selectedPersonBox">
+              <div class="selectedPerson">
+                <div class="selectedPersonName">
+                  {{ mother.name }}
+                </div>
 
-          <div class="selectedPersonBox" *ngIf="family?.parents?.[1] as mother">
-            <div class="selectedPerson">
-              <div class="selectedPersonName">
-                {{ mother.name }}
+                <div class="selectedPersonRefn">({{ mother.refn }})</div>
               </div>
-
-              <div class="selectedPersonRefn">({{ mother.refn }})</div>
+              <button
+                type="button"
+                (click)="openPersonPopup('mother', 0, mother)"
+              >
+                Person ändern
+              </button>
             </div>
-            <button
-              type="button"
-              (click)="openPersonPopup('mother', 0, mother)"
-            >
-              Person ändern
-            </button>
-          </div>
+          }
           @if (!family?.parents?.[1]) {
             <div class="selectedPersonBox">
               <span>Keine Mutter ausgewählt</span>
