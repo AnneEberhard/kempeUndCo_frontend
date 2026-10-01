@@ -31,7 +31,7 @@ export class AdminAncestorsComponent {
   loadPerson(refn: string): void {
     this.error = '';
 
-    this.adminFamilyService.getPerson(refn).subscribe({
+    this.adminFamilyService.getAdminPerson(refn).subscribe({
       next: person => {
         this.person = person;
         console.log('Admin Person:', person);

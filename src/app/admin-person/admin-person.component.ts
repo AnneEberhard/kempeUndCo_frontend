@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { PersonChange } from '../interfaces/person-change';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { CommonModule } from '@angular/common';
+import { LoadingService } from '../services/loading.service';
+import { EditFamily } from '../interfaces/edit-family';
 
 @Component({
   selector: 'app-admin-person',
@@ -18,6 +20,7 @@ import { CommonModule } from '@angular/common';
 export class AdminPersonComponent implements OnInit {
 
   person: AdminPerson | null = null;
+  family: EditFamily | undefined;
   error = '';
   givn = '';
   surn = '';
@@ -63,10 +66,28 @@ export class AdminPersonComponent implements OnInit {
   pendingChanges: PersonChange[] = [];
   noNewChanges: boolean = true;
   showSaveConfirmation = false;
+  expandedMarriageBoxes = new Set<number>();
+  personPopupOpen = false;
+  personPopupType: 'father' | 'mother' | 'spouse' | 'child' | null = null;
+  personPopupMarriageIndex: number | null = null;
+  personPopupChildIndex: number | null = null;
+  personPopupPerson: AdminPerson | null = null;
+  personSearchTerm = '';
+  personSearchResults: AdminPerson[] = [];
+  personSearchLoading = false;
+  personPopupSelectedPerson: AdminPerson | null = null;
+
+  familyStatusChoices = [
+    { value: 'married', label: 'verheiratet' },
+    { value: 'not_married', label: 'nicht verheiratet' },
+    { value: 'widowed', label: 'verwitwet' },
+    { value: 'divorced', label: 'geschieden' }
+  ];
 
   constructor(
     private route: ActivatedRoute, private router: Router,
-    private adminFamilyService: AdminFamilyService
+    private adminFamilyService: AdminFamilyService,
+    private loadingService: LoadingService
   ) { }
 
 
@@ -78,7 +99,7 @@ export class AdminPersonComponent implements OnInit {
       return;
     }
 
-    this.adminFamilyService.getPerson(refn).subscribe({
+    this.adminFamilyService.getAdminPerson(refn).subscribe({
       next: person => {
         this.person = person;
         this.givn = person.givn ?? '';
@@ -109,7 +130,40 @@ export class AdminPersonComponent implements OnInit {
         this.error = `Person konnte nicht geladen werden. (${error.status})`;
       }
     });
+    this.loadFamilyData();
   }
+
+  loadFamilyData() {
+    this.loadingService.show();
+    const refn = this.route.snapshot.paramMap.get('refn');
+
+    if (!refn) {
+      this.error = 'Keine REFN angegeben.';
+      return;
+    }
+
+    this.adminFamilyService.getEditFamily(refn).subscribe({
+      next: (family) => {
+        this.family = family;
+        console.log(this.family);
+      },
+      error: (error) => {
+        console.error('Fehler beim Laden der Familiendaten:', error);
+        this.loadingService.hide();
+        if (error.status === 404) {
+          alert('Familiendaten nicht gefunden.');
+        } else if (error.status === 500) {
+          alert('Serverfehler. Bitte versuche es später erneut.');
+        } else {
+          alert('Fehler beim Laden der Familiendaten.');
+        }
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
+    });
+  }
+
 
   save(): void {
     if (!this.person) {
@@ -124,7 +178,6 @@ export class AdminPersonComponent implements OnInit {
     }
     this.showSaveConfirmation = true;
   }
-
 
 
   confirmSave(): void {
@@ -400,14 +453,205 @@ export class AdminPersonComponent implements OnInit {
   }
 
   removeImagePreview(index: number): void {
-  this.imagePreviews[index - 1] = null;
-  this.imageFiles[index - 1] = null;
+    this.imagePreviews[index - 1] = null;
+    this.imageFiles[index - 1] = null;
     const input = document.getElementById(
-    `image${index}`
-  ) as HTMLInputElement | null;
+      `image${index}`
+    ) as HTMLInputElement | null;
 
-  if (input) {
-    input.value = '';
+    if (input) {
+      input.value = '';
+    }
   }
-}
+
+  get hasMarriages(): boolean {
+    return this.family?.marriages.some(
+      marriage =>
+        marriage.spouse !== null ||
+        marriage.children.length > 0
+    ) ?? false;
+  }
+
+  hasMarriageData(
+    marriage: {
+      spouse: AdminPerson | null;
+      marr_date: string | null;
+      marr_plac: string | null;
+      fam_stat: string | null;
+      children: (AdminPerson | null)[];
+    },
+    index: number
+  ): boolean {
+    if (index === 0) {
+      return true;
+    }
+
+    if (this.expandedMarriageBoxes.has(index)) {
+      return true;
+    }
+
+    return (
+      marriage.spouse !== null ||
+      marriage.marr_date !== null ||
+      marriage.marr_plac !== null ||
+      marriage.fam_stat !== null ||
+      marriage.children.some(child => child !== null)
+    );
+  }
+
+  newPartnerChildBox(index: number): void {
+    this.expandedMarriageBoxes.add(index);
+  }
+
+  openPersonPopup(
+    type: 'spouse' | 'child' | 'father' | 'mother',
+    marriageIndex: number,
+    person: AdminPerson | null,
+    childIndex: number | null = null
+  ): void {
+    this.personPopupType = type;
+    this.personPopupMarriageIndex = marriageIndex;
+    this.personPopupChildIndex = childIndex;
+    this.personPopupPerson = person;
+    this.personPopupSelectedPerson = person;
+    this.personSearchTerm = '';
+    this.personSearchResults = [];
+    this.personPopupOpen = true;
+  }
+
+  closePersonPopup(): void {
+    this.personPopupOpen = false;
+    this.personPopupType = null;
+    this.personPopupMarriageIndex = null;
+    this.personPopupChildIndex = null;
+    this.personPopupPerson = null;
+    this.personPopupSelectedPerson = null;
+    this.personSearchTerm = '';
+    this.personSearchResults = [];
+  }
+
+  searchPersons() {
+    const search = this.personSearchTerm.trim();
+    if (!search) {
+      this.personSearchResults = [];
+      return;
+    }
+    this.personSearchLoading = true;
+    this.adminFamilyService.searchRelatedPersons(search).subscribe({
+      next: (persons) => {
+        this.personSearchResults = persons;
+        this.personSearchLoading = false;
+      },
+      error: (error) => {
+        console.error('Fehler bei der Personensuche:', error);
+        this.personSearchResults = [];
+        this.personSearchLoading = false;
+      }
+    });
+  }
+
+  selectPerson(person: AdminPerson): void {
+    this.personPopupSelectedPerson = person;
+    console.log(this.personPopupSelectedPerson);
+  }
+
+  savePersonPopup(): void {
+    if (!this.personPopupSelectedPerson) {
+      return;
+    }
+
+    const person = this.personPopupSelectedPerson;
+
+    switch (this.personPopupType) {
+
+      case 'father':
+        if (this.family) {
+          this.family.parents[0] = person;
+        }
+        break;
+
+      case 'mother':
+        if (this.family) {
+          this.family.parents[1] = person;
+        }
+        break;
+
+      case 'spouse':
+        if (
+          this.family &&
+          this.personPopupMarriageIndex !== null
+        ) {
+          this.family.marriages[
+            this.personPopupMarriageIndex
+          ].spouse = person;
+        }
+        break;
+
+      case 'child':
+        if (
+          this.family &&
+          this.personPopupMarriageIndex !== null
+        ) {
+          const marriage =
+            this.family.marriages[
+            this.personPopupMarriageIndex
+            ];
+
+          if (this.personPopupChildIndex !== null) {
+            // Bestehendes Kind ändern
+            marriage.children[
+              this.personPopupChildIndex
+            ] = person;
+          } else {
+            // Neues Kind hinzufügen
+            marriage.children.push(person);
+          }
+        }
+        break;
+    }
+    console.log(this.family);
+
+    this.closePersonPopup();
+  }
+
+  removePersonFromPopup(): void {
+    if (!this.family) {
+      return;
+    }
+
+    switch (this.personPopupType) {
+
+      case 'father':
+        this.family.parents[0] = null;
+        break;
+
+      case 'mother':
+        this.family.parents[1] = null;
+        break;
+
+      case 'spouse':
+        if (this.personPopupMarriageIndex !== null) {
+          this.family.marriages[
+            this.personPopupMarriageIndex
+          ].spouse = null;
+        }
+        break;
+
+      case 'child':
+        if (
+          this.personPopupMarriageIndex !== null &&
+          this.personPopupChildIndex !== null
+        ) {
+          this.family.marriages[
+            this.personPopupMarriageIndex
+          ].children.splice(
+            this.personPopupChildIndex,
+            1
+          );
+        }
+        break;
+    }
+
+    this.closePersonPopup();
+  }
 }

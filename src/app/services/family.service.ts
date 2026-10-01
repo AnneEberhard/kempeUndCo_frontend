@@ -168,7 +168,7 @@ export class FamilyService {
    *
    * @returns {Person} A "Person" object with default or placeholder values.
    */
-  private createUnknownPerson(): Person {
+  createUnknownPerson(): Person {
     return {
       id: 0,
       refn: '',

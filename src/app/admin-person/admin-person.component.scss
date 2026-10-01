@@ -126,12 +126,14 @@ select {
 
   img {
     display: block;
-  transition: filter 0.2s ease, opacity 0.2s ease;
+    transition:
+      filter 0.2s ease,
+      opacity 0.2s ease;
 
-  &:hover {
-    filter: grayscale(100%);
-  opacity: 0.6;
-  }
+    &:hover {
+      filter: grayscale(100%);
+      opacity: 0.6;
+    }
   }
 }
 
@@ -141,3 +143,95 @@ select {
   gap: 16px;
   margin: 8px;
 }
+
+.newPartnerChildBox {
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
+}
+
+.emptyRelations {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selectedPersonBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selectedPerson {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.relationPersonBox {
+  label {
+    font-style: italic;
+  }
+}
+
+.popupOverlay {
+  position: fixed;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.personPopup {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 400px;
+  padding: 48px;
+  overflow: auto;
+}
+
+.personPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.margin8 {
+  margin: 8px 0 8px 0;
+}
+
+.personSearchResult {
+  cursor: pointer;
+  padding: 8px;
+}
+
+.personSearchResult.selected {
+  color: rgb(100, 16, 32);
+  background: #e0e2e6;
+}
+
+.dividerSmall {
+  background-color: rgb(192, 191, 191);
+  height: 0.5px;
+
+  margin-top: 8px;
+}
+
+.dividerMedium {
+  background-color: lightslategrey;
+  height: 0.5px;
+
+  margin: 8px 0 8px 0;
+}
+
+.infoText {
+  color: rgb(100, 16, 32);
+  font-size: 12px;
+}
+
