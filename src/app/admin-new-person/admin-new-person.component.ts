@@ -116,6 +116,8 @@ export class AdminNewPersonComponent {
   availableFamilies: string[] = [];
   selectedFamily = '';
   successMessage = '';
+  showSuccessPopup = false;
+  createdPersonRefn: string | null = null;
 
   constructor(
     private route: ActivatedRoute, private router: Router,
@@ -153,29 +155,39 @@ export class AdminNewPersonComponent {
 
 
   confirmSave(): void {
-    if (!this.person) {
-      return;
-    }
 
     this.showSaveConfirmation = false;
     this.error = '';
 
     const personData = this.assemblePersonData();
-    const relationData = this.assembleRelationData();
 
     this.adminFamilyService
-      .updatePerson(this.person.refn, personData)
+      .createPerson(personData)
       .subscribe({
-        next: person => {
-          this.clearPersonData(person);
-          this.saveRelation(person, relationData);
+        next: response => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+          this.clearPersonData();
+          this.clearRelationData();
+          this.successMessage = ' Person wurde erfolgreich angelegt.';
+          this.createdPersonRefn = response.person.refn;
+          this.showSuccessPopup = true;
         },
         error: error => {
           console.error(error);
           this.loadingService.hide();
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
           this.error =
             `Person konnte nicht gespeichert werden. (${error.status})`;
           alert(this.error);
+        },
+        complete: () => {
+          this.loadingService.hide();
         }
       });
   }
@@ -193,38 +205,24 @@ export class AdminNewPersonComponent {
     formData.append('name_marnm', this.nameMarnm);
     formData.append('sour', this.sour);
     formData.append('note', this.note);
-
     formData.append('birt_date', this.birtDate);
     formData.append('birt_plac', this.birtPlac);
-
     formData.append('deat_date', this.deatDate);
     formData.append('deat_plac', this.deatPlac);
-
     formData.append('chr_date', this.chrDate);
     formData.append('chr_plac', this.chrPlac);
     formData.append('chr_addr', this.chrAddr);
-
     formData.append('buri_date', this.buriDate);
     formData.append('buri_plac', this.buriPlac);
-
     formData.append('sex', this.sex);
     formData.append('confidential', this.confidential);
+    formData.append('family_1', this.selectedFamily);
 
     this.appendImageData(formData);
-
     return formData;
   }
 
   private appendImageData(formData: FormData): void {
-    for (let i = 1; i <= 6; i++) {
-      const title =
-        this.person?.[`obje_titl_${i}` as keyof AdminPerson];
-
-      formData.append(
-        `obje_titl_${i}`,
-        (title as string | null | undefined) ?? ''
-      );
-    }
 
     for (let i = 0; i < 6; i++) {
       const file = this.imageFiles[i];
@@ -237,77 +235,8 @@ export class AdminNewPersonComponent {
         );
       }
     }
-
-    for (const index of this.deletedImageSlots) {
-      formData.append(`delete_obje_file_${index}`, 'true');
-    }
   }
 
-  private assembleRelationData(): Partial<AdminRelations> {
-    if (!this.family) {
-      return {};
-    }
-
-    const relationData: Partial<AdminRelations> = {
-      fath_refn: this.family.parents[0]?.refn ?? null,
-      moth_refn: this.family.parents[1]?.refn ?? null
-    };
-
-    this.family.marriages.forEach((marriage, i) => {
-      const index = i + 1;
-
-      const marriageData = {
-        [`marr_spou_refn_${index}`]:
-          marriage.spouse?.refn ?? null,
-
-        [`marr_date_${index}`]:
-          marriage.marr_date,
-
-        [`marr_plac_${index}`]:
-          marriage.marr_plac,
-
-        [`fam_stat_${index}`]:
-          marriage.fam_stat,
-
-        [`children_${index}`]:
-          marriage.children
-            .filter((child): child is AdminPerson => child !== null)
-            .map(child => child.refn)
-      };
-
-      Object.assign(relationData, marriageData);
-    });
-
-    return relationData;
-  }
-
-  private saveRelation(
-    person: AdminPerson,
-    relationData: Partial<AdminRelations>
-  ): void {
-    this.adminFamilyService
-      .updateRelation(this.person!.refn, relationData)
-      .subscribe({
-        next: () => {
-          this.clearRelationData();
-          this.successMessage = 'Person wurde geändert.';
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        },
-        error: error => {
-          console.error(error);
-          this.loadingService.hide();
-          this.error =
-            `Familiendaten konnten nicht gespeichert werden. (${error.status})`;
-          alert(this.error);
-        },
-        complete: () => {
-          this.loadingService.hide();
-        }
-      });
-  }
 
   cancel(): void {
     this.router.navigate(['/admin-ancestors']);
@@ -316,7 +245,6 @@ export class AdminNewPersonComponent {
   cancelSave(): void {
     this.showSaveConfirmation = false;
   }
-
 
   getChanges(): PersonChange[] {
     const changes: PersonChange[] = [];
@@ -355,8 +283,8 @@ export class AdminNewPersonComponent {
     addChange('Beerdigungsdatum', this.buriDate);
     addChange('Beerdigungsort', this.buriPlac);
     addChange('Tauf-/Kirchenadresse', this.chrAddr);
-   // addChange('Geschlecht', this.sex);
- 
+    // addChange('Geschlecht', this.sex);
+
     changes.push(...this.getSexChanges());
     changes.push(...this.getConfidentialityChanges());
     changes.push(...this.getFamilyChanges());
@@ -370,7 +298,7 @@ export class AdminNewPersonComponent {
     return changes;
   }
 
-private getSexChanges(): PersonChange[] {
+  private getSexChanges(): PersonChange[] {
 
     const sexLabel =
       this.sex === 'F'
@@ -389,7 +317,6 @@ private getSexChanges(): PersonChange[] {
       }
     ];
   }
-
 
   private getConfidentialityChanges(): PersonChange[] {
     if (!this.confidential) {
@@ -413,7 +340,6 @@ private getSexChanges(): PersonChange[] {
       }
     ];
   }
-
 
   private getFamilyChanges(): PersonChange[] {
     if (!this.selectedFamily) {
@@ -542,92 +468,97 @@ private getSexChanges(): PersonChange[] {
   }
 
   private getPictureChanges(): PersonChange[] {
-    if (!this.person || !this.family) {
-      return [];
-    }
     const changes: PersonChange[] = [];
-    for (let i = 1; i <= 6; i++) {
-      const oldImage = this.person[
-        `obje_file_${i}` as keyof AdminPerson
-      ] as string | null | undefined;
 
+    for (let i = 1; i <= 6; i++) {
       const newFile = this.imageFiles[i - 1];
 
-      if (this.deletedImageSlots.has(i)) {
-        if (oldImage) {
-          changes.push({
-            label: `Bild ${i}`,
-            oldValue: 'vorhanden',
-            newValue: 'gelöscht'
-          });
-        }
-      } else if (newFile) {
+      if (newFile) {
         changes.push({
           label: `Bild ${i}`,
-          oldValue: oldImage ? 'vorhanden' : '',
+          oldValue: '',
           newValue: `hinzugefügt: ${newFile.name}`
         });
       }
     }
+
     return changes;
   }
 
-  clearPersonData(person: AdminPerson | null) {
-    if (!person) {
-      return
-    }
-    this.person = person;
+  clearPersonData(): void {
 
-    this.givn = person.givn ?? '';
-    this.surn = person.surn ?? '';
-    this.nameRufname = person.name_rufname ?? '';
-    this.nameNick = person.name_nick ?? '';
-    this.occu = person.occu ?? '';
-    this.reli = person.reli ?? '';
-    this.nameNpfx = person.name_npfx ?? '';
-    this.nameMarnm = person.name_marnm ?? '';
-    this.sour = person.sour ?? '';
-    this.note = person.note ?? '';
+    this.givn = '';
+    this.surn = '';
+    this.nameRufname = '';
+    this.nameNick = '';
+    this.occu = '';
+    this.reli = '';
+    this.nameNpfx = '';
+    this.nameMarnm = '';
+    this.sour = '';
+    this.note = '';
 
-    this.birtDate = person.birt_date ?? '';
-    this.birtPlac = person.birt_plac ?? '';
+    this.birtDate = '';
+    this.birtPlac = '';
 
-    this.deatDate = person.deat_date ?? '';
-    this.deatPlac = person.deat_plac ?? '';
+    this.deatDate = '';
+    this.deatPlac = '';
 
-    this.chrDate = person.chr_date ?? '';
-    this.chrPlac = person.chr_plac ?? '';
-    this.chrAddr = person.chr_addr ?? '';
+    this.chrDate = '';
+    this.chrPlac = '';
+    this.chrAddr = '';
 
-    this.buriDate = person.buri_date ?? '';
-    this.buriPlac = person.buri_plac ?? '';
+    this.buriDate = '';
+    this.buriPlac = '';
 
-    this.sex = person.sex ?? 'D';
-    this.confidential = person.confidential ?? 'no';
+    this.sex = 'D';
+    this.confidential = 'no';
 
     this.imageFiles = [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
+      null, null, null, null, null, null
     ];
+
     this.deletedImageSlots.clear();
+
     this.imagePreviews = [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
+      null, null, null, null, null, null
     ];
   }
 
-  clearRelationData() {
-    if (this.family) {
-
-    }
+  clearRelationData(): void {
+    this.family = {
+      parents: [null, null],
+      marriages: [
+        {
+          spouse: null,
+          marr_date: null,
+          marr_plac: null,
+          fam_stat: null,
+          children: []
+        },
+        {
+          spouse: null,
+          marr_date: null,
+          marr_plac: null,
+          fam_stat: null,
+          children: []
+        },
+        {
+          spouse: null,
+          marr_date: null,
+          marr_plac: null,
+          fam_stat: null,
+          children: []
+        },
+        {
+          spouse: null,
+          marr_date: null,
+          marr_plac: null,
+          fam_stat: null,
+          children: []
+        }
+      ]
+    };
 
     this.expandedMarriageBoxes.clear();
   }
@@ -650,39 +581,11 @@ private getSexChanges(): PersonChange[] {
       return;
     }
 
-    // index ist 1-basiert: 1 -> Array-Index 0
     this.imageFiles[index - 1] = file;
     this.imagePreviews[index - 1] =
       URL.createObjectURL(file);
   }
 
-  getExistingImage(index: number): string | null {
-    if (!this.person) {
-      return null;
-    }
-
-    return this.person[
-      `obje_file_${index}` as keyof AdminPerson
-    ] as string | null ?? null;
-  }
-
-  removeExistingImage(index: number): void {
-    if (this.deletedImageSlots.has(index)) {
-      // Löschung rückgängig machen
-      this.deletedImageSlots.delete(index);
-    } else {
-      // Bild zum Löschen markieren
-      this.deletedImageSlots.add(index);
-    }
-  }
-
-  isImageSlotAvailable(index: number): boolean {
-    return !this.getExistingImage(index);
-  }
-
-  isImageDeleted(index: number): boolean {
-    return this.deletedImageSlots.has(index);
-  }
 
   removeImagePreview(index: number): void {
     this.imagePreviews[index - 1] = null;
@@ -694,33 +597,6 @@ private getSexChanges(): PersonChange[] {
     if (input) {
       input.value = '';
     }
-  }
-
-  hasMarriageData(
-    marriage: {
-      spouse: AdminPerson | null;
-      marr_date: string | null;
-      marr_plac: string | null;
-      fam_stat: string | null;
-      children: (AdminPerson | null)[];
-    },
-    index: number
-  ): boolean {
-    if (index === 0) {
-      return true;
-    }
-
-    if (this.expandedMarriageBoxes.has(index)) {
-      return true;
-    }
-
-    return (
-      marriage.spouse !== null ||
-      !!marriage.marr_date?.trim() ||
-      !!marriage.marr_plac?.trim() ||
-      !!marriage.fam_stat ||
-      marriage.children.some(child => child !== null)
-    );
   }
 
   openPersonPopup(
@@ -772,7 +648,6 @@ private getSexChanges(): PersonChange[] {
 
   selectPerson(person: AdminPerson): void {
     this.personPopupSelectedPerson = person;
-    console.log(this.personPopupSelectedPerson);
   }
 
   savePersonPopup(): void {
@@ -818,12 +693,10 @@ private getSexChanges(): PersonChange[] {
             ];
 
           if (this.personPopupChildIndex !== null) {
-            // Bestehendes Kind ändern
             marriage.children[
               this.personPopupChildIndex
             ] = person;
           } else {
-            // Neues Kind hinzufügen
             marriage.children.push(person);
           }
         }
@@ -834,9 +707,6 @@ private getSexChanges(): PersonChange[] {
   }
 
   removePersonFromPopup(): void {
-    if (!this.family) {
-      return;
-    }
 
     switch (this.personPopupType) {
 
@@ -895,4 +765,24 @@ private getSexChanges(): PersonChange[] {
     this.router.navigate(['/admin-ancestors']);
   }
 
+  goToCreatedPerson(): void {
+    if (!this.createdPersonRefn) {
+      return;
+    }
+
+    this.showSuccessPopup = false;
+
+    this.router.navigate([
+      '/admin-ancestors/person',
+      this.createdPersonRefn
+    ]);
+  }
+
+  goToNewPerson(): void {
+    this.showSuccessPopup = false;
+
+    this.router.navigate([
+      '/admin-ancestors/newperson'
+    ]);
+  }
 }

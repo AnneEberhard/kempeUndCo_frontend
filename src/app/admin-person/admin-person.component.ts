@@ -172,6 +172,10 @@ export class AdminPersonComponent implements OnInit {
       return;
     }
 
+    if (!this.validateFamilyData()) {
+      return;
+    }
+
     this.pendingChanges = this.getChanges();
     this.noNewChanges = false;
 
@@ -797,7 +801,9 @@ export class AdminPersonComponent implements OnInit {
     this.personSearchLoading = true;
     this.adminFamilyService.searchRelatedPersons(search).subscribe({
       next: (persons) => {
-        this.personSearchResults = persons;
+        this.personSearchResults = persons.filter(
+        person => person.refn !== this.person?.refn
+      );
         this.personSearchLoading = false;
       },
       error: (error) => {
@@ -912,19 +918,45 @@ export class AdminPersonComponent implements OnInit {
   }
 
   goToNewPerson(): void {
-  this.pendingChanges = this.getChanges();
-  if (this.pendingChanges.length > 0) {
-    const proceed = window.confirm(
-      'Es gibt ungespeicherte Änderungen.\n\n' +
-      'Bitte speichere die Änderungen zuerst, bevor du eine neue Person anlegst.\n\n' +
-      'Möchtest du trotzdem zur neuen Person wechseln?'
-    );
+    this.pendingChanges = this.getChanges();
+    if (this.pendingChanges.length > 0) {
+      const proceed = window.confirm(
+        'Es gibt ungespeicherte Änderungen.\n\n' +
+        'Bitte speichere die Änderungen zuerst, bevor du eine neue Person anlegst.\n\n' +
+        'Möchtest du trotzdem zur neuen Person wechseln?'
+      );
 
-    if (!proceed) {
-      return;
+      if (!proceed) {
+        return;
+      }
     }
+
+    this.router.navigate(['/admin-ancestors/newperson']);
   }
 
-  this.router.navigate(['/admin-ancestors/newperson']);
-}
+  private validateFamilyData(): boolean {
+    if (!this.family) {
+      return true;
+    }
+    debugger;
+
+    const childrenExist = this.family.marriages.some(marriage =>
+      marriage.children.some(child => child !== null)
+    );
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+    if (childrenExist && (!this.person?.sex || this.person.sex === 'D')) {
+      this.error =
+        'Bitte gib zuerst das Geschlecht der Person an, bevor du ein Kind anlegst.';
+
+      alert(this.error);
+      return false;
+    }
+
+    return true;
+  }
 }

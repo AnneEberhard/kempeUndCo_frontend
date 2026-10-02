@@ -7,6 +7,7 @@ import { AdminPerson } from '../interfaces/admin-person';
 import { AdminRelations } from '../interfaces/admin-relations';
 import { EditFamily } from '../interfaces/edit-family';
 import { FamilyService } from './family.service';
+import { AdminPersonCreateResponse } from '../interfaces/admin-person-create-response';
 
 
 @Injectable({
@@ -166,4 +167,11 @@ export class AdminFamilyService {
       data
     );
   }
+
+  createPerson(data: FormData): Observable<AdminPersonCreateResponse> {
+  return this.http.post<AdminPersonCreateResponse>(
+    `${this.apiUrl}/persons/new/`,
+    data
+  );
+}
 }
