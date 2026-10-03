@@ -126,8 +126,7 @@ export class AdminPersonComponent implements OnInit {
         this.buriDate = person.buri_date ?? '';
         this.buriPlac = person.buri_plac ?? '';
         this.sex = person.sex ?? 'D';
-        this.confidential = person.confidential ?? 'no';
-
+        this.confidential = person.confidential ?? 'restricted';
       },
       error: error => {
         console.error(error);
@@ -324,7 +323,9 @@ export class AdminPersonComponent implements OnInit {
       .subscribe({
         next: () => {
           this.clearRelationData();
+          this.loadFamilyData();
           this.successMessage = 'Person wurde geändert.';
+          this.pendingChanges = [];
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -401,8 +402,24 @@ export class AdminPersonComponent implements OnInit {
 
     compare('Tauf-/Kirchenadresse', this.person.chr_addr, this.chrAddr);
 
-    compare('Geschlecht', this.person.sex, this.sex);
-    compare('Vertraulichkeit', this.person.confidential, this.confidential);
+    //compare('Geschlecht', this.person.sex, this.sex);
+    //compare('Vertraulichkeit', this.person.confidential, this.confidential);
+
+    if (this.person.sex !== this.sex) {
+      changes.push({
+        label: 'Geschlecht',
+        oldValue: this.getSexLabel(this.person.sex),
+        newValue: this.getSexLabel(this.sex)
+      });
+    }
+
+    if (this.person.confidential !== this.confidential) {
+      changes.push({
+        label: 'Vertraulichkeit',
+        oldValue: this.getConfidentialLabel(this.person.confidential),
+        newValue: this.getConfidentialLabel(this.confidential)
+      });
+    }
 
     changes.push(...this.getParentChanges());
     changes.push(...this.getSpousesChanges());
@@ -413,6 +430,45 @@ export class AdminPersonComponent implements OnInit {
     changes.push(...this.getPictureChanges());
 
     return changes;
+  }
+
+  private getSexLabel(value: string | null | undefined): string {
+    switch (value) {
+      case 'M':
+        return 'Männlich';
+      case 'F':
+        return 'Weiblich';
+      case 'D':
+        return 'Divers';
+      default:
+        return '';
+    }
+  }
+
+  private getConfidentialLabel(value: string | null | undefined): string {
+    switch (value) {
+      case 'restricted':
+        return 'Vertraulich';
+      case 'no':
+        return 'Nicht vertraulich';
+      default:
+        return '';
+    }
+  }
+
+  private getFamilyStatusLabel(value: string | null | undefined): string {
+    switch (value) {
+      case 'married':
+        return 'Verheiratet';
+      case 'not_married':
+        return 'Nicht verheiratet';
+      case 'widowed':
+        return 'Verwitwet';
+      case 'divorced':
+        return 'Geschieden';
+      default:
+        return '';
+    }
   }
 
   private getParentChanges(): PersonChange[] {
@@ -523,8 +579,8 @@ export class AdminPersonComponent implements OnInit {
       if ((oldStatus ?? '') !== (marriage.fam_stat ?? '')) {
         changes.push({
           label: `Familienstand ${index}`,
-          oldValue: oldStatus ?? '',
-          newValue: marriage.fam_stat ?? ''
+          oldValue: this.getFamilyStatusLabel(oldStatus),
+          newValue: this.getFamilyStatusLabel(marriage.fam_stat)
         });
       }
 
@@ -802,8 +858,8 @@ export class AdminPersonComponent implements OnInit {
     this.adminFamilyService.searchRelatedPersons(search).subscribe({
       next: (persons) => {
         this.personSearchResults = persons.filter(
-        person => person.refn !== this.person?.refn
-      );
+          person => person.refn !== this.person?.refn
+        );
         this.personSearchLoading = false;
       },
       error: (error) => {
@@ -938,7 +994,6 @@ export class AdminPersonComponent implements OnInit {
     if (!this.family) {
       return true;
     }
-    debugger;
 
     const childrenExist = this.family.marriages.some(marriage =>
       marriage.children.some(child => child !== null)
@@ -949,7 +1004,7 @@ export class AdminPersonComponent implements OnInit {
       behavior: 'smooth'
     });
 
-    if (childrenExist && (!this.person?.sex || this.person.sex === 'D')) {
+    if (childrenExist && (!this.person?.sex || this.sex === 'D')) {
       this.error =
         'Bitte gib zuerst das Geschlecht der Person an, bevor du ein Kind anlegst.';
 
@@ -958,5 +1013,23 @@ export class AdminPersonComponent implements OnInit {
     }
 
     return true;
+  }
+
+  goToSearch(): void {
+    this.pendingChanges = this.getChanges();
+    console.log(this.pendingChanges);
+    if (this.pendingChanges.length > 0) {
+      const proceed = window.confirm(
+        'Es gibt ungespeicherte Änderungen.\n\n' +
+        'Bitte speichere die Änderungen zuerst, bevor du eine neue Person anlegst.\n\n' +
+        'Möchtest du trotzdem zur Suche wechseln?'
+      );
+
+      if (!proceed) {
+        return;
+      }
+    }
+
+    this.router.navigate(['/admin-ancestors']);
   }
 }

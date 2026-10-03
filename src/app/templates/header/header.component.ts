@@ -34,7 +34,6 @@ logout(): void {
 showNav(): void {
   const header = document.querySelector('header');
   const logo = document.getElementById('mobileLogo');
-  console.log(this.isAdmin);
   if (header) {
     header.style.display = 'flex';
     header.style.opacity = '1';

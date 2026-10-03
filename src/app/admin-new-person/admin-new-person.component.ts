@@ -8,7 +8,6 @@ import { PersonChange } from '../interfaces/person-change';
 import { ScrollToTopButtonComponent } from '../templates/scroll-to-top-button/scroll-to-top-button.component';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '../services/loading.service';
-import { AdminRelations } from '../interfaces/admin-relations';
 import { NewFamily } from '../interfaces/new-family';
 
 @Component({
@@ -40,7 +39,7 @@ export class AdminNewPersonComponent {
   buriDate = '';
   buriPlac = '';
   sex = 'D';
-  confidential = 'no';
+  confidential = 'restricted';
   imageFiles: (File | null)[] = [
     null,
     null,
@@ -131,7 +130,6 @@ export class AdminNewPersonComponent {
 
     this.availableFamilies = [family1, family2]
       .filter((family): family is string => !!family);
-    console.log(this.availableFamilies);
 
     if (this.availableFamilies.length === 1) {
       this.selectedFamily = this.availableFamilies[0];
@@ -237,7 +235,6 @@ export class AdminNewPersonComponent {
     }
   }
 
-
   cancel(): void {
     this.router.navigate(['/admin-ancestors']);
   }
@@ -251,11 +248,12 @@ export class AdminNewPersonComponent {
 
     const addChange = (
       label: string,
-      value: string | null | undefined
+      value: string | null | undefined,
+      defaultValue: string = ''
     ): void => {
       const newValue = value?.trim() ?? '';
 
-      if (newValue) {
+      if (newValue && newValue !== defaultValue) {
         changes.push({
           label,
           oldValue: '',
@@ -283,10 +281,9 @@ export class AdminNewPersonComponent {
     addChange('Beerdigungsdatum', this.buriDate);
     addChange('Beerdigungsort', this.buriPlac);
     addChange('Tauf-/Kirchenadresse', this.chrAddr);
-    // addChange('Geschlecht', this.sex);
+    addChange('Geschlecht', this.getSexLabel(this.sex), this.getSexLabel('D'));
+    addChange('Vertraulichkeit', this.getConfidentialLabel(this.confidential), this.getConfidentialLabel('restricted'));
 
-    changes.push(...this.getSexChanges());
-    changes.push(...this.getConfidentialityChanges());
     changes.push(...this.getFamilyChanges());
     changes.push(...this.getParentChanges());
     changes.push(...this.getSpousesChanges());
@@ -298,47 +295,29 @@ export class AdminNewPersonComponent {
     return changes;
   }
 
-  private getSexChanges(): PersonChange[] {
 
-    const sexLabel =
-      this.sex === 'F'
-        ? 'weiblich'
-        : this.sex === 'M'
-          ? 'männlich'
-          : this.sex === 'D'
-            ? 'divers'
-            : this.sex;
-
-    return [
-      {
-        label: 'Vertraulichkeit',
-        oldValue: '',
-        newValue: sexLabel
-      }
-    ];
+  private getSexLabel(value: string | null | undefined): string {
+    switch (value) {
+      case 'M':
+        return 'Männlich';
+      case 'F':
+        return 'Weiblich';
+      case 'D':
+        return 'Divers';
+      default:
+        return '';
+    }
   }
 
-  private getConfidentialityChanges(): PersonChange[] {
-    if (!this.confidential) {
-      return [];
+  private getConfidentialLabel(value: string | null | undefined): string {
+    switch (value) {
+      case 'restricted':
+        return 'Vertraulich';
+      case 'no':
+        return 'Nicht vertraulich';
+      default:
+        return '';
     }
-
-    const confidentialLabel =
-      this.confidential === 'no'
-        ? 'Nein'
-        : this.confidential === 'restricted'
-          ? 'Eingeschränkt'
-          : this.confidential === 'yes'
-            ? 'Ja'
-            : this.confidential;
-
-    return [
-      {
-        label: 'Vertraulichkeit',
-        oldValue: '',
-        newValue: confidentialLabel
-      }
-    ];
   }
 
   private getFamilyChanges(): PersonChange[] {
@@ -585,7 +564,6 @@ export class AdminNewPersonComponent {
     this.imagePreviews[index - 1] =
       URL.createObjectURL(file);
   }
-
 
   removeImagePreview(index: number): void {
     this.imagePreviews[index - 1] = null;

@@ -1,5 +1,8 @@
 <section>
   <h2>Person bearbeiten</h2>
+    <button type="button" class="new-person-button" (click)="goToSearch()">
+    Person suchen
+  </button>
 
   @if (error) {
     <p class="errorMessage">{{ error }}</p>
