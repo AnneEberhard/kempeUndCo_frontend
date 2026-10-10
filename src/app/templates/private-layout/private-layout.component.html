@@ -4,3 +4,33 @@
   <router-outlet></router-outlet>
 </div>
 <app-footer></app-footer>
+@if (inactivityService.showWarning$ | async) {
+  <div class="inactivity-backdrop">
+    <div
+      class="inactivity-dialog"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="inactivity-title"
+    >
+      <h2 id="inactivity-title">Noch da?</h2>
+
+      <p>
+        Du warst eine Weile inaktiv. Du wirst in Kürze automatisch abgemeldet.
+      </p>
+
+      <button
+        type="button"
+        (click)="inactivityService.continueSession()"
+      >
+        Angemeldet bleiben
+      </button>
+
+      <button
+        type="button"
+        (click)="inactivityService.logout()"
+      >
+        Jetzt abmelden
+      </button>
+    </div>
+  </div>
+}

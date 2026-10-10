@@ -138,18 +138,12 @@
 
           @for (family of availableFamilies; track family) {
             <option [value]="family">
-              {{
-                family === "kempe"
-                  ? "Kempe"
-                  : family === "huenten"
-                    ? "Hünten"
-                    : family
-              }}
+              {{ getFamilyLabel(family) }}
             </option>
           }
         </select>
       } @else {
-        <input id="family" type="text" [value]="selectedFamily" readonly />
+        <input id="family" type="text" [value]="getFamilyLabel(selectedFamily)" readonly />
       }
     </div>
     <h3>Vertraulichkeit</h3>
@@ -180,7 +174,6 @@
         Alle Verknüpfungen mit Verwandten erfolgen im nächsten Schritt (Person
         bearbeiten).
       </i>
-
     </div>
 
     <h3>Quellen und Notizen</h3>
@@ -365,6 +358,68 @@
 
           <button type="button" (click)="goToNewPerson()">
             Neue Person anlegen
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showExistingPersonPopup) {
+    <div class="popUpConfirmation">
+      <div
+        class="popUpConfirmationContent"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="existing-person-title"
+      >
+        <h2 id="existing-person-title">
+          Person möglicherweise bereits vorhanden
+        </h2>
+
+        <p>
+          Es gibt bereits Personen mit diesem Vor- und Nachnamen. Bitte prüfe,
+          ob eine davon dieselbe Person ist.
+        </p>
+
+        <div class="existing-person-list">
+          @for (person of existingPersons; track person.refn) {
+            <div class="existing-person-item">
+              <div class="existing-person-details">
+                <strong> {{ person.givn }} {{ person.surn }} </strong>
+
+                <span> REFN: {{ person.refn }} </span>
+
+                @if (person.birt_date) {
+                  <span> Geboren: {{ person.birt_date }} </span>
+                }
+
+                @if (person.deat_date) {
+                  <span> Verstorben: {{ person.deat_date }} </span>
+                }
+
+                @if (!person.birt_date && !person.deat_date) {
+                  <span> Keine Geburts- oder Sterbedaten vorhanden </span>
+                }
+              </div>
+
+              <button type="button" (click)="openExistingPerson(person)">
+                Person öffnen
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="buttonBox">
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="cancelExistingPersonCheck()"
+          >
+            Abbrechen
+          </button>
+
+          <button type="button" (click)="createAnyway()">
+            Trotzdem neu anlegen
           </button>
         </div>
       </div>

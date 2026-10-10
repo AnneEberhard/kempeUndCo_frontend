@@ -88,19 +88,7 @@ export class AuthService {
         console.error('Logout failed', err);
       }
     });
-
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('authorName');
-    localStorage.removeItem('family_1');
-    localStorage.removeItem('family_2');
-    localStorage.removeItem('is_staff');
-    localStorage.removeItem('alert_faminfo');
-    localStorage.removeItem('alert_info');
-    localStorage.removeItem('alert_recipe');
-    localStorage.removeItem('alert_discussion');
+    this.clearLocalStorage();
     this.router.navigate(['/login']);
   }
 
@@ -179,4 +167,19 @@ export class AuthService {
     return this.http.put(url, preferences);
   }
 
+
+  clearLocalStorage(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('authorName');
+    localStorage.removeItem('family_1');
+    localStorage.removeItem('family_2');
+    localStorage.removeItem('is_staff');
+    localStorage.removeItem('alert_faminfo');
+    localStorage.removeItem('alert_info');
+    localStorage.removeItem('alert_recipe');
+    localStorage.removeItem('alert_discussion');
+  }
 }

@@ -88,6 +88,10 @@ export class AdminPersonComponent implements OnInit {
   originalFamily: EditFamily | null = null;
   successMessage = '';
 
+  showDuplicateRelationPopup = false;
+  duplicateRelationInputs: string[][] = [];
+
+
   constructor(
     private route: ActivatedRoute, private router: Router,
     private adminFamilyService: AdminFamilyService,
@@ -167,11 +171,26 @@ export class AdminPersonComponent implements OnInit {
 
 
   save(): void {
+    this.error ='';
     if (!this.person) {
       return;
     }
 
     if (!this.validateFamilyData()) {
+      return;
+    }
+    const dateError = this.adminFamilyService.validateBirthDeathDates(
+      this.birtDate,
+      this.deatDate
+    );
+
+    if (dateError) {
+      this.error = dateError;
+      alert(dateError);
+      window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
       return;
     }
 
@@ -184,6 +203,59 @@ export class AdminPersonComponent implements OnInit {
     this.showSaveConfirmation = true;
   }
 
+  private findDuplicateRelationInputs(
+    relationData: Partial<AdminRelations>
+  ): string[][] {
+    const entries: { refn: string; label: string }[] = [];
+
+    const addEntry = (
+      value: string | null | undefined,
+      label: string
+    ): void => {
+      const refn = value?.trim();
+
+      if (refn) {
+        entries.push({ refn, label });
+      }
+    };
+
+    addEntry(relationData.fath_refn, 'Vater');
+    addEntry(relationData.moth_refn, 'Mutter');
+
+    for (let i = 1; i <= 4; i++) {
+      const spouseField =
+        `marr_spou_refn_${i}` as keyof AdminRelations;
+
+      const spouseRefn = relationData[spouseField] as
+        string | null | undefined;
+
+      addEntry(spouseRefn, `Ehepartner ${i}`);
+
+      const childrenField =
+        `children_${i}` as keyof AdminRelations;
+
+      const children = relationData[childrenField] as
+        string[] | null | undefined;
+
+      children?.forEach((refn, childIndex) => {
+        addEntry(refn, `Kind ${childIndex + 1}, Beziehung ${i}`);
+      });
+    }
+
+    const grouped = new Map<string, string[]>();
+
+    for (const entry of entries) {
+      const labels = grouped.get(entry.refn) ?? [];
+      labels.push(entry.label);
+      grouped.set(entry.refn, labels);
+    }
+
+    return [...grouped.entries()]
+      .filter(([, labels]) => labels.length > 1)
+      .map(([refn, labels]) => [
+        `REFN ${refn}: ${labels.join(', ')}`
+      ]);
+  }
 
   confirmSave(): void {
     if (!this.person) {
@@ -195,6 +267,41 @@ export class AdminPersonComponent implements OnInit {
 
     const personData = this.assemblePersonData();
     const relationData = this.assembleRelationData();
+    const duplicates = this.findDuplicateRelationInputs(relationData);
+
+    if (duplicates.length > 0) {
+      this.duplicateRelationInputs = duplicates;
+      this.showDuplicateRelationPopup = true;
+      return;
+    }
+
+    this.showSaveConfirmation = false;
+    this.error = '';
+    this.finalizeSave(personData, relationData);
+  }
+
+  continueDuplicateRelationSave(): void {
+    if (!this.person) {
+      return;
+    }
+
+    const personData = this.assemblePersonData();
+    const relationData = this.assembleRelationData();
+
+    this.showDuplicateRelationPopup = false;
+    this.duplicateRelationInputs = [];
+    this.showSaveConfirmation = false;
+
+    this.finalizeSave(personData, relationData);
+  }
+
+  private finalizeSave(
+    personData: any,
+    relationData: any
+  ): void {
+    if (!this.person) {
+      return;
+    }
 
     this.adminFamilyService
       .updatePerson(this.person.refn, personData)
@@ -322,6 +429,7 @@ export class AdminPersonComponent implements OnInit {
       .updateRelation(this.person!.refn, relationData)
       .subscribe({
         next: () => {
+          console.log(relationData);
           this.clearRelationData();
           this.loadFamilyData();
           this.successMessage = 'Person wurde geändert.';
@@ -352,6 +460,10 @@ export class AdminPersonComponent implements OnInit {
     this.showSaveConfirmation = false;
   }
 
+  cancelDuplicateRelationSave(): void {
+    this.showDuplicateRelationPopup = false;
+    this.duplicateRelationInputs = [];
+  }
 
   getChanges(): PersonChange[] {
     if (!this.person) {

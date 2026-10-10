@@ -1,61 +1,83 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from './auth.service';
-import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { Observable, catchError, switchMap, throwError } from 'rxjs';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
+import { AuthService } from './auth.service';
+
+const excludedUrls = [
+  '/login',
+  '/register',
+  '/forgot',
+  '/reset-password',
+  '/activation-success',
+  '/activation-failure',
+  '/legal',
+  '/login/refresh/',
+  '/token/blacklist/'
+];
+
+export const authInterceptor = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
   const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const isExcludedUrl = excludedUrls.some(url =>
+    req.url.includes(url)
+  );
+
+  if (isExcludedUrl) {
+    return next(req);
+  }
+
   const authToken = authService.getAccessToken();
 
-  // URLs, die vom Interceptor ausgeschlossen werden sollen
-  const excludedUrls = [
-    '/login',
-    '/register',
-    '/forgot',
-    '/reset-password',
-    '/activation-success',
-    '/activation-failure',
-    '/legal'
-  ];
-
-  // Überprüfe, ob die URL ausgeschlossen werden soll
-  const isExcludedUrl = excludedUrls.some(url => req.url.includes(url));
-
-  if (authToken && !isExcludedUrl) {
-    const cloned = req.clone({
+  const request = authToken
+    ? req.clone({
       setHeaders: {
         Authorization: `Bearer ${authToken}`
       }
-    });
+    })
+    : req;
 
-    return next(cloned).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && error.error?.code === 'token_not_valid') {
-          // Handle 401 error and attempt to refresh the token
-          return handle401Error(req, next, authService);
-        }
-         // Fehlerbehandlung für andere Fehler, z. B. 400 Bad Request
-         let errorMessage = error.error ? error.error : error.message;
-
-         // Gebe die komplette Fehlerantwort weiter
-         return throwError(() => error);
-      })
-    );
-  }
-  
-  return next(req).pipe(
+  return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Fehlerbehandlung für Requests ohne Token
-      return throwError(() => error);
+      if (error.status !== 401) {
+        return throwError(() => error);
+      }
+
+      if (!authToken) {
+        authService.clearLocalStorage();
+        void router.navigate(['/login']);
+        return throwError(() => error);
+      }
+
+      return handle401Error(
+        req,
+        next,
+        authService,
+        router
+      );
     })
   );
 };
 
-const handle401Error = (request: HttpRequest<any>, next: HttpHandlerFn, authService: AuthService): Observable<HttpEvent<any>> => {
+const handle401Error = (
+  request: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+  authService: AuthService,
+  router: Router
+): Observable<HttpEvent<unknown>> => {
   return authService.refreshToken().pipe(
-    switchMap((token: any) => {
+    switchMap((token: { access: string }) => {
+      if (!token?.access) {
+        throw new Error('Refresh lieferte keinen Access-Token.');
+      }
+
       authService.setAccessToken(token.access);
+
       const cloned = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token.access}`
@@ -63,9 +85,11 @@ const handle401Error = (request: HttpRequest<any>, next: HttpHandlerFn, authServ
       });
       return next(cloned);
     }),
-    catchError((error) => {
-      authService.logout();
-      return throwError(() => new Error(error.message));
+    catchError((error: unknown) => {
+      authService.clearLocalStorage();
+      void router.navigate(['/login']);
+
+      return throwError(() => error);
     })
   );
 };

@@ -1,0 +1,41 @@
+
+.inactivity-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 50%);
+}
+
+.inactivity-dialog {
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: #fff;
+  color: #222;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 20%);
+}
+
+.inactivity-dialog button {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.inactivity-dialog button:first-of-type {
+  background: #245c46;
+  color: #fff;
+}
+
+.inactivity-dialog button:last-of-type {
+  background: #eee;
+  color: #222;
+}

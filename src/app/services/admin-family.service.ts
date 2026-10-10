@@ -174,4 +174,89 @@ export class AdminFamilyService {
     data
   );
 }
+
+validateBirthDeathDates(
+  birthValue: string | null | undefined,
+  deathValue: string | null | undefined
+): string | null {
+  const birth = this.parseDateValue(birthValue);
+  const death = this.parseDateValue(deathValue);
+
+  if (!birth || !death) {
+    return null;
+  }
+
+  // Beide Angaben enthalten ein vollständiges Datum.
+  if (birth.type === 'full' && death.type === 'full') {
+    if (death.date < birth.date) {
+      return 'Das Sterbedatum darf nicht vor dem Geburtsdatum liegen.';
+    }
+
+    return null;
+  }
+
+  // Mindestens eine Angabe enthält nur eine Jahreszahl.
+  if (death.year < birth.year) {
+    return 'Das Sterbedatum darf nicht vor dem Geburtsdatum liegen.';
+  }
+
+  // Gleiches Jahr: nur bei zwei vollständigen Daten ist
+  // der Vergleich auf Tagesebene eindeutig.
+  if (
+    birth.year === death.year &&
+    birth.type === 'full' &&
+    death.type === 'full' &&
+    death.date < birth.date
+  ) {
+    return 'Das Sterbedatum darf nicht vor dem Geburtsdatum liegen.';
+  }
+
+  return null;
+}
+
+private parseDateValue(
+  value: string | null | undefined
+): { year: number; type: 'year' | 'full'; date: Date } | null {
+  const input = value?.trim();
+
+  if (!input) {
+    return null;
+  }
+
+  // Reine Jahreszahl, z. B. 1847
+  const yearMatch = input.match(/^(\d{4})$/);
+
+  if (yearMatch) {
+    const year = Number(yearMatch[1]);
+
+    return {
+      year,
+      type: 'year',
+      date: new Date(year, 0, 1)
+    };
+  }
+
+  // Vollständiges Datum, z. B. 9.1.2001 oder 09.01.2001
+  const dateMatch = input.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+
+  if (!dateMatch) {
+    return null;
+  }
+
+  const day = Number(dateMatch[1]);
+  const month = Number(dateMatch[2]);
+  const year = Number(dateMatch[3]);
+
+  const date = new Date(year, month - 1, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+
+  return { year, type: 'full', date };
+}
 }

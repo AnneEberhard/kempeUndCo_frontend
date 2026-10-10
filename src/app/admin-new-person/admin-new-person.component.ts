@@ -117,6 +117,10 @@ export class AdminNewPersonComponent {
   successMessage = '';
   showSuccessPopup = false;
   createdPersonRefn: string | null = null;
+  existingPersons: AdminPerson[] = [];
+  showExistingPersonPopup = false;
+  checkingExistingPersons = false;
+
 
   constructor(
     private route: ActivatedRoute, private router: Router,
@@ -129,7 +133,10 @@ export class AdminNewPersonComponent {
     const family2 = localStorage.getItem('family_2');
 
     this.availableFamilies = [family1, family2]
-      .filter((family): family is string => !!family);
+      .filter(
+        (family): family is string =>
+          !!family && family !== 'null'
+      );
 
     if (this.availableFamilies.length === 1) {
       this.selectedFamily = this.availableFamilies[0];
@@ -137,17 +144,88 @@ export class AdminNewPersonComponent {
   }
 
   save(): void {
+    this.error ='';
     if (!this.selectedFamily) {
       alert('Bitte wähle einen Stammbaum aus.');
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      return;
+    }
+    const dateError = this.adminFamilyService.validateBirthDeathDates(
+      this.birtDate,
+      this.deatDate
+    );
+    if (dateError) {
+      this.error = dateError;
+      alert(dateError);
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
       return;
     }
 
-    this.pendingChanges = this.getChanges();
-    this.noNewChanges = false;
+    this.checkExistingPerson();
+  }
 
-    if (this.pendingChanges.length === 0) {
-      this.noNewChanges = true;
+  private checkExistingPerson(): void {
+    const givn = this.givn.trim() || '';
+    const surn = this.surn.trim() || '';
+    const search = `${givn} ${surn}`.trim();
+
+    if (!search) {
+      this.continueSave();
+      return;
     }
+
+    this.adminFamilyService.searchPersons(search).subscribe({
+      next: persons => {
+        const normalize = (value: string | null | undefined) =>
+          (value ?? '').trim().toLocaleLowerCase();
+
+        this.existingPersons = persons.filter(person =>
+          normalize(person.givn) === normalize(this.givn) &&
+          normalize(person.surn) === normalize(this.surn)
+        );
+
+        if (this.existingPersons.length > 0) {
+          this.showExistingPersonPopup = true;
+          return;
+        }
+
+        this.continueSave();
+      },
+      error: error => {
+        this.checkingExistingPersons = false;
+        console.error('Fehler bei der Prüfung auf bestehende Personen:', error);
+        alert('Die Namensprüfung ist fehlgeschlagen. Bitte versuche es erneut.');
+      }
+    });
+  }
+
+  openExistingPerson(person: AdminPerson): void {
+    this.showExistingPersonPopup = false;
+
+    this.router.navigate([
+      '/admin-ancestors/person',
+      person.refn
+    ]);
+  }
+
+  createAnyway(): void {
+    this.showExistingPersonPopup = false;
+    this.continueSave();
+  }
+
+  cancelExistingPersonCheck(): void {
+    this.showExistingPersonPopup = false;
+  }
+
+  private continueSave(): void {
+    this.pendingChanges = this.getChanges();
+    this.noNewChanges = this.pendingChanges.length === 0;
     this.showSaveConfirmation = true;
   }
 
@@ -724,6 +802,18 @@ export class AdminNewPersonComponent {
 
   newPartnerChildBox(index: number): void {
     this.expandedMarriageBoxes.add(index);
+  }
+
+
+  getFamilyLabel(family: string): string {
+    switch (family) {
+      case 'kempe':
+        return 'Kempe';
+      case 'huenten':
+        return 'Hünten';
+      default:
+        return family;
+    }
   }
 
   goToSearch(): void {
