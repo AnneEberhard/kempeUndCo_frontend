@@ -818,6 +818,11 @@ export class AdminNewPersonComponent {
 
   goToSearch(): void {
     this.pendingChanges = this.getChanges();
+      if (this.availableFamilies.length === 1) {
+    this.pendingChanges = this.pendingChanges.filter(
+      change => change.label !== 'Stammbaum'
+    );
+  }
     if (this.pendingChanges.length > 0) {
       const proceed = window.confirm(
         'Es gibt ungespeicherte Änderungen.\n\n' +
