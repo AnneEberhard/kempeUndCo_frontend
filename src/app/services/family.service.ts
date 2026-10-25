@@ -70,25 +70,35 @@ export class FamilyService {
           const spouseRefn = relations[`marr_spou_refn_${i}` as keyof Relations];
           const childrenIds = relations[`children_${i}` as keyof Relations] as number[];
 
-          if (typeof spouseRefn === 'number') {
-            const spouse$ = this.getPerson(spouseRefn).pipe(
-              catchError(() => of(this.createUnknownPerson())) // Fängt Fehler für den Ehepartner ab
-            );
-            const children$ = childrenIds.length > 0 ? forkJoin(
-              childrenIds.map(childId => this.getPerson(childId).pipe(
-                catchError(() => of(this.createUnknownPerson())) // Fängt Fehler für Kinder ab
-              ))
-            ) : of([]);
+          const spouse$ = typeof spouseRefn === 'number'
+            ? this.getPerson(spouseRefn).pipe(
+              catchError(() => of(this.createUnknownPerson()))
+            )
+            : of(null);
 
+          const children$ = childrenIds?.length > 0
+            ? forkJoin(
+              childrenIds.map(childId =>
+                this.getPerson(childId).pipe(
+                  catchError(() => of(this.createUnknownPerson()))
+                )
+              )
+            )
+            : of([]);
+
+          // Nur einen Eintrag erzeugen, wenn mindestens
+          // ein Ehepartner oder mindestens ein Kind existiert.
+          if (typeof spouseRefn === 'number' || (childrenIds?.length ?? 0) > 0) {
             return forkJoin([spouse$, children$]).pipe(
               map(([spouse, children]) => ({
-                spouse,
+                spouse: spouse ?? this.createUnknownPerson(),
                 children
               }))
             );
-          } else {
-            return of(null);
           }
+
+          return of(null);
+
         });
 
         return forkJoin([person$, father$, mother$, ...marriages$]).pipe(
@@ -141,7 +151,7 @@ export class FamilyService {
       catchError(() => of([unknownPerson, unknownPerson]))  // Fängt Fehler ab, wenn die Relation nicht gefunden wird
     ) : of([unknownPerson, unknownPerson]);
 
-    const motherParents$ = mother && mother.id !== 0? this.getRelations(mother.id).pipe(
+    const motherParents$ = mother && mother.id !== 0 ? this.getRelations(mother.id).pipe(
       switchMap(relations => {
         const father$ = relations.fath_refn ? this.getPerson(relations.fath_refn).pipe(
           catchError(() => of(unknownPerson))  // Fängt Fehler ab, wenn die Person nicht gefunden wird

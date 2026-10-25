@@ -10,11 +10,11 @@ import { FormsModule } from '@angular/forms';
 import { LoadingService } from '../services/loading.service';
 
 @Component({
-    selector: 'app-ancestors',
-    standalone: true,
-    imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule],
-    templateUrl: './ancestors.component.html',
-    styleUrl: './ancestors.component.scss'
+  selector: 'app-ancestors',
+  standalone: true,
+  imports: [CommonModule, RouterModule, ScrollToTopButtonComponent, FormsModule],
+  templateUrl: './ancestors.component.html',
+  styleUrl: './ancestors.component.scss'
 })
 export class AncestorsComponent implements OnInit {
 
@@ -31,9 +31,9 @@ export class AncestorsComponent implements OnInit {
   userKempe = false;
 
   constructor(
-    private familyService: FamilyService, 
-    private router: Router, 
-    private route: ActivatedRoute, 
+    private familyService: FamilyService,
+    private router: Router,
+    private route: ActivatedRoute,
     private loadingService: LoadingService) {
     this.personId = 3571;
   }
@@ -109,7 +109,7 @@ export class AncestorsComponent implements OnInit {
     } else {
       console.error('Person mit dem angegebenen Namen nicht gefunden');
     }
-    
+
   }
 
   /**
@@ -128,10 +128,11 @@ export class AncestorsComponent implements OnInit {
    */
   loadFamilyData() {
     this.loadingService.show();
-  
+
     this.familyService.getFamily(this.personId).subscribe({
       next: (family) => {
         this.family = family;
+        console.log(this.family);
       },
       error: (error) => {
         console.error('Fehler beim Laden der Familiendaten:', error);
@@ -169,10 +170,11 @@ export class AncestorsComponent implements OnInit {
   selectPerson(person: Person): void {
     this.personId = person.id;
     this.loadingService.show();
-  
+
     this.familyService.getFamily(this.personId).subscribe({
       next: (family) => {
         this.family = family;
+        console.log(this.family);
         this.clearSearch();
       },
       error: (error) => {
@@ -221,7 +223,7 @@ export class AncestorsComponent implements OnInit {
     if (id !== 0) {
       this.personId = id;
       this.loadingService.show();
-  
+
       this.familyService.getFamily(this.personId).subscribe({
         next: (family) => {
           this.family = family;
